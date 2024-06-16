@@ -1,0 +1,88 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<script>
+    $(document).ready(function() {
+        $.get('/countries', function(data) {
+            var countrySelect = $('#country');
+            data.forEach(function(country) {
+                countrySelect.append(new Option(country.name, country.code));
+            });
+        });
+
+        $('#country').change(function() {
+            var countryCode = $(this).val();
+            // Şehir bilgilerini çekmek için AJAX isteği gönderin
+        });
+
+        $('#city').change(function() {
+            var cityCode = $(this).val();
+            // İlçe bilgilerini çekmek için AJAX isteği gönderin
+        });
+    });
+</script>
+<div class="profile-main main">
+    <div class="profile-links">
+        <ul class="profile-ul">
+            <li class="profile-li"><a href="/profil/">Kişisel Bilgiler</a></li>
+            <li class="profile-li"><a href="/profil/siparislerim">Siparişlerim</a></li>
+            <li class="profile-li"><a href="/profil/adreslerim">Adreslerim</a></li>
+            <form action="/auth/cikis" method="post">
+                <li class="profile-li"><a href="/auth/cikis"><input class="danger-badge" type="submit" value="Çıkış Yap"></a></li>
+
+
+            </form>
+        </ul>
+    </div>
+    <div class="profile-container">
+        <div class="profile-title">
+            <h2>Teslimat Biglileri</h2>
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="address_first">Ad</label>
+                    <input class="form-control" name="address_first" type="text" value="<%=addresses.address_first%>">
+                </div>
+                <div class="form-group">
+                    <label for="address_last">Soyad</label>
+                    <input class="form-control" name="address_last" type="text" value="<%=addresses.address_last%>">
+                </div>
+                <div class="form-group">
+                    <label for="address_phone">Telefon</label>
+                    <input class="form-control" name="address_phone" type="text" value="<%=addresses.address_phone%>">
+                </div>
+                <div class="form-group">
+                    <label for="address_email">Email</label>
+                    <input class="form-control" name="address_email" type="text" value="<%=addresses.address_email%>">
+                </div>
+                <div class="form-group">
+                    <label for="address_country">Ülke</label>
+                    <select name="address_country" id="country">
+                        <option value="tr">Türkiye</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address_city">Şehir</label>
+                    <select name="address_city" id="city">
+                        <option value="tr">Ağrı</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address_district">İlçe</label>
+                    <select name="address_district" id="district">
+                        <option value="tr">Doğubayazıt</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Tam Adres(Mahalle, sokak, cadde,)</label>
+                    <input class="form-control" name="phone" type="text" value="<%=addresses.address_email%>">
+                </div>
+                <div class="form-group">
+                    <label for="phone">TC Kimlik No</label>
+                    <input class="form-control" name="phone" type="text" value="<%=addresses.address_email%>">
+                </div>
+                <input type="submit" class="btn" value="Değiştir">
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer.ejs') %>

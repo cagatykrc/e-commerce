@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
+const Addresses = require('../models/Addresses')
 const Users = sequelize.define('Users', {
     user_id: {
         type: DataTypes.INTEGER,
@@ -43,6 +44,8 @@ const Users = sequelize.define('Users', {
     tableName: 'users', // Veritabanında kullanılacak tablo adı
     timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
 });
+Addresses.belongsTo(Users,{as:'users', foreignKey:'user_id'});
+Users.hasMany(Addresses,{as:'addresses', foreignKey:'user_id'});
 
 
 module.exports = Users;

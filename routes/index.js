@@ -48,7 +48,12 @@ router.get('/urunler', async (req, res) => {
         selectedCategories = kategoriAd; // Assign selected categories
       }
     }
-
+    const productType = await Kategorilertab.findByPk(1,{
+      include:[{
+        model:Kategoriler,
+        as:'kategoriler'
+      }]
+    })
     const products = await Urunler.findAll({
       include: [{
         model: Kategoriler,
@@ -75,7 +80,8 @@ router.get('/urunler', async (req, res) => {
       userS,
       message,
       categoryTabs,
-      selectedCategories // Pass selected categories to template
+      selectedCategories,
+      productType // Pass selected categories to template
     });
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
@@ -131,6 +137,12 @@ router.get('/', async (req, res) => {
     const userS = req.session.user;
     const kategoritabID = req.body;
     try {
+        const productType = await Kategorilertab.findByPk(1,{
+          include:[{
+            model:Kategoriler,
+            as:'kategoriler'
+          }]
+        })
         const urunler = await Urunler.findAll({
           include:[{
             model:Kategoriler,
@@ -157,7 +169,7 @@ router.get('/', async (req, res) => {
         //         model: Kategorilertab,
         //     }]
         // });
-        res.render('index', { duyurular, products:urunler, userS,message, categoryTabs: kategoriTabs});
+        res.render('index', { duyurular,productType, products:urunler, userS,message, categoryTabs: kategoriTabs});
     } catch (error) {
         console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
         return res.status(500).send('Internal Server Error');

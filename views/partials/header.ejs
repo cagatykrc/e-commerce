@@ -53,8 +53,39 @@
                             <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </label>
                         
-                          <li> <a class="ftp-nav-link" href="/">Anasayfa</a></li> 
+                        <% if (typeof productType !== 'undefined' && productType) { %>
+                            <% if (!productType.kategoriler || productType.kategoriler.length === 0) { %>
+                                <p>Veri bulunamadı.</p>
+                                <% } else { %>
+                                    <li><a class="ftp-nav-link" href="blog.html">YENİ ÜRÜNLER</a></li>
+                                    <li><a class="ftp-nav-link" href="/iletisim">ÇOK SATANLAR</a></li>
+                                    <div class="shop-categories-filter flex">
+                                    <div class="shop-categories-navbar flex" onclick="toggleCategory('category-area')">
+                                        <h3 class="spec-text gap-2">Perdeler</h3>
+                                        <i class="fa-solid fa-plus"></i>
+                                    </div>
+                                    <div id="category-area" class="shop-categories-area">
+                                        <ul class="spec-ul">
+                                        <% productType.kategoriler.forEach(kategori => { %>
+                                            <li class="spec-li"><a href="/urunler?kategoriID=<%=kategori.category_low%>"><%= kategori.kategori_ad %></a></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            </div>
+                            <% } %>
+                        <% } %>
+                        <script>
+                        function toggleCategory(id) {
+                            const element = document.getElementById(id);
+                            if (element.style.display === "block") {
+                                element.style.display = "none";
+                            } else {
+                                element.style.display = "block";
+                            }
+                        }
+                    </script>
 
+                        <li> <a class="ftp-nav-link head" href="/">Anasayfa</a></li> 
                         <li><a class="ftp-nav-link" href="/urunler">Ürünler</a></li>
                         <li><a class="ftp-nav-link" href="/hakkimizda">Hakkımızda</a></li>
                         <li><a class="ftp-nav-link" href="services.html">Servislerimiz</a></li>

@@ -105,8 +105,17 @@ a {
 .banner-container img{
   border-radius: 1rem;
 }
+div#category-area.shop-categories-area li{
+  display: none;
+}
  
 @media (max-width:998px) {
+  div#category-area.shop-categories-area li{
+    display: flex;
+  }
+  #category-area{
+    display: none;
+  }
   .banner-container img{
     object-fit: cover;
     width: 360px;
@@ -294,7 +303,7 @@ main.container{
     display: flex;
     justify-content: flex-start;
     padding: 18px 19px 18px 29px;
-    color: #333333;
+    color: #000;
     font-size: 16px;
   }
   a.ftp-navlink {
@@ -440,7 +449,7 @@ a{
   .custom-navbar .custom-navbar-nav li a {
     font-weight: 500;
     color: #000 !important;
-    opacity: .5;
+    opacity: .9;
     -webkit-transition: .3s all ease;
     -o-transition: .3s all ease;
     transition: .3s all ease;
@@ -1458,7 +1467,17 @@ textarea {
       font-size: 1.25rem;
       font-family: "DM Sans", sans-serif;
   }
-  
+  .shop-categories-navbar{
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 19px 18px 29px;
+    font-size: 16px;
+  }
+  .shop-categories-navbar .spec-text{
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 19px;
+  }
   .shop-categories-filter {
       flex-direction: column;
   }
