@@ -1,0 +1,44 @@
+<%- include('../partials/header.ejs') %>
+<div class="custom-category-container">
+    <div style="width: auto;" class="custom-category-panel">
+        <div class="category-create-panel">
+            <h2 class="text-center mb-4">Duyuru Oluştur</h2>
+            <!-- Kategori Tab Oluşturma Formu -->
+
+            <!-- Kategori Oluşturma Formu -->
+            <form action="/admin/duyuruolustur" method="POST">
+                <p>Duyurular Kullanıcılara sadece anasayfa kısmında gösterilir. </p>
+                <div class="form-group">
+                    <label for="duyuru_baslik">Duyuru Başlığı:</label>
+                    <input type="text" class="form-control admin-panel-input" id="duyuru_baslik" maxlength="32" name="duyuru_baslik" required>
+                </div>
+                <div class="form-group">
+                    <label for="duyuru_metin">Duyuru Metni:</label>
+                    <input type="text" class="form-control admin-panel-input" id="duyuru_metin" maxlength="255" name="duyuru_metin" required>
+                </div>
+                <div class="form-group">
+                    <label for="duyuru_metin">Duyuru Rengi:</label>
+                    <input type="color" class="form-control admin-panel-input" id="duyuru_metin" maxlength="255" name="duyuru_renk" required>
+                </div>
+                <button type="submit" class="btn addbookbtn btn-primary">Duyuruyu Oluştur</button>
+            </form>
+        </div>
+
+        <!-- Kategori Yönetim Paneli -->
+        <div style="margin-top: 50px;" class="category-management-panel">
+        </div>
+        <h1>Aktif Duyuru</h1>
+        <% duyurular.forEach(duyuru=>{%>
+        <div style="width: 80%;" class="announcement-panel">
+            <h2 style="color: <%= duyuru.duyuru_renk%>" class="announcement-title"><%= duyuru.duyuru_baslik %></h2>
+            <p class="announcement-description"><%= duyuru.duyuru_metin %></p>
+        </div>
+        <% }); %>
+        <form action="/admin/duyurusil" method="POST">
+            <button class="btn btn-danger">Duyuruyu Sil</button>
+        </form>
+        <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
+    </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

@@ -1,0 +1,28 @@
+<%- include('../partials/header.ejs') %>
+<div class="container">
+    <div style="margin-top: 64px;" class="card-body">
+        <div style="padding: 12px; border-radius: 12px;" class="card-header">
+            <h4 class="mb-0">Kontrol Paneli</h4>
+        </div>
+                    <div class="title">
+                        <% if(userS && userS.firstName){ %>
+                            <p>Merhaba, <%= userS.firstName %> Kontrol paneline hoş geldiniz.</p>
+                        <% } else { %>
+                            <p>Merhaba, Anonim Kontrol paneline hoş geldiniz.</p>
+                        <% } %>
+                </div>
+                <div class="admin-panel-bottom-body">
+                    <a href="/admin/urunolustur"><button class="mb-1 btn btn-primary">Dergi Oluştur</button></a>
+                    <a href="/admin/urunyonetim"><button class="mb-1 btn btn-primary">Dergi Paneli</button></a>
+                    <a href="/admin/kullaniciyonetim"><button class="mb-1 btn btn-primary">Kullanıcı Yetkileri</button></a>
+                    <a href="/admin/kategoriyonetim"><button class="mb-1 btn btn-primary">Kategori Seçenekleri</button></a>
+                    <a href="/admin/duyuruolustur"><button class="mb-1 btn btn-primary">Duyuru Oluştur</button></a>
+                    <a href="/admin/logizleme"><button class="mb-1 btn btn-primary">Log Geçmişi</button></a>
+                </div>
+                    <!-- Diğer içerikleri buraya ekleyebilirsiniz -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('../partials/footer.ejs') %>

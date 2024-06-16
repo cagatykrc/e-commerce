@@ -1,0 +1,50 @@
+<%- include('./partials/header.ejs',) %>
+<%- include('./partials/loader.ejs') %>
+
+<div class="container">
+    <section class="contact">
+        <h2>İletişim</h2>
+        <p>Bizimle iletişime geçmek için aşağıdaki bilgileri kullanabilirsiniz.</p>
+        <ul>
+            <li><strong>E-posta:</strong> yeditepekulturvesanat@gmail.com</li>
+        </ul>
+        <p>Bizimle sosyal medyada da bağlantı kurabilirsiniz:</p>
+        <div class="social-icons">
+            <a href="https://www.instagram.com/yeditepe.kultur.sanat?igsh=NTc4MTIwNjQ2YQ==" target="_blank" rel="">
+                <i class="fa-brands fa-instagram"></i><span> yeditepekultursanat</span>
+            </a>
+            <a href="https://www.facebook.com/profile.php?id=61556218620082&mibextid=ZbWKwL" target="_blank" rel="">
+                <i class="fa-brands fa-facebook"></i><span> yeditepekultursanat</span>
+            </a>
+            <!-- Diğer sosyal medya ikonları ekleyebilirsiniz -->
+        </div>
+        
+    </section>
+    <div class="send-contact-area">
+        <section class="contact-sec">
+            <h2>Sitemize yazınızı gönderin.</h2>
+            <p>Aşağıda gösterilen formu doldurarak sitemizde veya dergilerimizde paylaşılmasını istediğiniz yazılarınızı veya şiirlerinizi bize değerlendirmemiz ve sizinle iletişime geçmemiz için gönderebilirisiniz.</p>
+        </section>
+        <h2>İletişime Geç</h2>
+        <form action="https://formsubmit.co/85589274a624a76b7577c3154548a02f" method="POST">
+            <div class="form-group">
+                <label for="contact-email">Email</label>
+                <input type="email" class="form-control admin-panel-input" id="contact-email" name="email" required>
+            </div>            
+            <div class="form-group">
+                <label for="contact-fullname">İsim ve Soyisim</label>
+                <input type="text" class="form-control admin-panel-input" id="contact-fullname" maxlength="45" name="name" required>
+            </div>            
+            <div class="form-group">
+                <label for="contact-form">Metniniz</label>
+                <textarea type="text" class="form-control admin-panel-input" id="contact-form" name="message" required></textarea>
+            </div>
+            <button type="submit" class="btn addbookbtn btn-primary">İleti Gönder</button>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+
+</div>
+<%- include('./partials/footer.ejs') %>

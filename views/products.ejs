@@ -1,0 +1,55 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<!-- Start Hero Section -->
+<div class="product-main main">
+    <div class="mobile-filter-open-area">
+        <label class="filter-mbl-btn" for="filter-area-active">Filtrele<i class="fa-solid fa-sliders"></i></label>
+        <label class="filter-mbl-btn" for="sort-area-active">Sırala<i class="fa-solid fa-arrow-down-short-wide"></i></label>
+    </div>
+    <input type="checkbox" name="" id="filter-area-active">
+    <input type="checkbox" name="" id="sort-area-active">
+        <div class="mobile-filter-area">
+            <%- include('./partials/filter-menu.ejs', { selectedCategories: selectedCategories }) %>
+        </div>
+
+    <div class="herotit">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-5">
+                    <div class="intro-excerpt">
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Hero Section -->
+
+    <div class="untree_co-section product-section before-footer-section">
+        <%- include('./partials/filter-menu.ejs', { selectedCategories: selectedCategories }) %>
+        <div class="container product-cnt">
+            <h1>Ürünler (<%= products.length %>)</h1>
+            <div class="row">
+                <!-- Start Column 1 -->
+                <% products.forEach(urun => { %>
+                <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+                    <a class="product-item" href="/urun/<%= urun.urun_id %>">
+                        <img src="<%= urun.resim %>" class="img-fluid product-thumbnail">
+                        <h3 class="product-title"><%= urun.urun_basligi %></h3>
+                        <strong class="product-price">₺<%= urun.product_price %>/m<sup>2</sup></strong>
+                        <span class="icon-cross">
+                            <img src="/images/cross.svg" class="img-fluid">
+                        </span>
+                    </a>
+                </div>
+                <% }); %>
+                <!-- End Column 1 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<%- include('./partials/footer.ejs') %>

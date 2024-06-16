@@ -1,0 +1,159 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<div class="hero">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>Sepet</h1>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Hero Section -->
+
+<div class="untree_co-section before-footer-section">
+<div class="container">
+  <div class="row mb-5">
+    <form class="col-md-12" method="post">
+      <div class="site-blocks-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="product-thumbnail">Görsel</th>
+              <th class="product-name">Ürün</th>
+              <th class="product-price">Fiyat</th>
+              <th class="product-measure">Ölçü</th>
+              <th class="product-quantity">Miktar</th>
+              <th class="product-total">Toplam</th>
+              <th class="product-remove">Kaldır</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% userCart.forEach(cartItem => { %>
+            <tr>
+              <td class="product-thumbnail">
+                <img src="<%=cartItem.Urunler.resim%>" alt="Image" class="img-fluid">
+              </td>
+              <td class="product-name">
+                <h2 class="h5 text-black"><%=cartItem.Urunler.urun_basligi%></h2>
+                <span class="opacity-0"><%= cartItem.cart_id %></span>
+              </td>
+              <td>₺<%= cartItem.Urunler.product_price %></td>
+              <td><%= cartItem.width %>cm, En<br><%= cartItem.height %>cm, Boy</td>
+              <td>
+                <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
+                  <div class="input-group-prepend">
+                    <button class="btn btn-outline-black decrease" type="button">&minus;</button>
+                  </div>
+                  <input type="text" disabled class="form-control text-center quantity-amount" value="<%= cartItem.quantity %>" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-black increase" type="button">&plus;</button>
+                  </div>
+                </div>
+              </td>
+              <td>₺<%=cartItem.total_price %></td>
+              <td><button type="button" class="btn btn-black btn-sm remove-item" data-cartid="<%= cartItem.cart_id %>">X</button></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row mb-5">
+        <div class="col-md-6 mb-3 mb-md-0">
+          <button class="btn btn-black btn-sm btn-block">Sepeti Güncelle</button>
+        </div>
+        <div class="col-md-6">
+          <a href="/"><button class="btn btn-outline-black btn-sm btn-block">Alışverişe Devam Et</button></a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <label class="text-black h4" for="coupon">Kupon</label>
+          <p>Kupon Kodunuz Varsa.</p>
+        </div>
+        <div class="col-md-8 mb-3 mb-md-0">
+          <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-black">Kupon Uygula</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 pl-5">
+      <div class="row justify-content-end">
+        <div class="col-md-7">
+          <div class="row">
+            <div class="col-md-12 text-right border-bottom mb-5">
+              <h3 class="text-black h4 text-uppercase">Sepet Tutarı</h3>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <span class="text-black">Ara Toplam</span>
+            </div>
+            <div class="col-md-6 text-right">
+              <strong class="text-black">₺<%= totalCartPrice.toFixed(2) %></strong>
+            </div>
+          </div>
+          <div class="row mb-5">
+            <div class="col-md-6">
+              <span class="text-black">Toplam</span>
+            </div>
+            <div class="col-md-6 text-right">
+              <strong class="text-black">₺<%= totalCartPrice.toFixed(2) %></strong>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <form action="/odeme/siparisonayla" method="POST">
+                <button type="submit" class="btn btn-black btn-lg py-3 btn-block">Alışverişi Tamamla</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+  document.querySelectorAll('.remove-item').forEach(button => {
+    button.addEventListener('click', async (e) => {
+      const cartId = e.target.getAttribute('data-cartid');
+      try {
+        const response = await fetch(`/${cartId}/sepetsil`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({})
+        });
+        const result = await response.json();
+        if (result.success) {
+          location.reload();
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error('Hata:', error);
+        alert('Bir hata oluştu.');
+      }
+    });
+  });
+</script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/tiny-slider.js"></script>
+<script src="/js/custom.js"></script>
+<%- include('./partials/footer.ejs') %>

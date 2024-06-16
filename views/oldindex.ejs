@@ -1,0 +1,129 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+
+<div class="custom-container">
+  <% duyurular.forEach(duyuru=>{%>
+    <div style="width: 80%;" class="announcement-panel">
+        <h2 class="announcement-title"><%= duyuru.duyuru_baslik %></h2>
+        <p  class="announcement-description"><%= duyuru.duyuru_metin %></p>
+    </div>
+    <% }); %>
+    <!-- Kategori Filtreleme Butonu -->
+    <div class="custom-row card-panel">
+        <div class="sidebar close">
+          <div class="sidebar-closebtn">
+            <i class='bx bx-arrow-to-left' ></i>
+          </div>
+            <div class="logo-details">
+                <img class="filter-logo dsp-none" src="/images/newLogoWhiteColorTransparent.png" width="100px" height="100px" alt="">
+            </div>
+            <ul class="nav-links">
+              <li>
+                <a href="/">
+                  <i class='bx bx-grid-alt' ></i>
+                  <span class="link_name">Kategoriler</span>
+                </a>
+                <% kategoriTabs.forEach(category => { %>
+                    </li>
+                    <li>
+                      <div class="iocn-link">
+                        <a href="#">
+                          <i class='bx bx-collection' ></i>
+                          <span class="link_name"><%= category.kategori_tab_ad %></span>
+                        </a>
+                        <i class='bx bxs-chevron-down arrow' ></i>
+                      </div>
+                      <ul class="sub-menu">
+                          <li><a class="link_name filter-categoryss"></a></li>
+                              <% category.kategoriler.forEach(subcategory => { %>
+                                    <li class="filter-lis" data-kategori="<%=subcategory.kategori_low %>"><a><%= subcategory.kategori_ad %></a></li>
+                                <% }); %>
+                      </ul>
+                <% }); %>
+        </ul>
+      </div>
+      <div class="top-custom-cards-cont">
+      <h2 class="main-bks">Dergilerimiz</h2>
+          <section class="home-section">
+            <div class="home-content">
+              <i class='bx bx-menu' ></i>
+              <span class="text">Filtreler</span>
+            </div>
+          </section>
+        </div>
+          <div class="custom-card-container">
+              <% dergiler.forEach(dergi => { %>
+                  <a class="custom-card <%= dergi.kategorisi %> tumu" href="/dergiler/<%= dergi.dergi_id %>">
+                    <div class="">
+                      <img src="./uploads/<%= dergi.resim %>" alt="<%= dergi.baslik %>">
+                      <span class="<%= dergi.kategorisi %>"></span>
+                      <div class="custom-card-content">
+                        <span class="custom-card-span"><%=dergi.dergi_turu %></span>
+                        <h5 class="custom-card-title"><%= dergi.dergi_basligi %></h5>
+                        <p class="custom-card-text"><%= dergi.aciklama ? dergi.aciklama.substring(0, 50) + '...' : '' %></p>
+                      </div>
+                  </div>
+              </a>
+                  <% }); %>
+              </div>
+      </div>
+    </div>
+</div>
+
+<script>
+
+    let arrow = document.querySelectorAll(".arrow");
+for (var i = 0; i < arrow.length; i++) {
+    arrow[i].addEventListener("click", (e)=>{
+        let arrowParent = e.target.parentElement.parentElement;//selecting main parent of arrow
+        arrowParent.classList.toggle("showMenu");
+      });
+  }
+  let sidebar = document.querySelector(".sidebar");
+  let sidebarBtn = document.querySelector(".home-content");
+  let closebtn = document.querySelector(".sidebar-closebtn");
+  let filtlogo = document.querySelector(".filter-logo");
+
+  sidebarBtn.addEventListener("click", ()=>{
+      sidebar.classList.toggle("close");
+      filtlogo.classList.toggle("dsp-none");
+  });
+  closebtn.addEventListener("click", ()=>{
+      sidebar.classList.toggle("close");
+      filtlogo.classList.toggle("dsp-none");
+
+      document.querySelector(".custom-container").style.marginLeft = "0px";
+
+  });
+
+    // Filtreleme fonksiyonu
+    document.querySelectorAll('.filter-lis').forEach(function (kategoriItem) {
+        kategoriItem.addEventListener('click', function () {
+            // Seçilen kategori adını al
+            var secilenKategori = kategoriItem.getAttribute('data-kategori');
+
+            // Filtreleme fonksiyonunu çağır
+            filtrele(secilenKategori);
+        });
+    });
+
+    function filtrele(kategori) {
+        // Tüm kartları gizle
+        document.querySelectorAll('.custom-card').forEach(function (dergiKarti) {
+            dergiKarti.style.display = 'none';
+        });
+
+        // Seçilen kategoriye ait kartları göster
+        document.querySelectorAll('.' + kategori).forEach(function (dergiKarti) {
+            dergiKarti.style.display = 'block';
+        });
+
+        // Kategorilerin görünürlüğünü kapat
+        var kategoriListesi = document.querySelector('.filter-categoryss');
+        kategoriListesi.classList.remove('active');
+    }
+
+    // Kategori seçildiğinde filtreleme yap
+</script>
+
+<%- include('./partials/footer.ejs') %>

@@ -1,0 +1,48 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<body>
+    <main class="main">
+        <div class="customer-orders">
+            <div class="orders-page-title">
+                <h2>Sipariş #<%=order.order_id%></h2>
+                <span><%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></span>
+            </div>
+            <ul class="orders-page-ul">
+                <% order.orderItems.forEach(item => { %>
+                    <li class="orders-page-li">
+                        <div class="left-side">
+                            <div class="image-area">
+                                <img src="<%=item.urunler.resim%>" class="img-fluid" width="100px" height="125px" alt="">
+                            </div>
+                            <div class="content-area">
+                                <strong><%= item.urunler ? item.urunler.urun_basligi : 'Bilgi Bulunamadı' %></strong><br>
+                                <span><%= item.urunler.kategoriler ? item.urunler.kategoriler.kategori_ad : 'Bilgi Bulunamadı' %><br></span>
+                                <strong></strong> <%= item.urunler ? item.urunler.product_price + ' TL' : 'Bilgi Bulunamadı' %>
+
+                            </div>
+                        </div>
+                        <div class="right-side">
+                            <strong></strong> <%= item.urunler ? item.price + ' TL' : 'Bilgi Bulunamadı' %>
+                            <strong class=secondary-text> <%= item.quantity %> Adet</strong><br>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+        <div class="order-page">
+            <div class="orders-page-bt-title">
+                <h2>Detaylar</h2>
+            </div>
+            <div class="order-details">
+                <p><strong>Sipariş Numarası:</strong> <%= order.order_id %></p>
+                <p><strong>Sipariş Tarihi:</strong> <%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></p>
+                <p><strong>İsim:</strong> <%= order.user.first_name %> <%= order.user.last_name %></p>
+                <p><strong>Toplam Tutar:</strong> <%= order.total_price %> TL</p>
+                <p class="success-badge"><strong>Ödeme:</strong><span> <%= order.payment_status %></span></p>
+
+                <p class="shipment-badge"><strong>Durum:</strong><span> <%= order.status %></span></p>
+            </div>
+        </div>
+    </main>
+</body>
+<%- include('./partials/footer.ejs') %>

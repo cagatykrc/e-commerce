@@ -1,0 +1,12 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<div class="main">
+    <h2>Ödeme Sayfası</h2>
+    <script src="https://www.paytr.com/js/iframeResizer.min.js"></script>
+    <iframe src="https://www.paytr.com/odeme/guvenli/<%=iframetoken%>" id="paytriframe" frameborder="0"
+    scrolling="no" style="width: 100%;"></iframe>
+    <script>iFrameResize({},'#paytriframe');</script>
+
+</div>
+
+<%- include('./partials/footer.ejs') %>

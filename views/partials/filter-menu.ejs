@@ -1,0 +1,79 @@
+<div class="filter-container">
+    <div class="filter-page">
+        <div class="filter-categories">
+            <% categoryTabs.forEach(category => { %>
+            <div class="shop-categories-filter flex">
+                <div class="shop-categories-title flex" onclick="toggleCategory('categories<%= category.dataValues.kategori_tab_id %>')">
+                    <h3 class="spec-text gap-2"><%= category.dataValues.kategori_tab_ad %></h3>
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div id="categories<%= category.dataValues.kategori_tab_id %>" class="shop-categories-area">
+                    <ul class="spec-ul">
+                        <% category.dataValues.kategoriler.forEach(subcategory => { %>
+                        <li class="spec-li" data-category="<%= subcategory.dataValues.category_low %>">
+                            <input type="checkbox" name="kategoriID" value="<%= subcategory.dataValues.category_id %>" <%= selectedCategories.includes(subcategory.dataValues.category_low) ? 'checked' : '' %>><%= subcategory.dataValues.kategori_ad %>
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+            </div>
+            <% }); %>
+            <div class="shop-categories-filter flex">
+                <div class="shop-categories-title flex" onclick="toggleCategory('priceRange')">
+                    <h3 class="spec-text gap-2">Fiyat Aralığı</h3>
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <div id="priceRange" class="shop-categories-area">
+                    <ul class="spec-ul">
+                        <li class="spec-li"><input type="checkbox" name="" id="">₺500-₺600</li>
+                        <li class="spec-li"><input type="checkbox" name="" id="">₺600-₺700</li>
+                        <li class="spec-li"><input type="checkbox" name="" id="">₺700-₺800</li>
+                        <li class="spec-li"><input type="checkbox" name="" id="">₺800-₺900</li>
+                        <li class="spec-li"><input type="checkbox" name="" id="">₺900-₺1000</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="filter-btn-area">
+                <button class="btn" onclick="applyFilters()">Filtreleri Uygula</button>
+                <button class="btn" onclick="resetFilters()">Sıfırla</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCategory(id) {
+        const element = document.getElementById(id);
+        if (element.style.display === "none") {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+    }
+
+    function applyFilters() {
+        // Gather the selected categories
+        const selectedCategories = [];
+        document.querySelectorAll('.spec-li input[type="checkbox"]:checked').forEach((checkbox) => {
+            selectedCategories.push(checkbox.closest('.spec-li').getAttribute('data-category').trim());
+        });
+
+        // Construct the query string from the selected categories
+        const queryString = selectedCategories.map(category => `kategoriID=${category}`).join('&');
+
+        // Reset URL to base and then add the query string
+        const baseUrl = window.location.href.split('?')[0];
+        window.location.href = `${baseUrl}?${queryString}`;
+    }
+
+    function resetFilters() {
+        // Clear all checkboxes
+        document.querySelectorAll('.spec-li input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.checked = false;
+        });
+
+        // Reload the page without any query parameters
+        let baseUrl = window.location.href.split('?')[0];
+        window.location.href = baseUrl;
+    }
+</script>

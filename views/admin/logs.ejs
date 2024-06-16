@@ -1,0 +1,12 @@
+<%- include('../partials/header.ejs',) %>
+<div class="custom-container">
+    <div class="log-area">
+        <pre><%= dosyaIcerigi %></pre>
+        <form action="/admin/logtemizle" method="POST">
+            <button class="btn btn-primary">Log İçeriğini Temizle</button>
+        </form>
+        <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
+
+</div>
+</div>
+<%- include('../partials/footer.ejs') %>

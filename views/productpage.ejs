@@ -1,0 +1,91 @@
+<%- include('./partials/header.ejs') %>
+<style>
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+}
+ 
+.product-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+</style>
+
+<main class="product-container">
+  <!-- Left Column / Headphones Image -->
+  <div class="left-column">
+    <img data-image="red" class="product-image active" src="<%=urun.resim%>" alt="">
+  </div>
+ 
+  <!-- Right Column -->
+  <div class="right-column">
+    <!-- Product Description -->
+    <div class="product-description">
+      <span><%=urun.kategorisi%></span>
+      <h1><%=urun.urun_basligi%></h1>
+      <p><%=urun.aciklama%></p>
+    </div>
+ 
+    <!-- Product Configuration -->
+    <div class="product-configuration">
+      <form id="orderForm" action="/<%=urun.urun_id%>/sepetekle" method="POST">
+        <div class="cable-config">
+          <input type="number" disabled value="<%=urun.urun_id%>" style="display: none;" name="urunId">
+          <h1>Sipariş Seçenekleri</h1>
+          <span>Ölçü Bilgileri 'cm'</span>
+          <div class="cable-choose">
+            <input type="number" name="height" id="height" step="any" class="form-control" required placeholder="Boy cm Bilgisi" maxlength="3">
+            <input type="number" name="width" id="width" step="any" class="form-control" required placeholder="En cm Bilgisi" maxlength="3">
+          </div>
+          <a href="/servisler/en-ve-boy">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a><br>
+          <span>Takmatik Seçimi</span>
+          <div class="cable-choose">
+            <input type="button" class="form-control" value="Metal Klips">
+            <input type="button" class="form-control" value="Plastik Klips">
+          </div>
+        </div>
+    </div>
+ 
+    <!-- Product Pricing -->
+    <div class="product-price">
+      <div class="product-span-area">
+        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span>
+        <span>₺<%=urun.product_price%>/m<sup>2</sup></span>
+      </div>
+      <div class="product-price-add-cart">
+        <input type="submit" value="Sepete ekle" class="cart-btn">
+
+      </div>
+    </div>
+    </form>
+  </div>
+</main>
+
+<%- include('./partials/footer.ejs') %>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  function calculateTotalPrice() {
+    const height = parseFloat($('#height').val());
+    const width = parseFloat($('#width').val());
+    const productPrice = parseFloat('<%=urun.product_price%>');
+
+    if (!isNaN(height) && !isNaN(width)) {
+      const squareMeters = (height * width) / 10000;
+      const totalPrice = squareMeters * productPrice;
+      $('#totalPrice').text(`₺${totalPrice.toFixed(2)}`);
+    } else {
+      $('#totalPrice').text('₺0');
+    }
+  }
+
+  $('#height, #width').on('input', calculateTotalPrice);
+});
+</script>

@@ -1,0 +1,39 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<div class="profile-main main">
+    <div class="profile-links">
+        <ul class="profile-ul">
+            <li class="profile-li"><a href="/profil/">Kişisel Bilgiler</a></li>
+            <li class="profile-li"><a href="/profil/siparislerim">Siparişlerim</a></li>
+            <li class="profile-li"><a href="/profil/adreslerim">Adreslerim</a></li>
+            <form action="/auth/cikis" method="post">
+                <li class="profile-li"><a href="/auth/cikis"><input class="danger-badge" type="submit" value="Çıkış Yap"></a></li>
+
+            </form>
+        </ul>
+    </div>
+    <div class="profile-container">
+        <div class="profile-title">
+            <h2>Siparişlerim</h2>
+        </div>
+            <%orders.forEach(order =>{%>
+                <div class="profile-order-cnt">
+                    <a href="/orders/<%= order.order_id %>">
+                        <div class="orders-page-title">
+                            <span>sipariş: #<%= order.order_id %></span>
+                            <span><strong>detaylar</strong></span>
+                        </div>
+                        <div class="profile-order-content">
+                            <p><strong>Sipariş Tarihi:</strong> <%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></p>
+                            <p><strong>Toplam Tutar:</strong> <%= order.total_price %> TL</p>
+                            <p><strong>Ödeme:</strong> <%= order.payment_status %></p>
+                            <p><strong>Durum:</strong> <%= order.status %></p>
+                        </div>
+                    </a>
+                </div>
+           <% }); %>
+
+    </div>
+</div>
+
+<%- include('./partials/footer.ejs') %>

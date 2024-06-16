@@ -1,0 +1,36 @@
+<!-- views/kayit.ejs -->
+<%- include('./partials/header.ejs',) %>
+<div class="lgncustom-container">
+<div class="loginPage">
+    <form action="/auth/kayit" method="post">
+        <h2>Kayıt Ol</h2>
+        <div class="form-group">
+            <label for="name">Kullanıcı Adınız:</label>
+            <input type="text" class="form-control" name="username" id="username" placeholder="Kullanıcı adınızı girin" required maxlength="24">
+        </div>
+        <div class="form-group">
+            <label for="name">Adınız:</label>
+            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="Adınızı girin"required maxlength="18">
+        </div>
+        <div class="form-group">
+            <label for="name">Soyadınız:</label>
+            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Soyadınızı girin"required maxlength="18">
+        </div>
+        <div class="form-group">
+            <label for="email">E-posta Adresi:</label>
+            <input type="email" class="form-control" name="email" id="email" placeholder="E-posta adresinizi girin"required maxlength="45">
+        </div>
+        <div class="form-group">
+            <label for="password">Şifre:</label>
+            <input type="password" class="form-control" name="password" id="password" placeholder="Şifrenizi girin"required maxlength="24">
+        </div>
+        <div class="form-group">
+            <label for="password">Yeniden Şifre:</label>
+            <input type="password" class="form-control" name="verifypassword" id="password" placeholder="Tekrar şifrenizi girin"required maxlength="24">
+        </div>
+        <button type="submit" class="loginBtn">Kayıt Ol</button>
+        <a style="color: #28c4d8" href="/auth/giris">Zaten bir hesabınız var mı?</a>
+    </form>
+</div>
+</div>
+<%- include('./partials/footer.ejs') %>

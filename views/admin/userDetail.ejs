@@ -1,0 +1,56 @@
+<%- include('../partials/header.ejs') %>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Kullanıcı Bilgilerini Güncelle</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <!-- Kullanıcı Güncelleme Formu -->
+      <form action="/admin/kullanici/<%= user.user_id %>/update" method="post">
+        
+        <!-- Kullanıcı ID -->
+        <div class="mb-3">
+          <label for="userId" class="form-label">Kullanıcı ID</label>
+          <input type="text" class="form-control" id="userId" name="userId" value="<%= user.user_id %>" readonly>
+        </div>
+
+        <!-- Kullanıcı Adı Güncelleme -->
+        <div class="mb-3">
+          <label for="newUsername" class="form-label">Yeni Kullanıcı Adı</label>
+          <input type="text" class="form-control" id="newUsername" name="newUsername" value="<%= user.username %>" required>
+        </div>
+
+        <!-- Email Güncelleme -->
+        <div class="mb-3">
+          <label for="newEmail" class="form-label">Yeni Email</label>
+          <input type="email" class="form-control" id="newEmail" name="newEmail" value="<%= user.email %>" required>
+        </div>
+
+        <!-- Ad Güncelleme -->
+        <div class="mb-3">
+          <label for="newFirstName" class="form-label">Yeni Ad</label>
+          <input type="text" class="form-control" id="newFirstName" name="newFirstName" value="<%= user.first_name %>" required>
+        </div>
+
+        <!-- Soyad Güncelleme -->
+        <div class="mb-3">
+          <label for="newLastName" class="form-label">Yeni Soyad</label>
+          <input type="text" class="form-control" id="newLastName" name="newLastName" value="<%= user.last_name %>" required>
+        </div>
+
+        <!-- Yetki Güncelleme -->
+        <div class="mb-3">
+          <label for="newRole" class="form-label">Yeni Yetki</label>
+          <select class="form-control" class="form-control" id="newRole" name="newRole">
+            <option value="admin" <%= (user.role === 'admin') ? 'selected' : '' %>>Admin</option>
+            <option value="user" <%= (user.role === 'user') ? 'selected' : '' %>>Kullanıcı</option>
+          </select>
+        </div>
+
+        <!-- Güncelleme Butonu -->
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+      </form>
+      <a href="/admin/kullaniciyonetim/"><button class="btn btn-secondary mt-1">Geri</button></a>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer.ejs') %>

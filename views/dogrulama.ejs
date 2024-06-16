@@ -1,0 +1,14 @@
+<%- include('./partials/header.ejs') %>
+
+<div class="container mt-4">
+    <h2>Doğrulama Kodu</h2>
+    <form action="/auth/dogrulama" method="post">
+        <div class="form-group">
+            <label for="verificationCode">Doğrulama Kodu:</label>
+            <input type="text" class="form-control" name="verificationCode" id="verificationCode" placeholder="Doğrulama kodunu girin" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Doğrula</button>
+    </form>
+</div>
+
+<%- include('./partials/footer.ejs') %>

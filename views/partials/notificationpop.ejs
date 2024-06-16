@@ -1,0 +1,16 @@
+
+<% if (typeof message !== 'undefined' && message) { %>
+    <div id="notification" style="color: <%= messagecolor %>">
+      <p><%= message %></p>
+    </div>
+  <% } %>
+  <script>
+    // Hata mesajını 5 saniye sonra kaldıran JavaScript kodu
+    setTimeout(() => {
+      const notification = document.getElementById('notification');
+      if (notification) {
+        notification.remove(); // Bildirim mesajını kaldır
+      }
+    }, 5000); // 5000 milisaniye = 5 saniye
+  </script>
+  

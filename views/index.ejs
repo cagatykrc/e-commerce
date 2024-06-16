@@ -1,0 +1,224 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<div class="a-s"></div>
+<div class="banner-hero">
+  <div class="banner-container">
+	  <img src="images/open-banner.png" class="">
+          <p><a href="/urunler" class=" btn btn-white-outline">Daha fazla</a></p>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+		<!-- Start Product Section -->
+		<div class="product-section">
+
+
+
+			<div class="container">
+				<div class="row">
+
+					<!-- Start Column 1 -->
+					<!-- <div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+						<h2 class="mb-4 section-title">Öne çıkan ürünler</h2>
+						<p><a href="/urunler" class="btn">Daha Fazla...</a></p>
+					</div>  -->
+					<!-- End Column 1 -->
+
+					<!-- Start Column 2 -->
+					
+					<div class="product-slider">
+						<div class="product-slider-title">
+							<h2 class="h2">Yeni Gelenler</h2>
+						</div>
+						<div class="product-news-area">
+							<i class="fa-solid fa-angle-left angle-left"></i>
+
+								<% products.forEach(urun => { %>
+									<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+										<a class="product-item" href="/urun/<%=urun.urun_id%>">
+											<span class="<%=urun.kategoriler.category_low%>"></span>
+											<img src="<%=urun.resim%>" class="img-fluid product-thumbnail">
+											<h3 class="product-title"><%=urun.urun_basligi %></h3>
+											<strong class="product-price">₺<%=urun.product_price %>/m<sup>2</sup></strong>
+				
+											<span class="icon-cross">
+												<img src="images/cross.svg" class="img-fluid">
+											</span>
+										</a>
+									</div> 
+									<% }); %>
+									<i class="fa-solid fa-angle-right angle-right"></i>
+							</div>
+					</div>
+					<div class="product-slider">
+						<div class="product-slider-title">
+							<h2 class="h2">Çok Satanlar</h2>
+						</div>
+						<div class="product-top-sellers-area">
+							<% products.forEach(urun => { %>
+								<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+									<a class="product-item" href="/urun/<%=urun.urun_id%>">
+										<span class="<%=urun.kategoriler.category_low%>"></span>
+										<img src="<%=urun.resim%>" class="img-fluid product-thumbnail">
+										<h3 class="product-title"><%=urun.urun_basligi %></h3>
+										<strong class="product-price">₺<%=urun.product_price %>/mt</strong>
+			
+										<span class="icon-cross">
+											<img src="images/cross.svg" class="img-fluid">
+										</span>
+									</a>
+								</div> 
+								<% }); %>
+						</div>
+					</div>
+					
+					<!-- End Column 2 -->
+				
+
+				</div>
+			</div>
+		</div>
+    <!-- Ürünler Bölümü Son-->
+
+    		<!-- Neden Biz Bölümü -->
+		<div class="why-choose-section">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-6">
+						<h2 class="section-title">Neden Bizi Seçmelisin</h2>
+						<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+
+						<div class="row my-5">
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/truck.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Hızlı &amp; Ücretsiz Teslimat</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/bag.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Kolay Alışveriş</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/support.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>24/7 Destek</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+							<div class="col-6 col-md-6">
+								<div class="feature">
+									<div class="icon">
+										<img src="images/return.svg" alt="Image" class="imf-fluid">
+									</div>
+									<h3>Hızlı Geri Dönüş</h3>
+									<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate.</p>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="img-wrap">
+							<img src="images/why-choose-us-img.jpg" alt="Image" class="img-fluid">
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- Neden biz bölüm son -->
+
+	
+    <div class="popular-product">
+			<div class="container">
+				<div class="row">
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="images/product-1.png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Nordic Chair</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="images/product-2.png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Kruzo Aero Chair</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+						<div class="product-item-sm d-flex">
+							<div class="thumbnail">
+								<img src="images/product-3.png" alt="Image" class="img-fluid">
+							</div>
+							<div class="pt-3">
+								<h3>Ergonomic Chair</h3>
+								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
+								<p><a href="#">Read More</a></p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!-- End Popular Product -->
+
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>$(document).ready(function(){
+			$(".show-now .btn .btn-secondary me-2").click(function(){
+				$('html, body').scrollTop($(".product-section").offset().top);});
+				console.log('çalıştı')
+			});
+		</script>
+					<script>
+						function toggleCategory(id) {
+							const element = document.getElementById(id);
+							if (element.style.display === "none" || element.style.display === "") {
+								element.style.display = "block";
+							} else {
+								element.style.display = "none";
+							}
+						}
+						</script>
+		<!-- End Testimonial Slider -->
+<%- include('./partials/footer.ejs') %>

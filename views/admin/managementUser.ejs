@@ -1,0 +1,39 @@
+<%- include('../partials/header.ejs') %>
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Kullanıcı Yönetimi</h2>
+  
+  <div class="table-responsive usercont">
+    <table class="usercont-table table table-bordered table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Kullanıcı Adı</th>
+          <th>Email</th>
+          <th>Ad</th>
+          <th>Soyad</th>
+          <th>Yetki</th>
+          <th>Oluşturulma Tarihi</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr>
+            <td><%= user.user_id %></td>
+            <td><%= user.username %></td>
+            <td><%= user.email %></td>
+            <td><%= user.first_name %></td>
+            <td><%= user.last_name %></td>
+            <td><%= user.role %></td>
+            <td><%= user.created_at %></td>
+            <td>
+                <a href="/admin/kullanici/<%= user.user_id %>/"><button class="btn btn-primary">Değiştir</button></a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <a href="/admin/panel/"><button class="btn btn-secondary mt-1">Geri</button></a>
+</div>
+<%- include('../partials/footer.ejs') %>

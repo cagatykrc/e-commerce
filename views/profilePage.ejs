@@ -1,0 +1,23 @@
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/loader.ejs') %>
+<div class="profile-main main">
+    <div class="profile-links">
+        <ul class="profile-ul">
+            <li class="profile-li"><a href="/profil/">Kişisel Bilgiler</a></li>
+            <li class="profile-li"><a href="/profil/siparislerim">Siparişlerim</a></li>
+            <li class="profile-li"><a href="/profil/adreslerim">Adreslerim</a></li>
+            <form action="/auth/cikis" method="post">
+                <li class="profile-li"><a href="/auth/cikis"><input class="danger-badge" type="submit" value="Çıkış Yap"></a></li>
+
+
+            </form>
+        </ul>
+    </div>
+    <div class="profile-container">
+        <div class="profile-title">
+            <h2>Kişisel Bilgiler</h2>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer.ejs') %>
