@@ -55,10 +55,11 @@
                         
                         <% if (typeof productType !== 'undefined' && productType) { %>
                             <% if (!productType.kategoriler || productType.kategoriler.length === 0) { %>
+                                <div class="category-m-l">
                                 <p>Veri bulunamadı.</p>
                                 <% } else { %>
-                                    <li><a class="ftp-nav-link" href="blog.html">YENİ ÜRÜNLER</a></li>
-                                    <li><a class="ftp-nav-link" href="/iletisim">ÇOK SATANLAR</a></li>
+                                    <li><a class="ftp-nav-link m-li" href="blog.html">YENİ ÜRÜNLER</a></li>
+                                    <li><a class="ftp-nav-link m-li" href="/iletisim">ÇOK SATANLAR</a></li>
                                     <div class="shop-categories-filter flex">
                                     <div class="shop-categories-navbar flex" onclick="toggleCategory('category-area')">
                                         <h3 class="spec-text gap-2">Perdeler</h3>
@@ -67,7 +68,7 @@
                                     <div id="category-area" class="shop-categories-area">
                                         <ul class="spec-ul">
                                         <% productType.kategoriler.forEach(kategori => { %>
-                                            <li class="spec-li"><a href="/urunler?kategoriID=<%=kategori.category_low%>"><%= kategori.kategori_ad %></a></li>
+                                            <li class="spec-li m-li"><a href="/urunler?kategoriID=<%=kategori.category_low%>"><%= kategori.kategori_ad %></a></li>
                                         <% }); %>
                                     </ul>
                                 </div>

@@ -75,7 +75,7 @@ app.get('*', (req, res) => {
   try {
     await sequelize.sync();
 
-    const PORT = process.env.PORT || 8000;
+    const PORT = process.env.PORT || 8080;
 
     if (isProduction && sslOptions) {
       https.createServer(sslOptions, app).listen(PORT, "0.0.0.0", () => {

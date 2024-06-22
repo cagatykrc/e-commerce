@@ -1162,6 +1162,7 @@ textarea {
 
     .lgncustom-container {
       display: flex;
+      margin-top: 125px;
       justify-content: center;
       align-items: center;
       min-height: 70vh;
@@ -1542,6 +1543,7 @@ textarea {
   }
   
   @media (max-width: 992px) {
+
     .banner-container a{
       position: absolute;
       bottom: 50px;
@@ -1584,7 +1586,9 @@ textarea {
         margin-top: 24px;
       }
   }
-  
+  .m-li{
+    display: none;
+  }
   @media (max-width: 552px) {
       .img-fluid {
           max-width: 100%;
@@ -1703,6 +1707,9 @@ textarea {
   #sort-area-active{
     display: none;
   }
+  .shop-categories-navbar{
+    display: none;
+  }
   @media (max-width:998px) {
     .order-page{
       width: 100%;
@@ -1710,6 +1717,12 @@ textarea {
     .filter-btn-area{
         position: fixed;
     
+      }
+      .m-li{
+        display: unset;
+      }
+      .shop-categories-navbar{
+        display: flex;
       }
   }
       
@@ -1778,4 +1791,11 @@ textarea {
   }
   .profile-order-content{
     padding: 0 .5rem 0 .5rem;
+  }
+  .check-policy{
+    display: flex;
+    flex-direction: row;
+    padding: 2px;
+    margin-bottom: 12px;
+    font-size: .8rem;
   }

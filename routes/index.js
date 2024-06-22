@@ -19,7 +19,9 @@ router.get('/hakkimizda', (req, res) =>{
 });
 
 
-
+router.get('/kullanici-sozlesmesi',(req,res)=>{
+  res.render('useragreement',{userS : req.session.user});
+})
 
 router.get('/urunler', async (req, res) => {
   const message = req.session.message;
