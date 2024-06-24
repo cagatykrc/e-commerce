@@ -7,7 +7,7 @@ require('dotenv').config();
 //   host: process.env.DB_HOST ,
 //   dialect:'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
 // });
-const sequelize = new Sequelize( 'fatosperde', 'root', '', {
+const sequelize = new Sequelize( 'fatosperde', 'root', 'HQrlvkY2clOkwBQcsXEl', {
   host:'localhost',
   dialect:'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
 });
