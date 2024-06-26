@@ -24,7 +24,7 @@ const Urunler = sequelize.define('Urunler', {
         allowNull: false,
     },
     olusturan_user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
     },
     product_price:{
