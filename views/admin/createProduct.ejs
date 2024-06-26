@@ -33,7 +33,7 @@
                             <label for="kategori">Kategoriler</label>
                             <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
                                 <% kategoriler.forEach(kategori => {%>
-                                    <option value="<%= kategori.category_low%>"><%= kategori.kategori_ad%></option>
+                                    <option value="<%= kategori.category_id%>"><%= kategori.kategori_ad%></option>
                                 <%});%>
                                 
                             </select>
