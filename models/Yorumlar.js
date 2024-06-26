@@ -12,7 +12,7 @@ const Yorumlar = sequelize.define('Yorumlar', {
         allowNull: false,
     },
     kullanici_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     yorum_metni: {
