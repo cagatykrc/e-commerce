@@ -12,7 +12,7 @@ const Addresses = sequelize.define('Addresses', {
         allowNull: false,
     },
     user_id:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull:false,
     },
     address_first: {
