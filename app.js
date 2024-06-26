@@ -71,9 +71,9 @@ app.get('*', (req, res) => {
 });
 
 // Sequelize modellerini senkronize et ve sunucuyu başlat
-(async ({force:true}) => {
+(async () => {
   try {
-    await sequelize.sync();
+    await sequelize.sync({force:true});
 
     const PORT = process.env.PORT || 8080;
 
