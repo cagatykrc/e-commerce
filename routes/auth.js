@@ -68,15 +68,16 @@ router.post('/kayit', postlimiter, async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await Users.create({
-      user_id: crypto.randomUUID,
-      username,
-      email,
-      password: hashedPassword,
-      first_name: firstName,
-      last_name: lastName,
-      role: 'user'
-    });
+const newUser = await Users.create({
+  user_id: crypto.randomUUID(), // Doğru şekilde fonksiyon çağrısını yapmalısınız
+  username,
+  email,
+  password: hashedPassword,
+  first_name: firstName,
+  last_name: lastName,
+  role: 'user'
+});
+
 
 
     const ipAddress = req.socket.remoteAddress;
