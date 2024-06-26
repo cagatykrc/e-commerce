@@ -190,7 +190,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
             olusturan_user_id: userID,
             urun_basligi: baslik,
             yazar,
-            category_low,
+            category_low: kategorisi,
             urun_turu: turu,
         });
 
