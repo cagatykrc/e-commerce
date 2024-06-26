@@ -71,7 +71,7 @@ app.get('*', (req, res) => {
 });
 
 // Sequelize modellerini senkronize et ve sunucuyu başlat
-(async () => {
+(async ({force:true}) => {
   try {
     await sequelize.sync();
 
