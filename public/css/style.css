@@ -1408,6 +1408,9 @@ textarea {
 
 
     @media (max-width: 940px) {
+      .product-container{
+        flex-direction: column;
+      }
       main.container{
         flex-direction: column;
       }
