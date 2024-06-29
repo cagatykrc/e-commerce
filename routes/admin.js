@@ -173,7 +173,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
 
     const userID = req.session.user.id;
 
-    const { baslik, yazar, konu, aciklama, kategorisi, resim, turu } = req.body;
+    const { baslik, price, konu, aciklama, kategorisi, turu } = req.body;
 
     if (!req.files || !req.files['resim']) {
         console.error('Dosya yüklemesi başarısız oldu.');
@@ -189,21 +189,21 @@ router.post('/urunolustur', verifyToken, upload.fields([
             resim: resimDosya.filename,
             olusturan_user_id: userID,
             urun_basligi: baslik,
-            yazar,
+            product_price: parseFloat(price).toFixed(2),  // Fiyatı ondalıklı sayıya çevir ve iki basamaklı hale getir
             category_low: kategorisi,
             urun_turu: turu,
         });
 
         const ipAddress = req.socket.remoteAddress;
-        logger.info(userS.username + ' ' + 'Urun Oluşturdu: ' + ipAddress + '  //' + now);
-      
+        logger.info(userS.username + ' ' + 'Urun Oluşturdu: ' + ipAddress + '  //' + new Date());
+
         res.redirect('/admin/panel');
     } catch (error) {
         console.error('Urun oluşturulurken bir hata oluştu: ' + error);
-        // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
         return res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
@@ -214,16 +214,16 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
     }
 
     const urunId = req.params.urunId;
-    const { konu, aciklama, resim, baslik, kategorisi, turu } = req.body;
+    const { konu, aciklama, resim, baslik, kategorisi, turu, price } = req.body;
 
     try {
         const urun = await Urunler.findByPk(urunId);
 
         if (!urun) {
-            return res.status(404).send('Urun bulunamadı');
+            return res.status(404).send('Ürün bulunamadı');
         }
 
-        // Sequelize'nin update metodunu kullanarak urunyi güncelle
+        // Sequelize'nin update metodunu kullanarak ürünü güncelle
         await urun.update({
             urun_basligi: baslik,
             konu: konu,
@@ -231,18 +231,21 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
             resim: resim,
             category_low: kategorisi,
             urun_turu: turu,
+            product_price: parseFloat(price).toFixed(2), // Price alanını formatlayarak ekle
         });
 
         const ipAddress = req.socket.remoteAddress;
-        logger.info(userS.username + ' ' + 'Urun Düzenledi: ' + ipAddress + '  //' + now);
+        const now = new Date().toISOString(); // Şu anki zamanı al
+        logger.info(`${userS.username} Ürün Düzenledi: ${ipAddress} // ${now}`);
    
         res.redirect('/admin/urunyonetim');
     } catch (error) {
-        console.error('Urun güncellenirken bir hata oluştu: ' + error);
+        console.error('Ürün güncellenirken bir hata oluştu: ' + error);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
         return res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 router.get('/:urunId/duzenle', async (req, res) => {

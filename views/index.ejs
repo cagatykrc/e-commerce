@@ -3,7 +3,7 @@
 <div class="a-s"></div>
 <div class="banner-hero">
   <div class="banner-container">
-	  <img src="images/open-banner.png" class="">
+	  <img src="/images/open-banner.png" class="">
           <p><a href="/urunler" class=" btn btn-white-outline">Daha fazla</a></p>
         </div>
       </div>
@@ -40,7 +40,8 @@
 								<% products.forEach(urun => { %>
 									<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
 										<a class="product-item" href="/urun/<%=urun.urun_id%>">
-											<span class="<%=urun.kategoriler.category_low%>"></span>
+											<span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
+
 											<img src="/uploads/<%=urun.resim%>" class="img-fluid product-thumbnail">
 											<h3 class="product-title"><%=urun.urun_basligi %></h3>
 											<strong class="product-price">₺<%=urun.product_price %>/m<sup>2</sup></strong>
@@ -62,7 +63,8 @@
 							<% products.forEach(urun => { %>
 								<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
 									<a class="product-item" href="/urun/<%=urun.urun_id%>">
-										<span class="<%=urun.kategoriler.category_low%>"></span>
+										<span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
+ 
 										<img src="/uploads/<%=urun.resim%>" class="img-fluid product-thumbnail">
 										<h3 class="product-title"><%=urun.urun_basligi %></h3>
 										<strong class="product-price">₺<%=urun.product_price %>/mt</strong>

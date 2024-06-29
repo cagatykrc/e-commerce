@@ -35,10 +35,6 @@ const Urunler = sequelize.define('Urunler', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    yazar: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
     category_low:{
         type: DataTypes.INTEGER,
         allowNull:true,

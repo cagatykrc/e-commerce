@@ -2,51 +2,60 @@
 
 <div style="padding: 12px;" class="container mt-4">
     <div class="create-urun">
-    <h1>Dergi Düzenle</h1>
+        <h1>Dergi Düzenle</h1>
 
-    <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
+        <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
 
-        <div class="mb-3">
-            <label for="konu" class="form-label">Başlık:</label>
-            <input type="text" id="baslik" name="baslik" class="form-control" value="<%= urun.urun_basligi %>" required>
-        </div>
+            <div class="mb-3">
+                <label for="baslik" class="form-label">Başlık:</label>
+                <input type="text" id="baslik" name="baslik" class="form-control" value="<%= urun.urun_basligi %>" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="konu" class="form-label">Konu:</label>
-            <input type="text" id="konu" name="konu" class="form-control" value="<%= urun.konu %>" required>
-        </div>
-        <div class="mb-3">
-            <label for="turu" class="form-label">Türü:</label>
-            <input type="text" id="turu" name="turu" class="form-control" value="<%= urun.urun_turu %>" required>
-        </div>
-        <div class="form-group">
-            <label for="kategori">Kategoriler</label>
-            <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
-                <% kategoriler.forEach(kategori => {%>
-                    <option value="<%= kategori.kategori_low%>"><%= kategori.kategori_ad%></option>
-                <%});%>
-            </select>
-        </div>
+            <div class="mb-3">
+                <label for="konu" class="form-label">Konu:</label>
+                <input type="text" id="konu" name="konu" class="form-control" value="<%= urun.konu %>" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="aciklama" class="form-label">Açıklama:</label>
-            <textarea id="aciklama" name="aciklama" class="form-control"><%= urun.aciklama %></textarea>
-        </div>
+            <div class="mb-3">
+                <label for="turu" class="form-label">Türü:</label>
+                <input type="text" id="turu" name="turu" class="form-control" value="<%= urun.urun_turu %>" required>
+            </div>
 
-        <div class="mb-3">
-            <label for="resim" class="form-label">Kapak Adı:</label>
-            <input type="text" id="resim" name="resim" class="form-control" value="<%= urun.resim %>" required>
-        </div>
+            <div class="form-group">
+                <label for="kategorisi">Kategoriler:</label>
+                <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
+                    <% kategoriler.forEach(kategori => { %>
+                        <option value="<%= kategori.kategori_low %>" <%= urun.category_low == kategori.kategori_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
+                    <% }); %>
+                </select>
+            </div>
 
-        <!-- Diğer bilgileri ekle -->
+            <div class="mb-3">
+                <label for="aciklama" class="form-label">Açıklama:</label>
+                <textarea id="aciklama" name="aciklama" class="form-control"><%= urun.aciklama %></textarea>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Dergiyi Düzenle</button>
-    </form>
+            <div class="mb-3">
+                <label for="price" class="form-label">Fiyat:</label>
+                <input type="text" id="price" name="price" class="form-control" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="resim" class="form-label">Kapak Adı:</label>
+                <input type="text" id="resim" name="resim" class="form-control" value="<%= urun.resim %>" required>
+            </div>
+
+            <!-- Diğer bilgileri ekle -->
+
+            <button type="submit" class="btn btn-primary">Dergiyi Düzenle</button>
+        </form>
+
         <a class="btn btn-secondary mt-1" href="/admin/urunyonetim">Geri</a>
-    <div class="resim-goster mt-4">
-        <img src="<%= urun.resim %>" alt="<%= urun.resim %>" class="img-fluid">
+        
+        <div class="resim-goster mt-4">
+            <img src="/uploads/<%= urun.resim %>" alt="<%= urun.resim %>" class="img-fluid">
+        </div>
     </div>
-</div>
 </div>
 
 <%- include('../partials/footer.ejs') %>
