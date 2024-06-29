@@ -235,6 +235,7 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
         const ipAddress = req.socket.remoteAddress;
         const now = new Date().toISOString(); // Şu anki zamanı al
         logger.info(`${userS.username} Ürün Düzenledi: ${ipAddress} // ${now}`);
+
    
         res.redirect('/admin/urunyonetim');
     } catch (error) {

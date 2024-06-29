@@ -1,81 +1,113 @@
 const express = require('express');
 const router = express.Router();
+const { Sequelize, Op } = require('sequelize');
+const nodemailer = require('nodemailer');
 const Urunler = require('../models/Urunler');
-const Users = require('../models/Users')
-const ShoppingCart = require('../models/ShoppingCart')
+const Users = require('../models/Users');
+const ShoppingCart = require('../models/ShoppingCart');
 const Kategoriler = require('../models/Kategoriler');
 const Kategorilertab = require('../models/Kategorilertab');
-const verifyToken = require('../utility/verifyToken');
-const nodemailer = require('nodemailer');
 const Duyurular = require('../models/Duyurular');
-const { Sequelize, Op } = require('sequelize');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
-// Ana sayfa
 
-router.get('/hakkimizda', (req, res) =>{
-    const notif = ''
-    res.render('hakkimizda', { userS: req.session.user });
+// Nodemailer transporter
+
+
+// Routes
+router.get('/hakkimizda', (req, res) => {
+  res.render('about', { userS: req.session.user });
 });
 
+router.get('/kullanici-sozlesmesi', (req, res) => {
+  res.render('useragreement', { userS: req.session.user });
+});
 
-router.get('/kullanici-sozlesmesi',(req,res)=>{
-  res.render('useragreement',{userS : req.session.user});
-})
+router.get('/iletisim', (req, res) => {
+  res.render('contact', { userS: req.session.user });
+});
 
+router.post('/contact', (req, res) => {
+  const { name, email, message } = req.body;
+  const mailOptions = {
+    from: 'your-email@gmail.com',
+    to: 'recipient-email@example.com',
+    subject: 'İletişim Formu Mesajı',
+    text: `Ad: ${name}\nE-posta: ${email}\nMesaj: ${message}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log('E-posta gönderilemedi:', error);
+    }
+    res.send('Mesajınız başarıyla gönderildi.');
+  });
+});
+
+// Ana Sayfa
+router.get('/', async (req, res) => {
+  const message = req.session.message;
+  delete req.session.message;
+  const userS = req.session.user;
+  try {
+    const productType = await Kategorilertab.findByPk(1, {
+      include: [{ model: Kategoriler, as: 'kategoriler' }]
+    });
+    const urunler = await Urunler.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }]
+    });
+    const duyurular = await Duyurular.findAll();
+    const kategoriTabs = await Kategorilertab.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
+    });
+
+    res.render('index', { duyurular, productType, products: urunler, userS, message, });
+  } catch (error) {
+    console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
+    return res.status(500).send('Internal Server Error');
+  }
+});
+
+// Ürünler
 router.get('/urunler', async (req, res) => {
   const message = req.session.message;
   delete req.session.message;
   const userS = req.session.user;
-  let kategoriAd = req.query.kategoriID; // Kategori adı sorgu parametresi olarak gelecek
+  let kategoriAd = req.query.kategoriID;
 
   try {
-    let whereClause = {}; // whereClause'u burada tanımlayın
-
-    // To handle single or multiple category filters
+    let whereClause = {};
     let selectedCategories = [];
     if (kategoriAd) {
       if (typeof kategoriAd === 'string') {
         kategoriAd = [kategoriAd];
       }
-      console.log("Kategori Adları:", kategoriAd);
 
       const categories = await Kategoriler.findAll({ where: { category_low: kategoriAd } });
-      console.log("Bulunan Kategoriler:", categories);
-
       if (categories.length > 0) {
         const kategoriIDs = categories.map(category => category.dataValues.category_id);
-        console.log("Kategori ID'leri:", kategoriIDs);
         whereClause = { category_id: { [Sequelize.Op.in]: kategoriIDs } };
-        selectedCategories = kategoriAd; // Assign selected categories
+        selectedCategories = kategoriAd;
       }
     }
-    const productType = await Kategorilertab.findByPk(1,{
-      include:[{
-        model:Kategoriler,
-        as:'kategoriler'
-      }]
-    })
+
+    const productType = await Kategorilertab.findByPk(1, {
+      include: [{ model: Kategoriler, as: 'kategoriler' }]
+    });
     const products = await Urunler.findAll({
       include: [{
         model: Kategoriler,
         as: 'kategoriler',
-        where: whereClause // whereClause'u include içinde kullanın
+        where: whereClause
       }]
     });
 
     const announcements = await Duyurular.findAll();
-
     const categoryTabs = await Kategorilertab.findAll({
-      include: [{
-        model: Kategoriler,
-        as: 'kategoriler'
-      }],
-      order: [
-        [{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']
-      ]
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
     });
-    console.log(categoryTabs)
 
     res.render('products', {
       products,
@@ -83,7 +115,7 @@ router.get('/urunler', async (req, res) => {
       message,
       categoryTabs,
       selectedCategories,
-      productType // Pass selected categories to template
+      productType
     });
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
@@ -91,106 +123,18 @@ router.get('/urunler', async (req, res) => {
   }
 });
 
-
-
-
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'nazimkogce@gmail.com', // E-posta adresinizi buraya girin
-      pass: 'your-password' // E-posta şifrenizi buraya girin
-    }
-  });
-
-
-router.get('/iletisim', (req, res) =>{
-    const notif = ''
-    res.render('iletisim', { userS: req.session.user });
-});
-
-router.post('/contact', (req, res) => {
-  const { name, email, message } = req.body;
-
-  // E-posta gönderilecek ayarlar
-  const mailOptions = {
-    from: 'your-email@gmail.com', // Gönderen e-posta adresi
-    to: 'recipient-email@example.com', // Alıcı e-posta adresi
-    subject: 'İletişim Formu Mesajı',
-    text: `Ad: ${name}\nE-posta: ${email}\nMesaj: ${message}`
-  };
-
-  // E-posta gönderme işlemi
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log('E-posta gönderilemedi:', error);
-    }
-  
-    res.send('Mesajınız başarıyla gönderildi.');
-  });
-});
-
-
-
-
-router.get('/', async (req, res) => {
-    const message = req.session.message;
-    delete req.session.message;
-    const userS = req.session.user;
-    const kategoritabID = req.body;
-    try {
-        const productType = await Kategorilertab.findByPk(1,{
-          include:[{
-            model:Kategoriler,
-            as:'kategoriler'
-          }]
-        })
-        const urunler = await Urunler.findAll({
-          include:[{
-            model:Kategoriler,
-            as:'kategoriler'
-          }]
-        });
-        const duyurular = await Duyurular.findAll();
-        const kategoriTabs = await Kategorilertab.findAll({
-            include: [{
-                model: Kategoriler,
-                as: 'kategoriler'
-            }],
-            order: [
-
-                [{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']
-        
-              ]
-        });
-        // const kategorilers = await Kategoriler.findAll({
-        //     where: {
-        //         kategori_tab_id: kategoritabID,
-        //     },
-        //     include: [{
-        //         model: Kategorilertab,
-        //     }]
-        // });
-        res.render('index', { duyurular,productType, products:urunler, userS,message, categoryTabs: kategoriTabs});
-    } catch (error) {
-        console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
-        return res.status(500).send('Internal Server Error');
-    }
-});
-
+// Sepet
 router.get('/sepet', async (req, res) => {
   if (!req.session.user) {
-    return res.redirect('/auth/giris'); // Kullanıcı oturumu yoksa giriş sayfasına yönlendirin
+    return res.redirect('/auth/giris');
   }
   try {
     const user = req.session.user;
-
-    // Kullanıcının alışveriş sepeti ve ilgili ürün bilgilerini çek
     const userCart = await ShoppingCart.findAll({
-      where: { user_id: user.id }, // Kullanıcının tüm sepetleri
+      where: { user_id: user.id },
       include: [{
-        model: Urunler, // Ürün modeli
-        attributes: ['product_price', 'resim', 'urun_basligi'] // Gerekli ürün bilgilerini seç
+        model: Urunler,
+        attributes: ['product_price', 'resim', 'urun_basligi']
       }]
     });
 
@@ -198,23 +142,23 @@ router.get('/sepet', async (req, res) => {
     userCart.forEach(cartItem => {
       const productPrice = parseFloat(cartItem.total_price);
       const total = productPrice;
-      console.log(productPrice, cartItem.total_price);
-      cartItem.totalPrice = total; // Her bir shopping cart için totalPrice alanı oluştur
+      cartItem.totalPrice = total;
       totalCartPrice += total;
     });
-    res.render('cart', { userS: req.session.user, userCart, totalCartPrice: totalCartPrice });
+
+    res.render('cart', { userS: req.session.user, userCart, totalCartPrice });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-router.post('/:urunId/sepetekle', async(req, res) => {
+router.post('/:urunId/sepetekle', async (req, res) => {
   if (!req.session.user) {
-    return res.redirect('/auth/giris'); // Kullanıcı oturumu yoksa giriş sayfasına yönlendirin
+    return res.redirect('/auth/giris');
   }
   const userS = req.session.user;
   const urunId = req.params.urunId;
-  const { width, height } = req.body; // total_price input formdan alınmıyor, yeniden hesaplanıyor
+  const { width, height } = req.body;
   const quantity = 1;
 
   try {
@@ -227,16 +171,16 @@ router.post('/:urunId/sepetekle', async(req, res) => {
     }
 
     const productPrice = parseFloat(product.product_price);
-    const squareMeters = (height * width) / 10000; // Metrekare hesaplaması: cm^2'den m^2'ye çevirme
+    const squareMeters = (height * width) / 10000;
     const total_price = squareMeters * productPrice;
 
     await ShoppingCart.create({
       user_id: userS.id,
-      quantity: quantity,
+      quantity,
       urun_id: urunId,
-      width: width,
-      height: height,
-      total_price: total_price,
+      width,
+      height,
+      total_price
     });
 
     res.redirect('/sepet');
@@ -259,7 +203,7 @@ router.post('/:cartid/sepetsil', async (req, res) => {
     }
 
     if (userS && userS.id === cartItem.user_id) {
-      await cartItem.destroy(); // Sepet öğesini sil
+      await cartItem.destroy();
       console.log(`Sepet öğesi ${cartId} başarıyla silindi.`);
       return res.json({ success: true, message: 'Sepet öğesi başarıyla silindi.' });
     } else {
@@ -272,11 +216,11 @@ router.post('/:cartid/sepetsil', async (req, res) => {
   }
 });
 
+// Sipariş Detayları
 router.get('/orders/:orderId', async (req, res) => {
   const orderId = req.params.orderId;
-  const userS = req.session.user
+  const userS = req.session.user;
   try {
-    // Sipariş bilgilerini ve ilgili kullanıcı adını getir
     const order = await Orders.findByPk(orderId, {
       include: [
         {
@@ -291,27 +235,28 @@ router.get('/orders/:orderId', async (req, res) => {
             {
               model: Urunler,
               as: 'urunler',
-              attributes: ['urun_id','resim','urun_basligi','category_low', 'aciklama', 'product_price'],
-              include:[{
+              attributes: ['urun_id', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
+              include: [{
                 model: Kategoriler,
-                as:'kategoriler',
-                attributes:['kategori_ad']
+                as: 'kategoriler',
+                attributes: ['kategori_ad']
               }]
-            },
-          ],
-        },
-      ],
+            }
+          ]
+        }
+      ]
     });
+
     if (!order) {
-      return res.status(404).json({ error: 'Sipariş bulunamadı' });
+      console.log('Sipariş bulunamadı.');
+      return res.status(404).json({ message: 'Sipariş bulunamadı' });
     }
 
     res.render('ordersDetail', { order, userS });
   } catch (error) {
     console.error('Sipariş detayları alınırken bir hata oluştu:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).send('Internal Server Error');
   }
 });
-
 
 module.exports = router;
