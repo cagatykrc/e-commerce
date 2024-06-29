@@ -25,7 +25,7 @@
                 <label for="kategorisi">Kategoriler:</label>
                 <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
                     <% kategoriler.forEach(kategori => { %>
-                        <option value="<%= kategori.kategori_low %>" <%= urun.category_low == kategori.kategori_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
+                        <option value="<%= kategori.category_low %>" <%= urun.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
                     <% }); %>
                 </select>
             </div>
