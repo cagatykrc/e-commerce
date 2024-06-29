@@ -11,10 +11,6 @@ const Urunler = sequelize.define('Urunler', {
         primaryKey: true,
         autoIncrement: true,
     },
-    konu: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     aciklama: {
         type: DataTypes.TEXT,
         allowNull: false,

@@ -173,7 +173,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
 
     const userID = req.session.user.id;
 
-    const { baslik, price, konu, aciklama, kategorisi, turu } = req.body;
+    const { baslik, price, aciklama, kategorisi, turu } = req.body;
 
     if (!req.files || !req.files['resim']) {
         console.error('Dosya yüklemesi başarısız oldu.');
@@ -184,7 +184,6 @@ router.post('/urunolustur', verifyToken, upload.fields([
 
     try {
         const result = await Urunler.create({
-            konu,
             aciklama,
             resim: resimDosya.filename,
             olusturan_user_id: userID,
@@ -214,7 +213,7 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
     }
 
     const urunId = req.params.urunId;
-    const { konu, aciklama, resim, baslik, kategorisi, turu, price } = req.body;
+    const { aciklama, resim, baslik, kategorisi, turu, price } = req.body;
 
     try {
         const urun = await Urunler.findByPk(urunId);
@@ -226,7 +225,6 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
         // Sequelize'nin update metodunu kullanarak ürünü güncelle
         await urun.update({
             urun_basligi: baslik,
-            konu: konu,
             aciklama: aciklama,
             resim: resim,
             category_low: kategorisi,
