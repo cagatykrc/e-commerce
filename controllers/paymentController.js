@@ -10,17 +10,21 @@ const Users = require('../models/Users');
 const Urunler = require('../models/Urunler');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
-function generateUniqueId() {
-    return crypto.randomBytes(2).toString('hex');
-  }
+
 dotenv.config();
 
+const merchant_id = process.env.MERCHANT_ID || '469080';
+const merchant_key = process.env.MERCHANT_KEY || 'r7KJBYCjuWk4tDq5';
+const merchant_salt = process.env.MERCHANT_SALT || 'FF6sW88pwH4xU4J1';
 
-console.log()
+function generateUniqueId() {
+    return crypto.randomBytes(2).toString('hex');
+}
+
 router.post("/siparisonayla", async (req, res) => {
     const userS = req.session.user;
     if (!userS) {
-        return res.redirect('/sepet')
+        return res.redirect('/sepet');
     }
     
     try {
@@ -35,62 +39,58 @@ router.post("/siparisonayla", async (req, res) => {
                 }
             }]
         });
+
         let totalCartPrice = 0;
         if (userDetails.length > 0 && userDetails[0].ShoppingCarts) {
             userDetails[0].ShoppingCarts.forEach(cartItem => {
                 totalCartPrice += parseFloat(cartItem.total_price);
             });
         }
-        console.log(totalCartPrice)
 
-        res.render('checkout', { userS, userDetails:userDetails[0],totalCartPrice });
+        console.log(totalCartPrice);
+        res.render('checkout', { userS, userDetails: userDetails[0], totalCartPrice });
     } catch (error) {
         console.error('Error fetching user details and shopping cart:', error);
         res.status(500).send('Internal Server Error');
     }
-})
+});
 
-router.get("/siparis", function  (req, res) {
+router.get("/siparis", function(req, res) {
     res.redirect('/');
-    });
-const merchant_oid = "IN" + microtime.now(); // Sipariş numarası: Her işlemde benzersiz olmalıdır!! Bu bilgi bildirim sayfanıza yapılacak bildirimde geri gönderilir.
+});
 
 router.post("/", async function(req, res) {
     const user = req.session.user;
     if (!user) {
-        return res.redirect('/sepet')
+        return res.redirect('/sepet');
     }
 
     const { email, address, phone, firstname, lastname } = req.body;
-    const merchant_id = '469080';
-    const merchant_key = 'r7KJBYCjuWk4tDq5';
-    const merchant_salt = 'FF6sW88pwH4xU4J1';
     const user_ip = req.ip;
-    const merchant_oid = `${user.id}${Date.now()}`; // Benzersiz bir sipariş ID'si oluşturun
+    const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Benzersiz ve alfanumerik bir sipariş ID'si oluşturun
 
     let basket = [];
     let totalCartPrice = 0;
 
     try {
-        // Kullanıcının alışveriş sepeti ve ilgili ürün bilgilerini çek
         const userCart = await ShoppingCart.findAll({
-            where: { user_id: user.id }, // Kullanıcının tüm sepetleri
+            where: { user_id: user.id },
             include: [{
-                model: Urunler, // Ürün modeli
-                attributes: ['product_price', 'resim', 'urun_basligi'] // Gerekli ürün bilgilerini seç
+                model: Urunler,
+                attributes: ['product_price', 'resim', 'urun_basligi']
             }]
         });
 
         userCart.forEach(cartItem => {
             basket.push([
-                cartItem.Urunler.urun_basligi, // Ürün adı
-                parseFloat(cartItem.total_price).toFixed(2), // Ürün fiyatı
-                cartItem.quantity // Ürün miktarı
+                cartItem.Urunler.urun_basligi,
+                parseFloat(cartItem.total_price).toFixed(2),
+                cartItem.quantity
             ]);
             const productPrice = parseFloat(cartItem.total_price);
             const total = productPrice;
             console.log(productPrice, cartItem.total_price);
-            cartItem.totalPrice = total; // Her bir shopping cart için totalPrice alanı oluştur
+            cartItem.totalPrice = total;
             totalCartPrice += total;
         });
     } catch (error) {
@@ -98,22 +98,9 @@ router.post("/", async function(req, res) {
     }
 
     const user_basket = nodeBase64.encode(JSON.stringify(basket));
-    const payment_amount = totalCartPrice * 100; // Toplam tutarı hesaplayın ve çarpanı düzeltin
+    const payment_amount = totalCartPrice * 100;
 
-    const max_installment = '0';
-    const no_installment = '0';
-    const currency = 'TL';
-    const test_mode = '0';
-    const user_name = `${firstname} ${lastname}`;
-    const user_address = address;
-    const user_phone = phone;
-    const merchant_ok_url = 'http://www.fatosperde.com/odeme_basarili';
-    const merchant_fail_url = 'http://www.fatosperde.com/odeme_hata';
-    const timeout_limit = 30;
-    const debug_on = 1;
-    const lang = 'tr';
-
-    const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}`;
+    const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}0${0}TL0`;
     const paytr_token = hashSTR + merchant_salt;
     const token = crypto.createHmac('sha256', merchant_key).update(paytr_token).digest('base64');
 
@@ -128,24 +115,24 @@ router.post("/", async function(req, res) {
             email: email,
             payment_amount: payment_amount,
             merchant_oid: merchant_oid,
-            user_name: user_name,
-            user_address: user_address,
-            user_phone: user_phone,
-            merchant_ok_url: merchant_ok_url,
-            merchant_fail_url: merchant_fail_url,
+            user_name: `${firstname} ${lastname}`,
+            user_address: address,
+            user_phone: phone,
+            merchant_ok_url: 'http://www.fatosperde.com/odeme_basarili',
+            merchant_fail_url: 'http://www.fatosperde.com/odeme_hata',
             user_basket: user_basket,
             user_ip: user_ip,
-            timeout_limit: timeout_limit,
-            debug_on: debug_on,
-            test_mode: test_mode,
-            lang: lang,
-            no_installment: no_installment,
-            max_installment: max_installment,
-            currency: currency,
+            timeout_limit: 30,
+            debug_on: 1,
+            test_mode: 0,
+            lang: 'tr',
+            no_installment: 0,
+            max_installment: 0,
+            currency: 'TL',
             paytr_token: token,
         }
     };
-    console.log(options)
+    console.log(options);
 
     request(options, function (error, response, body) {
         if (error) throw new Error(error);
@@ -162,30 +149,26 @@ router.post("/", async function(req, res) {
 router.post("/callback", async function (req, res) {
     const callback = req.body;
 
-    // POST değerleri ile hash oluştur.
     const paytr_token = callback.merchant_oid + merchant_salt + callback.status + callback.total_amount;
     const token = crypto.createHmac('sha256', merchant_key).update(paytr_token).digest('base64');
 
-    // Oluşturulan hash'i, paytr'dan gelen post içindeki hash ile karşılaştır (isteğin paytr'dan geldiğine ve değişmediğine emin olmak için)
-    if (token != callback.hash) {
+    if (token !== callback.hash) {
         throw new Error("PAYTR notification failed: bad hash");
     }
 
-    if (callback.status == 'success') {
+    if (callback.status === 'success') {
         try {
-            // Başarılı ödeme durumunda sipariş kaydı yap
-            const userId = req.user.id; // Kullanıcı ID'sini burada alabilirsiniz (örneğin, req.user.id)
+            const userId = req.session.user.id;
             const userCart = await ShoppingCart.findAll({
-                where: { user_id: userId }, // Kullanıcının tüm sepetleri
+                where: { user_id: userId },
                 include: [{
-                    model: Urunler, // Ürün modeli
-                    attributes: ['urun_basligi', 'product_price'] // Gerekli ürün bilgilerini seç
+                    model: Urunler,
+                    attributes: ['urun_basligi', 'product_price']
                 }]
             });
 
-            // Sipariş kaydı oluştur
             const orderItems = userCart.map(cartItem => ({
-                order_id: null, // Sipariş oluşturulduğunda bu alan doldurulacak
+                order_id: null,
                 product_id: cartItem.product_id,
                 quantity: cartItem.quantity,
                 unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
@@ -197,26 +180,23 @@ router.post("/callback", async function (req, res) {
                 total_price: callback.total_amount,
                 status: 'Hazırlanıyor',
                 order_date: new Date(),
-                OrderItems: orderItems // Orders ve OrderItem modelleri arasındaki ilişkiyi kullanarak kayıt yap
+                OrderItems: orderItems
             }, {
                 include: OrderItem
             });
 
-            // Başarılı sipariş kaydı oluşturulduğunda, kullanıcının sepetini boşalt
             await ShoppingCart.destroy({
                 where: { user_id: userId }
             });
 
-            res.send('OK'); // Başarılı yanıt
+            res.send('OK');
         } catch (error) {
             console.error('Error creating order:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        // Ödeme başarısız ise farklı bir işlem yapabilirsiniz
         res.redirect('/');
     }
 });
 
-
-module.exports=router;
+module.exports = router;
