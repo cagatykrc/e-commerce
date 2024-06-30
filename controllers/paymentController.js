@@ -120,7 +120,7 @@ router.post("/", async function(req, res) {
             product_id: cartItem.product_id,
             quantity: cartItem.quantity,
             width: cartItem.width,
-            price: parseFloat(cartItem.price).toFixed(2),
+            price: parseFloat(cartItem.total_price).toFixed(2),
             order_date: formatDate(new Date()),  // Bu satırda virgül ekleyin
             height: cartItem.height,
         }));
