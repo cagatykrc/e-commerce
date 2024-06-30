@@ -154,7 +154,7 @@ router.get("/odeme_basarili", async function (req,res) {
     res.render('order-success', userS)
 })
 
-router.post("/callback", async function (req, res) {
+router.post("/odeme_basarili", async function (req, res) {
     const callback = req.body;
 
     const paytr_token = callback.merchant_oid + merchant_salt + callback.status + callback.total_amount;

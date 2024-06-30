@@ -22,7 +22,7 @@ const Orders = sequelize.define('Orders', {
         allowNull: false
     },
     payment_status:{
-        type:DataTypes.STRING(11),
+        type:DataTypes.BOOLEAN,
         allowNull:false
     },
     total_price:{
