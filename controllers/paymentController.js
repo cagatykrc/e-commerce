@@ -109,6 +109,9 @@ router.post("/", async function(req, res) {
             order_id: null,
             product_id: cartItem.product_id,
             quantity: cartItem.quantity,
+            width: cartItem.width,
+            order_date: new Date(),
+            height: cartItem.height,
             unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
         }));
     
