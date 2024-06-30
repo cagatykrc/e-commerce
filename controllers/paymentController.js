@@ -73,6 +73,13 @@ router.post("/", async function(req, res) {
     let basket = [];
     let totalCartPrice = 0;
 
+    const userCart = await ShoppingCart.findAll({
+        where: { user_id: user.id },
+        include: [{
+            model: Urunler,
+            attributes: ['product_price', 'resim', 'urun_basligi']
+        }]
+    });
     try {
         
         
@@ -97,13 +104,6 @@ router.post("/", async function(req, res) {
     const payment_amount = totalCartPrice * 100;
     try {
         
-        const userCart = await ShoppingCart.findAll({
-            where: { user_id: user.id },
-            include: [{
-                model: Urunler,
-                attributes: ['product_price', 'resim', 'urun_basligi']
-            }]
-        });
     
         const orderItems = userCart.map(cartItem => ({
             order_id: null,
@@ -115,7 +115,7 @@ router.post("/", async function(req, res) {
         const order = await Orders.create({
             order_id: generateUniqueId(),
             user_id: user.id,
-            total_price: payment_amount,
+            total_price: totalCartPrice,
             payment_status: 0,
             merchant_oid: merchant_oid,
             order_date: new Date(),
