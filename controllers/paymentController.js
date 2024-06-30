@@ -117,7 +117,7 @@ router.post("/", async function(req, res) {
     
         const orderItems = userCart.map(cartItem => ({
             order_id: null,
-            product_id: cartItem.product_id,
+            urun_id: cartItem.product_id,
             quantity: cartItem.quantity,
             width: cartItem.width,
             price: parseFloat(cartItem.total_price).toFixed(2),
