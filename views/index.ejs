@@ -43,8 +43,14 @@
 
 											<img src="/uploads/<%=urun.resim%>" class="img-fluid product-thumbnail">
 											<h3 class="product-title"><%=urun.urun_basligi %></h3>
+											<% if(urun.discount_price){ %>
+											<strong style="color:#6a6a6a;" class="product-price discount"><strike>₺<%=urun.discount_price  %></strike></strong>
+											<br>
 											<strong class="product-price">₺<%=urun.product_price %>/m<sup>2</sup></strong>
-				
+
+											<% } else { %>
+												<strong class="product-price">₺<%=urun.product_price %>/m<sup>2</sup></strong>
+											<% } %>
 											<span class="icon-cross">
 												<img src="images/cross.svg" class="img-fluid">
 											</span>

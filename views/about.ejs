@@ -1,7 +1,15 @@
 <%- include('./partials/header.ejs',) %>
 <%- include('./partials/loader.ejs') %>
-    <div class="container">
-        <div class="row justify-content-between">
+<style>
+.container.s{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+}
+</style>
+    <div  class="container s">
+        <div style="margin-top: 64px;" class="row justify-content-between">
             <div class="col-lg-5">
                 <div class="intro-excerpt">
                     <h1>Hakkımızda</h1>
@@ -10,11 +18,10 @@
             </div>
             <div class="col-lg-7">
                 <div class="hero-img-wrap">
-                    <img src="images/couch.png" class="img-fluid">
                 </div>
             </div>
         </div>
-    </div>
+
     <div class="why-choose-section">
         <div class="container">
             <div class="row justify-content-between">
@@ -65,15 +72,10 @@
                     </div>
                 </div>
             </div>
-            
-
-                <div class="col-lg-5">
-                    <div class="img-wrap">
-                        <img src="images/why-choose-us-img.jpg" alt="Image" class="img-fluid">
-                    </div>
-                </div>
+        
 
             </div>
         </div>
     </div>
+</div>
 <%- include('./partials/footer.ejs') %>

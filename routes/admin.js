@@ -315,7 +315,44 @@ router.post('/:urunId/sil', verifyToken, async (req, res) => {
     }
 });
 
+router.post('/:urunId/indirim', verifyToken, async (req, res) => {
+    const userS = req.session.user;
+    if (!(userS && userS.role === 'admin')) {
+        return res.redirect('/');
+    }
+    const urunId = req.params.urunId;
+    const { discount_price, discount_percentage } = req.body;
 
+    try {
+        const urun = await Urunler.findByPk(urunId);
+        if (!urun) {
+            return res.status(404).send('Ürün bulunamadı');
+        }
+
+        // İndirimli fiyatı güncelleme
+        if (discount_price) {
+            await urun.update({
+                discount_price: parseFloat(urun.product_price).toFixed(2),
+                product_price:parseFloat(discount_price).toFixed(2),
+            });
+        }
+
+        // İndirim yüzdesini güncelleme
+        if (discount_percentage) {
+            const discountFactor = 1 - parseFloat(discount_percentage) / 100;
+            const discountedPrice = (urun.product_price * discountFactor).toFixed(2);
+            await urun.update({
+                discount_price: discountedPrice,
+            });
+        }
+
+        logger.info(`${userS.username} Ürüne İndirim Uyguladı: ${req.socket.remoteAddress} // ${now}`);
+        res.redirect('/admin/urunyonetim');
+    } catch (error) {
+        console.error('Ürüne indirim uygulanırken bir hata oluştu: ' + error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 
 

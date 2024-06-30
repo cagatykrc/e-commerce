@@ -1,55 +1,93 @@
 <%- include('../partials/header.ejs') %>
 
-<div style="padding: 12px;" class="container mt-4">
-    <div class="create-urun">
-        <h1>Dergi Düzenle</h1>
+<style>
+    .edit-product-container {
+        display: flex;
+        flex-direction: row;
+        padding: 12px;
+    }
+    @media (max-width:992px){
+        .edit-product-container{
+            flex-direction: column;
+        }
+    }
+    .edit-product, .discount-area {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
 
-        <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
+    .form-group, .mb-3 {
+        margin-bottom: 15px;
+    }
 
-            <div class="mb-3">
-                <label for="baslik" class="form-label">Başlık:</label>
-                <input type="text" id="baslik" name="baslik" class="form-control" value="<%= urun.urun_basligi %>" required>
-            </div>
+    .btn {
+        margin-right: 10px;
+    }
+</style>
 
+<div class="container mt-4">
+    <div class="edit-product-container">
+        <div class="edit-product">
+            <h1>Dergi Düzenle</h1>
+            <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
+                <div class="form-group">
+                    <div class="resim-goster mt-4">
+                        <img src="/uploads/<%= urun.resim %>" alt="Dergi Kapağı" class="img-fluid">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="baslik" class="form-label">Başlık:</label>
+                    <input type="text" id="baslik" name="baslik" class="form-control" value="<%= urun.urun_basligi %>" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="turu" class="form-label">Türü:</label>
-                <input type="text" id="turu" name="turu" class="form-control" value="<%= urun.urun_turu %>" required>
-            </div>
+                <div class="form-group">
+                    <label for="turu" class="form-label">Türü:</label>
+                    <input type="text" id="turu" name="turu" class="form-control" value="<%= urun.urun_turu %>" required>
+                </div>
 
-            <div class="form-group">
-                <label for="kategorisi">Kategoriler:</label>
-                <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
-                    <% kategoriler.forEach(kategori => { %>
-                        <option value="<%= kategori.category_id %>" <%= urun.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
-                    <% }); %>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="kategorisi">Kategoriler:</label>
+                    <select name="kategorisi" id="kategorisi" class="form-control">
+                        <% kategoriler.forEach(kategori => { %>
+                            <option value="<%= kategori.category_id %>" <%= urun.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
+                        <% }); %>
+                    </select>
+                </div>
 
-            <div class="mb-3">
-                <label for="aciklama" class="form-label">Açıklama:</label>
-                <textarea id="aciklama" name="aciklama" class="form-control"><%= urun.aciklama %></textarea>
-            </div>
+                <div class="form-group">
+                    <label for="aciklama" class="form-label">Açıklama:</label>
+                    <textarea id="aciklama" name="aciklama" class="form-control"><%= urun.aciklama %></textarea>
+                </div>
 
-            <div class="mb-3">
-                <label for="price" class="form-label">Fiyat:</label>
-                <input type="text" id="price" name="price" class="form-control" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
-            </div>
+                <div class="form-group">
+                    <label for="price" class="form-label">Fiyat:</label>
+                    <input type="text" id="price" name="price" class="form-control" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
+                </div>
 
-            <div class="mb-3">
-                <label for="resim" class="form-label">Kapak Adı:</label>
-                <input type="text" id="resim" name="resim" class="form-control" value="<%= urun.resim %>" required>
-            </div>
+                <div class="form-group">
+                    <label for="resim" class="form-label">Kapak Adı:</label>
+                    <input type="text" id="resim" name="resim" class="form-control" value="<%= urun.resim %>" required>
+                </div>
 
-            <!-- Diğer bilgileri ekle -->
+                <!-- Diğer bilgileri ekle -->
 
-            <button type="submit" class="btn btn-primary">Dergiyi Düzenle</button>
-        </form>
+                <button type="submit" class="btn btn-primary">Dergiyi Düzenle</button>
+                <a class="btn btn-secondary mt-1" href="/admin/urunyonetim">Geri</a>
+            </form>
+        </div>
 
-        <a class="btn btn-secondary mt-1" href="/admin/urunyonetim">Geri</a>
-        
-        <div class="resim-goster mt-4">
-            <img src="/uploads/<%= urun.resim %>" alt="/uploads/<%= urun.resim %>" class="img-fluid">
+        <div class="discount-area">
+            <form action="/admin/<%= urun.urun_id %>/indirim" method="post">
+                <div class="form-group">
+                    <label for="discount_price" class="form-label">İndirimli Fiyat:</label>
+                    <input type="number" name="discount_price" class="form-control" step="0.01" placeholder="İndirimli fiyatı girin">
+                </div>
+                <button class="btn btn-success" type="submit">İndirim Uygula</button>
+            </form>
         </div>
     </div>
 </div>

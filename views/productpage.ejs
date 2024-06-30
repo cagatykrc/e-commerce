@@ -4,9 +4,21 @@ html, body {
   height: 100%;
   width: 100%;
   margin: 0;
+  color: #000;
   font-family: "Inter", sans-serif;
 }
- 
+.product-span-area span{
+    font-size: 18px;
+    color: #000;
+    font-weight: 700;
+
+  }
+  .calculate-price span{
+    color: #000;
+  }
+  .product-p-p{
+    color: white;
+  } 
 .product-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -22,6 +34,7 @@ html, body {
   display: flex;
   justify-content: center;
 }
+
 }
 </style>
 
@@ -61,10 +74,14 @@ html, body {
     </div>
  
     <!-- Product Pricing -->
-    <div class="product-price">
+    <div class="product-page-price">
       <div class="product-span-area">
-        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span>
-        <span>₺<%=urun.product_price%>/m<sup>2</sup></span>
+        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
+        <% if(urun.discount_price) { %>
+        <div class="price-page-area"><span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%=urun.discount_price%></strike></span><span class="product-p-p">₺<%=urun.product_price%>/m<sup>2</sup></span></div>
+        <% }else{ %>
+          <span class="product-p-p">₺<%=urun.product_price%>/m<sup>2</sup></span>
+          <% } %>
       </div>
       <div class="product-price-add-cart">
         <input type="submit" value="Sepete ekle" class="cart-btn">
