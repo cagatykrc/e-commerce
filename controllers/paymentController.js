@@ -40,6 +40,7 @@ router.post("/siparisonayla", async (req, res) => {
             }]
         });
 
+
         let totalCartPrice = 0;
         if (userDetails.length > 0 && userDetails[0].ShoppingCarts) {
             userDetails[0].ShoppingCarts.forEach(cartItem => {
@@ -80,6 +81,27 @@ router.post("/", async function(req, res) {
                 attributes: ['product_price', 'resim', 'urun_basligi']
             }]
         });
+    
+        const orderItems = userCart.map(cartItem => ({
+            order_id: null,
+            product_id: cartItem.product_id,
+            quantity: cartItem.quantity,
+            unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
+        }));
+    
+        const order = await Orders.create({
+            order_id: generateUniqueId(),
+            user_id: user.id,
+            total_price: callback.total_amount,
+            payment_status: 0,
+            merchant_oid: merchant_oid,
+            order_date: new Date(),
+            OrderItems: orderItems
+        }, {
+            include: OrderItem
+        });
+        
+
 
         userCart.forEach(cartItem => {
             basket.push([
@@ -167,6 +189,12 @@ router.post("/odeme_basarili", async function (req, res) {
 
     if (callback.status === 'success') {
        try{
+            const order_success= await Orders.findAll({
+                where:{merchant_oid:callback.merchant_oid}
+            })
+            await order_success.update({
+                payment_status:1
+            })
             res.send('OK');
         } catch (error) {
             console.error('Error creating order:', error);
