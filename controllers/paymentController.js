@@ -10,7 +10,6 @@ const Users = require('../models/Users');
 const Urunler = require('../models/Urunler');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
-const user = req.session
 dotenv.config();
 function formatDate(date) {
     const d = new Date(date);
