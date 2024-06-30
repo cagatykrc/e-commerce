@@ -115,7 +115,7 @@ router.post("/", async function(req, res) {
         const order = await Orders.create({
             order_id: generateUniqueId(),
             user_id: user.id,
-            total_price: ,
+            total_price: payment_amount,
             payment_status: 0,
             merchant_oid: merchant_oid,
             order_date: new Date(),
