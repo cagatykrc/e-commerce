@@ -10,7 +10,7 @@ const Users = require('../models/Users');
 const Urunler = require('../models/Urunler');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
-
+const user = req.session
 dotenv.config();
 function formatDate(date) {
     const d = new Date(date);
@@ -194,6 +194,9 @@ router.post("/", async function(req, res) {
 router.get("/odeme_basarili", async function (req,res) {
     const userS = req.session.user;
     if (!userS) {
+        await ShoppingCart.destroy({
+            where: { user_id: userS.id }
+           });
         return res.redirect('/sepet');
     }
     res.render('order-success', {userS: req.session.user})
@@ -265,8 +268,6 @@ router.post("/odeme_basarili", async function (req, res) {
 //         include: OrderItem
 //     });
 
-//     await ShoppingCart.destroy({
-//         where: { user_id: userId }
-//     });
+
 
 module.exports = router;
