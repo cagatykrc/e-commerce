@@ -163,7 +163,7 @@ router.post("/odeme_basarili", async function (req, res) {
     if (token !== callback.hash) {
         throw new Error("PAYTR notification failed: bad hash");
     }
-    console.log(token)
+    console.log('callback: '+token)
 
     if (callback.status === 'success') {
        try{
