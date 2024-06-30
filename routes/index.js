@@ -230,7 +230,7 @@ router.get('/orders/:orderId', async (req, res) => {
         },
         {
           model: OrderItem,
-          as: 'orderItems',
+          as: 'OrderItems',
           include: [
             {
               model: Urunler,
