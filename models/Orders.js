@@ -34,9 +34,9 @@ const Orders = sequelize.define('Orders', {
     tableName: 'orders', // Veritabanında kullanılacak tablo adı
     timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
 }); // Her bir sipariş öğesi bir siparişe bağlıdır
-OrderItem.belongsTo(Orders, { as: 'orders', foreignKey: 'order_id' });
+OrderItem.belongsTo(Orders, { as: 'Order', foreignKey: 'order_id' });
 
-Orders.hasMany(OrderItem, { as: 'orderItems', foreignKey: 'order_id' });
+Orders.hasMany(OrderItem, { as: 'OrderItems', foreignKey: 'order_id' });
 Orders.belongsTo(Users, { as: 'user', foreignKey: 'user_id' });
 Users.hasMany(Orders,{as:'orders',foreignKey:'user_id'})
 

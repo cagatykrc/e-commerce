@@ -121,7 +121,10 @@ router.post("/", async function(req, res) {
             order_date: new Date(),
             OrderItems: orderItems
         }, {
-            include: OrderItem
+            include: {
+                model: OrderItem,
+                as: 'OrderItems' // Takma adı belirtin
+            }
         });
     } catch (error) {
         return res.status(500).json({ error: error.message });
