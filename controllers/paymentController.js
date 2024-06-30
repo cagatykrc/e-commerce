@@ -151,7 +151,7 @@ router.get("/odeme_basarili", async function (req,res) {
     if (!userS) {
         return res.redirect('/sepet');
     }
-    res.render('order-success', userS)
+    res.render('order-success', {userS})
 })
 
 router.post("/odeme_basarili", async function (req, res) {
