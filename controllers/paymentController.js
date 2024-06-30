@@ -208,25 +208,32 @@ router.post("/odeme_basarili", async function (req, res) {
     if (token !== callback.hash) {
         throw new Error("PAYTR notification failed: bad hash");
     }
-    console.log('callback: '+token)
+    console.log('callback: ' + token)
 
     if (callback.status === 'success') {
-       try{
-            const order_success= await Orders.findAll({
-                where:{merchant_oid:callback.merchant_oid}
-            })
-            await order_success.update({
-                payment_status:1
-            })
+        try {
+            const order_success = await Orders.findAll({
+                where: { merchant_oid: callback.merchant_oid }
+            });
+
+            if (order_success.length > 0) {
+                await Promise.all(order_success.map(async (order) => {
+                    await order.update({
+                        payment_status: 1
+                    });
+                }));
+            }
+
             res.send('OK');
         } catch (error) {
-            console.error('Error creating order:', error);
+            console.error('Error updating order:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
         res.redirect('/');
     }
 });
+
 
 
 
