@@ -110,10 +110,9 @@ router.post("/", async function(req, res) {
             product_id: cartItem.product_id,
             quantity: cartItem.quantity,
             width: cartItem.width,
-            price:cartItem.price,
+            price:parseFloat(cartItem.price).toFixed(2),
             order_date: new Date(),
             height: cartItem.height,
-            unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
         }));
     
         const order = await Orders.create({
