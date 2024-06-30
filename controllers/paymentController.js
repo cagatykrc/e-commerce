@@ -117,6 +117,7 @@ router.post("/", async function(req, res) {
             user_id: user.id,
             total_price: totalCartPrice,
             payment_status: 0,
+            status:'Onay Bekliyor',
             merchant_oid: merchant_oid,
             order_date: new Date(),
             OrderItems: orderItems
