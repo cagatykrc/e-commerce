@@ -147,11 +147,11 @@ router.post("/", async function(req, res) {
 });
 
 router.get("/odeme_basarili", async function (req,res) {
-    const user = req.session.user;
-    if (!user) {
+    const userS = req.session.user;
+    if (!userS) {
         return res.redirect('/sepet');
     }
-    res.render('order-success', user)
+    res.render('order-success', userS)
 })
 
 router.post("/callback", async function (req, res) {
