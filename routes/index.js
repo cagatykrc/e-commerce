@@ -235,7 +235,7 @@ router.get('/orders/:orderId', async (req, res) => {
             {
               model: Urunler,
               as: 'urunler',
-              attributes: ['urun_id','konu','aciklama', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
+              attributes: ['urun_id','aciklama', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
               include: [{
                 model: Kategoriler,
                 as: 'kategoriler',
