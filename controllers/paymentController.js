@@ -166,38 +166,7 @@ router.post("/odeme_basarili", async function (req, res) {
     console.log(token)
 
     if (callback.status === 'success') {
-        try {
-            const userId = req.session.user.id;
-            const userCart = await ShoppingCart.findAll({
-                where: { user_id: userId },
-                include: [{
-                    model: Urunler,
-                    attributes: ['urun_basligi', 'product_price']
-                }]
-            });
-
-            const orderItems = userCart.map(cartItem => ({
-                order_id: null,
-                product_id: cartItem.product_id,
-                quantity: cartItem.quantity,
-                unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
-            }));
-
-            const order = await Orders.create({
-                order_id: generateUniqueId(),
-                user_id: userId,
-                total_price: callback.total_amount,
-                payment_status: 1,
-                order_date: new Date(),
-                OrderItems: orderItems
-            }, {
-                include: OrderItem
-            });
-
-            await ShoppingCart.destroy({
-                where: { user_id: userId }
-            });
-
+       try{
             res.send('OK');
         } catch (error) {
             console.error('Error creating order:', error);
@@ -207,5 +176,39 @@ router.post("/odeme_basarili", async function (req, res) {
         res.redirect('/');
     }
 });
+
+
+
+// try {
+//     const userId = req.session.user.id;
+//     const userCart = await ShoppingCart.findAll({
+//         where: { user_id: userId },
+//         include: [{
+//             model: Urunler,
+//             attributes: ['urun_basligi', 'product_price']
+//         }]
+//     });
+
+//     const orderItems = userCart.map(cartItem => ({
+//         order_id: null,
+//         product_id: cartItem.product_id,
+//         quantity: cartItem.quantity,
+//         unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
+//     }));
+
+//     const order = await Orders.create({
+//         order_id: generateUniqueId(),
+//         user_id: userId,
+//         total_price: callback.total_amount,
+//         payment_status: 1,
+//         order_date: new Date(),
+//         OrderItems: orderItems
+//     }, {
+//         include: OrderItem
+//     });
+
+//     await ShoppingCart.destroy({
+//         where: { user_id: userId }
+//     });
 
 module.exports = router;
