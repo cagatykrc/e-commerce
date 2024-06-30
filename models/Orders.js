@@ -25,6 +25,10 @@ const Orders = sequelize.define('Orders', {
         type:DataTypes.BOOLEAN,
         allowNull:false
     },
+    merchant_oid:{
+        type:DataTypes.STRING,
+        allowNull:false,
+    },
     total_price:{
         type:DataTypes.DECIMAL(10,2),
         allowNull:true
