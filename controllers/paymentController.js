@@ -122,7 +122,7 @@ router.post("/", async function(req, res) {
             merchant_fail_url: 'http://184.72.145.255/odeme/odeme_hata',
             user_basket: user_basket,
             user_ip: user_ip,
-            timeout_limit: 30,
+            timeout_limit: 15,
             debug_on: 1,
             test_mode: 0,
             lang: 'tr',
@@ -146,6 +146,14 @@ router.post("/", async function(req, res) {
     });
 });
 
+router.get("/odeme_basarili", async function (req,res) {
+    const user = req.session.user;
+    if (!user) {
+        return res.redirect('/sepet');
+    }
+    res.render('order-success', user)
+})
+
 router.post("/callback", async function (req, res) {
     const callback = req.body;
 
@@ -155,6 +163,7 @@ router.post("/callback", async function (req, res) {
     if (token !== callback.hash) {
         throw new Error("PAYTR notification failed: bad hash");
     }
+    console.log(token)
 
     if (callback.status === 'success') {
         try {
