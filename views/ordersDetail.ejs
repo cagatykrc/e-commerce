@@ -8,7 +8,7 @@
                 <span><%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></span>
             </div>
             <ul class="orders-page-ul">
-                <% order.orderItems.forEach(item => { %>
+                <% order.OrderItems.forEach(item => { %>
                     <li class="orders-page-li">
                         <div class="left-side">
                             <div class="image-area">
