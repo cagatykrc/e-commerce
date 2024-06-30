@@ -74,35 +74,9 @@ router.post("/", async function(req, res) {
     let totalCartPrice = 0;
 
     try {
-        const userCart = await ShoppingCart.findAll({
-            where: { user_id: user.id },
-            include: [{
-                model: Urunler,
-                attributes: ['product_price', 'resim', 'urun_basligi']
-            }]
-        });
-    
-        const orderItems = userCart.map(cartItem => ({
-            order_id: null,
-            product_id: cartItem.product_id,
-            quantity: cartItem.quantity,
-            unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
-        }));
-    
-        const order = await Orders.create({
-            order_id: generateUniqueId(),
-            user_id: user.id,
-            total_price: callback.total_amount,
-            payment_status: 0,
-            merchant_oid: merchant_oid,
-            order_date: new Date(),
-            OrderItems: orderItems
-        }, {
-            include: OrderItem
-        });
         
-
-
+        
+        
         userCart.forEach(cartItem => {
             basket.push([
                 cartItem.Urunler.urun_basligi,
@@ -121,6 +95,38 @@ router.post("/", async function(req, res) {
 
     const user_basket = nodeBase64.encode(JSON.stringify(basket));
     const payment_amount = totalCartPrice * 100;
+    try {
+        
+        const userCart = await ShoppingCart.findAll({
+            where: { user_id: user.id },
+            include: [{
+                model: Urunler,
+                attributes: ['product_price', 'resim', 'urun_basligi']
+            }]
+        });
+    
+        const orderItems = userCart.map(cartItem => ({
+            order_id: null,
+            product_id: cartItem.product_id,
+            quantity: cartItem.quantity,
+            unit_price: parseFloat(cartItem.total_price / cartItem.quantity).toFixed(2)
+        }));
+    
+        const order = await Orders.create({
+            order_id: generateUniqueId(),
+            user_id: user.id,
+            total_price: ,
+            payment_status: 0,
+            merchant_oid: merchant_oid,
+            order_date: new Date(),
+            OrderItems: orderItems
+        }, {
+            include: OrderItem
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+        
+    }
 
     const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}0${0}TL0`;
     const paytr_token = hashSTR + merchant_salt;
