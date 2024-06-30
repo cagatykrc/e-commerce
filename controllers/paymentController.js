@@ -187,7 +187,7 @@ router.post("/odeme_basarili", async function (req, res) {
                 order_id: generateUniqueId(),
                 user_id: userId,
                 total_price: callback.total_amount,
-                status: 'Hazırlanıyor',
+                payment_status: 1,
                 order_date: new Date(),
                 OrderItems: orderItems
             }, {
