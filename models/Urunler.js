@@ -27,6 +27,10 @@ const Urunler = sequelize.define('Urunler', {
         type: DataTypes.DECIMAL(7,2),
         allowNull: true,
     },
+    discount_price:{
+        type:DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+    },
     urun_basligi: {
         type: DataTypes.STRING,
         allowNull: false,
