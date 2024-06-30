@@ -14,7 +14,7 @@ const OrderItem = sequelize.define('OrderItem', {
         allowNull: false,
     },  
     order_date: {
-        type: DataTypes.INTEGER,  // Veya uygun veri tipini seçebilirsiniz
+        type: DataTypes.DATE,  // Veya uygun veri tipini seçebilirsiniz
         allowNull: false,
     },
     product_id:{

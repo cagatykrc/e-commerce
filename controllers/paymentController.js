@@ -12,7 +12,17 @@ const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
 
 dotenv.config();
+function formatDate(date) {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
 
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 const merchant_id = process.env.MERCHANT_ID || '469080';
 const merchant_key = process.env.MERCHANT_KEY || 'r7KJBYCjuWk4tDq5';
 const merchant_salt = process.env.MERCHANT_SALT || 'FF6sW88pwH4xU4J1';
@@ -111,7 +121,7 @@ router.post("/", async function(req, res) {
             quantity: cartItem.quantity,
             width: cartItem.width,
             price:parseFloat(cartItem.price).toFixed(2),
-            order_date: new Date(),
+            order_date = formatDate(new Date()),
             height: cartItem.height,
         }));
     
