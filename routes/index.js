@@ -18,6 +18,9 @@ const OrderItem = require('../models/OrderItem');
 router.get('/hakkimizda', (req, res) => {
   res.render('about', { userS: req.session.user });
 });
+router.get('/cok-sorulan-sorular', (req, res) => {
+  res.render('maq', { userS: req.session.user });
+});
 
 router.get('/kullanici-sozlesmesi', (req, res) => {
   res.render('useragreement', { userS: req.session.user });
