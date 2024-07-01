@@ -61,6 +61,7 @@ router.get('/', async (req, res) => {
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
     });
+ 
 
     res.render('index', { duyurular, productType, products: urunler, userS, message, });
   } catch (error) {
@@ -134,7 +135,7 @@ router.get('/sepet', async (req, res) => {
       where: { user_id: user.id },
       include: [{
         model: Urunler,
-        attributes: ['product_price', 'resim', 'urun_basligi']
+        attributes: ['product_price','discount_price', 'resim', 'urun_basligi']
       }]
     });
 

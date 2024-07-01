@@ -20,37 +20,30 @@ const now = formattedDate.toLocaleString('tr-TR', options);
 router.get('/:urunid', async (req, res) => {
     const urunId = req.params.urunid;
     const userS = req.session.user;
-
+  
     try {
-        // Sequelize ile urun bilgilerini çek
-        const urun = await Urunler.findByPk(urunId, {
-            include: [{
-                model: Users,
-                as: 'olusturanUser',
-                attributes: ['first_name', 'last_name'],
-            }],
-        });
-        const olusturanUser = urun.olusturanUser;
-        // Sequelize ile urun yorumlarını çek
-        // const urunYorumlari = await Yorumlar.findAll({
-        //     where: {
-        //         urun_id: urunId
-        //     },
-        //     include: [{
-        //         model: Users,
-        //         attributes: ['first_name'],
-        //     }]
-        // });
+      // Sequelize ile urun bilgilerini çek
+      const urun = await Urunler.findByPk(urunId, {
+        include: [{
+          model: Users,
+          as: 'olusturanUser',
+          attributes: ['first_name', 'last_name'],
+        }],
+      });
+  
+      // Eğer urun bulunursa, indirim oranını hesapla
+    const discountRate = (( urun.discount_price-urun.product_price ) / urun.discount_price) * 100;
 
-
-        // Urun sayfasını render et
-        res.render('productpage', { urun, userS,olusturanUser });
+      const olusturanUser = urun ? urun.olusturanUser : null;
+  
+      // Urun sayfasını render et
+      res.render('productpage', { urun, userS, olusturanUser,discountRate });
     } catch (error) {
-        // Hata durumunda
-        console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);
-        res.status(500).send('Internal Server Error');
+      // Hata durumunda
+      console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);
+      res.status(500).send('Internal Server Error');
     }
-});
+  });
 
 router.post('/:urunId/yorumsil', verifyToken, async (req, res) => {
     const userS = req.session.user;

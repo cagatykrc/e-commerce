@@ -7,18 +7,40 @@ html, body {
   color: #000;
   font-family: "Inter", sans-serif;
 }
-.product-span-area span{
-    font-size: 18px;
-    color: #000;
-    font-weight: 700;
-
-  }
-  .calculate-price span{
-    color: #000;
-  }
-  .product-p-p{
-    color: white;
-  } 
+.discount-rate {
+  background-color: #3c8526;
+  color: white;
+  width: 40px;
+  font-size: 18px;
+  font-family: sans-serif;
+  padding-left: 2px;
+  padding-right: 2px;
+  align-items: center;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  margin-right: 5px;
+}
+.calculate-price span, .price-page-area span {
+  font-size: 18px;
+  color: #000;
+  font-weight: 700;
+}
+.product-span-area {
+  border: 1px solid #e1ded9;
+  background-color: #fff;
+  padding: 5px;
+  border-radius: .8rem;
+  display: flex;
+  align-items: center;
+}
+span.calculate-price {
+  color: #000;
+  font-weight: 700;
+}
+.product-p-p {
+  color: white;
+} 
 .product-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -26,38 +48,55 @@ html, body {
   display: flex;
   flex-direction: row;
 }
-@media (max-width:998px){
-.product-container{
- flex-direction: column; 
-}
-.left-column{
+.product-span-area {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
 }
-
+.float-price-area{
+  display: flex;
+  flex-direction: column-reverse;
+  line-height: 16px;
+}
+@media (max-width:998px) {
+  .product-container {
+    flex-direction: column; 
+  }
+  .left-column {
+    display: flex;
+    justify-content: center;
+  }
+  .float-price-area{
+    display: flex;
+    flex-direction: column;
+  }
+  .product-span-area{
+    display: flex;
+    flex-direction: row;
+  
+  }
 }
 </style>
 
 <main class="product-container">
-  <!-- Left Column / Headphones Image -->
+  <!-- Left Column / Product Image -->
   <div class="left-column">
-    <img data-image="red" class="product-image active" src="/uploads/<%=urun.resim%>" alt="">
+    <img data-image="red" class="product-image active" src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>">
   </div>
- 
+
   <!-- Right Column -->
   <div class="right-column">
     <!-- Product Description -->
     <div class="product-description">
-      <span><%=urun.kategorisi%></span>
-      <h1><%=urun.urun_basligi%></h1>
-      <p><%=urun.aciklama%></p>
+      <span><%= urun.kategorisi %></span>
+      <h1><%= urun.urun_basligi %></h1>
+      <p><%= urun.aciklama %></p>
     </div>
- 
+
     <!-- Product Configuration -->
     <div class="product-configuration">
-      <form id="orderForm" action="/<%=urun.urun_id%>/sepetekle" method="POST">
+      <form id="orderForm" action="/<%= urun.urun_id %>/sepetekle" method="POST">
         <div class="cable-config">
-          <input type="number" disabled value="<%=urun.urun_id%>" style="display: none;" name="urunId">
+          <input type="hidden" name="urunId" value="<%= urun.urun_id %>">
           <h1>Sipariş Seçenekleri</h1>
           <span>Ölçü Bilgileri 'cm' cinsinden</span>
           <div class="cable-choose">
@@ -72,20 +111,30 @@ html, body {
           </div>
         </div>
     </div>
- 
+
     <!-- Product Pricing -->
     <div class="product-page-price">
       <div class="product-span-area">
-        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
-        <% if(urun.discount_price) { %>
-        <div class="price-page-area"><span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%=urun.discount_price%></strike></span><span class="product-p-p">₺<%=urun.product_price%>/m<sup>2</sup></span></div>
-        <% }else{ %>
-          <span class="product-p-p">₺<%=urun.product_price%>/m<sup>2</sup></span>
+        <% if (discountRate > 8) { %>
+        <div class="discount-rate">
+          <span style="color: #fff;">%<%= discountRate.toFixed(0) %></span>
+        </div>
+        <% } %>
+        <div class="float-price-area">
+          
+          <% if (urun.discount_price) { %>
+          <div class="price-page-area">
+            <span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%= urun.discount_price %></strike></span>
+            <span class="product-p-p">₺<%= urun.product_price %>/m<sup>2</sup></span>
+          </div>
+          <% } else { %>
+            <span class="product-p-p">₺<%= urun.product_price %>/m<sup>2</sup></span>
           <% } %>
+        </div>
       </div>
       <div class="product-price-add-cart">
+        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
         <input type="submit" value="Sepete ekle" class="cart-btn">
-
       </div>
     </div>
     </form>
@@ -101,7 +150,7 @@ $(document).ready(function() {
   function calculateTotalPrice() {
     const height = parseFloat($('#height').val());
     const width = parseFloat($('#width').val());
-    const productPrice = parseFloat('<%=urun.product_price%>');
+    const productPrice = parseFloat('<%= urun.product_price %>');
 
     if (!isNaN(height) && !isNaN(width)) {
       const squareMeters = (height * width) / 10000;
