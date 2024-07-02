@@ -56,8 +56,14 @@ router.get('/', async (req, res) => {
     const productType = await Kategorilertab.findByPk(1, {
       include: [{ model: Kategoriler, as: 'kategoriler' }]
     });
+
     const urunler = await Urunler.findAll({
       include: [{ model: Kategoriler, as: 'kategoriler' }]
+    });
+    const newProducts = await Urunler.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [['createdAt', 'DESC']],
+      limit: 8
     });
     const duyurular = await Duyurular.findAll();
     const kategoriTabs = await Kategorilertab.findAll({
@@ -66,7 +72,7 @@ router.get('/', async (req, res) => {
     });
  
 
-    res.render('index', { duyurular, productType, products: urunler, userS, message, });
+    res.render('index', { duyurular, productType,newproducts:newProducts, products: urunler, userS, message, });
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
     return res.status(500).send('Internal Server Error');

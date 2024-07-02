@@ -10,6 +10,10 @@
 span{
   color: white;
 }
+
+html{
+  scroll-behavior: smooth;
+}
 strike{
   color: #6a6a6a;
 }
@@ -25,12 +29,15 @@ body {
   }
 
   h1{
-    color: #000;
+    color: #333333;
+  }
+  .h1{
+    font-weight: 700;
   }
 body {
-  font-family: "Inter", sans-serif;
+  font-family: "Poppins", sans-serif;
   line-height: 28px;
-  color: #6a6a6a;
+  color: #313131;
   font-size: 1rem;
   background-color: #fff; 
   overflow-x: hidden;
@@ -116,11 +123,64 @@ a {
 .banner-container img{
   border-radius: 1rem;
 }
+.header-category-area{
+  display: block;
+}
+ul.category-curtains-ul{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+li.category-curtains-li{
+  margin: auto;
+  cursor: pointer;
+  color: #616161;
+  transition: .5s ease-in-out;
+}
+li.category-curtains-li:hover{
+  color: #000;
+}
 div#category-area.shop-categories-area li{
   display: none;
 }
+.ads-area{
+  width: 100%;
+}
+.ads-divs{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+.ads-first,.ads-second{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  padding: 1rem;
+  margin: auto;
+  font-weight: 600;
+}
+.ads-second{
+  background-color: #E6F3FA;
+}
+.banner-discount span{
+  color: #ffc43f;
+}
  
 @media (max-width:998px) {
+  .ads-divs{
+    display: flex;
+    flex-direction: column;
+  }
+  .header-category-area{
+    display: none;
+  }
+  .ads-first,.ads-second{
+    width: 100%;
+    margin-bottom: 18px;
+    margin-top: 24px;
+  }
   div#category-area.shop-categories-area li{
     display: flex;
   }
@@ -659,6 +719,9 @@ a{
       margin-bottom: 30px;
       position: relative;
       top: 0;
+      width: 248px;
+      height: 248px;
+      object-fit: contain;
       -webkit-transition: .3s all ease;
       -o-transition: .3s all ease;
       transition: .3s all ease; }
