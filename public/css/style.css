@@ -129,7 +129,7 @@ a {
 }
 .header-category-area{
   box-shadow: 0 4px 12px rgba(0, 0, 0, .09);
-  padding: 2px;
+  padding: 8px;
   display: block;
   flex-direction: row;
   margin: auto;
