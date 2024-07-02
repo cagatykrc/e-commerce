@@ -25,6 +25,12 @@ router.get('/cok-sorulan-sorular', (req, res) => {
 router.get('/kullanici-sozlesmesi', (req, res) => {
   res.render('useragreement', { userS: req.session.user });
 });
+router.get('/sartlar-kosullar', (req, res) => {
+  res.render('termsandcondition', { userS: req.session.user });
+});
+router.get('/gizlilik-politikasi', (req, res) => {
+  res.render('privacypolicy', { userS: req.session.user });
+});
 
 router.get('/iletisim', (req, res) => {
   res.render('contact', { userS: req.session.user });

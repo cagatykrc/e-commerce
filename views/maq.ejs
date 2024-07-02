@@ -1,28 +1,38 @@
 <%- include('./partials/header.ejs') %>
+<style>
+    details{
+        background-color: #fff;
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+        border-radius: 1rem;
+        padding: 8px;
+        margin-top: 32px;
+        transition: .5s;
+    }
+</style>
 <div style="min-height: 80vh;" class="container">
     <h1>Çok Sorulan Sorular</h1>
     <div class="container">
-        <div class="col-lg-6">
-            <details >
-                <summary>Ölçü nedir? En ve boy ölçüsü nasıl alınır?</summary>
+        <div id="curtain-measure" class="col-lg-6">
+            <details open>
+                <summary  style="font-size: 21px;" class="h1">Tül Perde Ölçüsü nedir? En ve boy ölçüsü nasıl alınır?</summary>
                 <p><strong>En ölçüsü,</strong> kornişin başlangıç noktasından başlayıp bitiş noktasına kadar olan mesafeyi, <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır. <strong>Boy ölçüsüs</strong> ise tavanın tepesinden zemine kadar olan dikey mesafenin , <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır.</p>
             </details>
         </div>
-        <div class="col-lg-6">
-            <details >
-                <summary>Klips nedir? Klips nasıl seçilmelidir?</summary>
+        <div id="stor-measure"  class="col-lg-6">
+            <details open >
+                <summary style="font-size: 21px;" class="h1">Stor ve Zebra Perde ölçüsü nedir? En ve boy ölçüsü nasıl alınır?</summary>
+                <p><strong>En ölçüsü,</strong> kornişin başlangıç noktasından başlayıp bitiş noktasına kadar olan mesafeyi, <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır. <strong>Boy ölçüsüs</strong> ise tavanın tepesinden zemine kadar olan dikey mesafenin , <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır.</p>
+            </details>
+        </div>
+        <div id="clips-choose" class="col-lg-6">
+            <details open >
+                <summary style="font-size: 21px;" class="h1">Klips nedir? Klips nasıl seçilmelidir?</summary>
                 <p><strong>Mekanizmalı perdelerin montajında kullanılan klipsler</strong>, mekanizmayı tavana veya duvara monte etmek için kullanılır. Metal ve plastik olmak üzere iki çeşit klips vardır. <strong>Metal klipsler</strong>, korniş bulunmayan yerlerde duvara veya mekanizmanın takılacağı yere monte etmek için kullanılır ve klips sayısı kadar delik açılarak montaj yapılır. <strong>Plastik klipsler</strong> ise kornişe kolayca takılıp çevrilerek monte edilir.</p>
             </details>
         </div>
-        <div class="col-lg-6">
-            <details >
-                <summary>Ölçü nedir? En ve boy ölçüsü nasıl alınır?</summary>
-                <p><strong>En ölçüsü,</strong> kornişin başlangıç noktasından başlayıp bitiş noktasına kadar olan mesafeyi, <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır. <strong>Boy ölçüsüs</strong> ise tavanın tepesinden zemine kadar olan dikey mesafenin , <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır.</p>
-            </details>
-        </div>
-        <div class="col-lg-6">
-            <details >
-                <summary>Ölçü nedir? En ve boy ölçüsü nasıl alınır?</summary>
+        <div id class="col-lg-6">
+            <details open >
+                <summary style="font-size: 21px;" class="h1">Ölçü nedir? En ve boy ölçüsü nasıl alınır?</summary>
                 <p><strong>En ölçüsü,</strong> kornişin başlangıç noktasından başlayıp bitiş noktasına kadar olan mesafeyi, <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır. <strong>Boy ölçüsüs</strong> ise tavanın tepesinden zemine kadar olan dikey mesafenin , <strong>metre</strong> veya <strong>santimetre</strong> cinsinden ölçerek alınır.</p>
             </details>
         </div>

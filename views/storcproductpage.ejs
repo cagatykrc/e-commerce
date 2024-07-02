@@ -90,7 +90,7 @@ span.calculate-price {
   <div class="right-column">
     <!-- Product Description -->
     <div class="product-description">
-      <span><%= urun.kategorisi %></span>
+      <span><%= urun.kategoriler.kategori_ad %></span>
       <h1><%= urun.urun_basligi %></h1>
       <p><%= urun.aciklama %></p>
     </div>
@@ -106,7 +106,7 @@ span.calculate-price {
             <input type="number" name="height" id="height" step="any" class="form-control" required placeholder="Boy cm Bilgisi" maxlength="3">
             <input type="number" name="width" id="width" step="any" class="form-control" required placeholder="En cm Bilgisi" maxlength="3">
           </div>
-          <a href="/cok-sorulan-sorular#curtain-measure">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a><br>
+          <a href="/servisler/en-ve-boy">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a><br>
           <span>Takmatik Seçimi</span>
           <div class="cable-choose">
             <input type="button" class="form-control" value="Metal Klips">

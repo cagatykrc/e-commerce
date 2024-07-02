@@ -24,11 +24,17 @@ router.get('/:urunid', async (req, res) => {
     try {
       // Sequelize ile urun bilgilerini çek
       const urun = await Urunler.findByPk(urunId, {
-        include: [{
+        include: [
+          {
           model: Users,
           as: 'olusturanUser',
           attributes: ['first_name', 'last_name'],
-        }],
+          },
+          {
+            model: Kategoriler,
+            as: 'kategoriler',
+          }
+      ],
       });
   
       // Eğer urun bulunursa, indirim oranını hesapla
@@ -37,7 +43,21 @@ router.get('/:urunid', async (req, res) => {
       const olusturanUser = urun ? urun.olusturanUser : null;
   
       // Urun sayfasını render et
-      res.render('productpage', { urun, userS, olusturanUser,discountRate });
+      switch (urun.kategoriler.category_low) {
+        case 'tulperde':
+          res.render('tulcproductpage',{ urun, userS, olusturanUser,discountRate })
+          break;
+        case 'storperde':
+          res.render('storcproductpage',{ urun, userS, olusturanUser,discountRate })
+          break;
+        case 'fonperde':
+          res.render('foncproductpage',{ urun, userS, olusturanUser,discountRate })
+          break;
+        default:
+          res.render('productpage',{ urun, userS, olusturanUser,discountRate })
+          break;
+      }
+
     } catch (error) {
       // Hata durumunda
       console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);

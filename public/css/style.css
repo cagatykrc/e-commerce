@@ -95,7 +95,7 @@ a {
 }
 
 .product-section {
-  padding: 0 85px;
+  padding: 0 35px;
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -104,6 +104,9 @@ a {
 .product-price {
   align-items: center;
   position: unset;
+}
+.product-price-unit{
+  color: #e67e22;;
 }
  
 .product-price span {
@@ -116,6 +119,7 @@ a {
   display: flex;
   justify-content: center;
   border-radius: 1rem;
+  margin-top: 24px;
 }
 .banner-hero p{
   position: absolute;
@@ -124,11 +128,20 @@ a {
   border-radius: 1rem;
 }
 .header-category-area{
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .09);
+  padding: 2px;
   display: block;
+  flex-direction: row;
+  margin: auto;
+  padding: auto;
+  align-items: center;
+  justify-content: center;
 }
 ul.category-curtains-ul{
   display: flex;
   flex-direction: row;
+  margin: auto;
+  width: 100%;
   align-items: center;
   justify-content: center;
   margin-top: 12px;
@@ -136,6 +149,8 @@ ul.category-curtains-ul{
 li.category-curtains-li{
   margin: auto;
   cursor: pointer;
+  display: flex;
+  align-items: center;
   color: #616161;
   transition: .5s ease-in-out;
 }
@@ -729,8 +744,13 @@ a{
       font-weight: 600;
       font-size: 18px; }
     .product-section .product-item strong {
-      font-weight: 800 !important;
-      font-size: 15px !important; }
+      font-weight: 800 !important;}
+      .product-price.discount{
+        font-size: 13px;
+      }
+      strong.product-price{
+        font-size: 18px;
+      }
     .product-section .product-item h3, .product-section .product-item strong {
       color: #2f2f2f;
       text-decoration: none; }
@@ -773,7 +793,7 @@ a{
       -o-transition: .3s all ease;
       transition: .3s all ease; }
     .product-section .product-item:hover .product-thumbnail {
-      top: -25px; }
+      top: -8px; }
     .product-section .product-item:hover .icon-cross {
       bottom: 0;
       opacity: 1;
@@ -1376,7 +1396,7 @@ textarea {
     }
      
     .right-column {
-      width: 35%;
+      width: 50%;
       margin-top: 60px;
     }
 
@@ -1420,6 +1440,7 @@ textarea {
 
     .cable-choose {
       margin-bottom: 20px;
+      display: flex;
     }
      
     .cable-choose button {
