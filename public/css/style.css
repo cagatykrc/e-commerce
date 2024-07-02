@@ -162,6 +162,8 @@ div#category-area.shop-categories-area li{
 }
 .ads-area{
   width: 100%;
+  margin-top: 64px;
+  margin-bottom: 64px;
 }
 .ads-divs{
   display: flex;

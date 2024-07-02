@@ -92,6 +92,9 @@
                         <li><a class="ftp-nav-link" href="services.html">Servislerimiz</a></li>
                         <li><a class="ftp-nav-link" href="/cok-sorulan-sorular">Ç.S.S</a></li>
                         <li><a class="ftp-nav-link" href="/iletisim">İletişime Geçin</a></li>
+                        <% if(userS === 'admin'){ %>
+                        <li><a class="ftp-nav-link" href="/admin/panel">Admin</a></li>
+                        <% }else{} %>
                     </ul>
                 </div>
                 <div class="right-nav-area">

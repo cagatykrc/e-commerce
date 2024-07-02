@@ -14,10 +14,6 @@ const adminRoutes = require('./routes/admin');
 const categoryRoute = require('./routes/category');
 const paymentController = require('./controllers/paymentController');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-function generateUniqueId() {
-  return crypto.randomBytes(2).toString('hex');
-}
-console.log(generateUniqueId())
 dotenv.config();
 
 const app = express();

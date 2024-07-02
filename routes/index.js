@@ -162,7 +162,19 @@ router.get('/sepet', async (req, res) => {
       totalCartPrice += total;
     });
 
-    res.render('cart', { userS: req.session.user, userCart, totalCartPrice });
+    let discount = 0;
+    if (req.session.coupon) {
+      if (req.session.coupon.discount <= 1) {
+        // İndirim oranı
+        discount = totalCartPrice * req.session.coupon.discount;
+      } else {
+        // Sabit indirim miktarı
+        discount = req.session.coupon.discount;
+      }
+      totalCartPrice -= discount;
+    }
+
+    res.render('cart', { userS: req.session.user, userCart, totalCartPrice, discount, coupon: req.session.coupon });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -229,6 +241,30 @@ router.post('/:cartid/sepetsil', async (req, res) => {
   } catch (error) {
     console.error('Hata:', error);
     return res.status(500).json({ success: false, message: 'Bir hata oluştu.', error: error.message });
+  }
+});
+
+router.post('/kupon-uygula', async (req, res) => {
+  const { coupon_code } = req.body;
+  if (!req.session.user) {
+    return res.redirect('/auth/giris');
+  }
+
+  try {
+    const coupon = await Kuponlar.findOne({ where: { kupon_kodu: coupon_code, aktif: true } });
+    if (!coupon) {
+      return res.status(400).json({ success: false, message: 'Geçersiz veya süresi dolmuş kupon kodu.' });
+    }
+
+    req.session.coupon = {
+      code: coupon.kupon_kodu,
+      discount: coupon.indirim_orani || coupon.indirim_miktari
+    };
+    
+    res.redirect('/sepet');
+  } catch (error) {
+    console.error('Kupon kontrol edilirken hata oluştu: ', error);
+    res.status(500).json({ success: false, message: 'Bir hata oluştu.', error: error.message });
   }
 });
 

@@ -14,6 +14,7 @@ const verifyToken = require('../utility/verifyToken');
 const Kategorilertab = require('../models/Kategorilertab');
 const Duyurular = require('../models/Duyurular');
 const logger = require('../utility/logger');
+const Coupon = require('../models/Coupon');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
@@ -158,6 +159,33 @@ router.post('/duyurusil', verifyToken, async (req, res) => {
         console.error('Duyuru silinirken bir hata oluştu: ' + error);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
         return res.status(500).send('Internal Server Error');
+    }
+});
+
+router.get('/kuponlar', async (req,res)=>{
+    const userS = req.session.user;
+    if (!(userS && userS.role === 'admin')) {
+        return res.render('404', {userS});
+    }
+    const coupons = await Coupon.findAll()
+    console.log(coupons);
+    res.render('admin/couponCreate', {userS,coupons })
+})
+
+router.post('/kupon-olustur', async (req, res) => {
+    const { coupon_code, discount_type, discount_value, expiry_date } = req.body;
+
+    try {
+        await Coupon.create({
+            coupon_code,
+            discount_type,
+            discount_value,
+            active:1,    
+        });
+        res.redirect('/admin/kuponlar');
+    } catch (error) {
+        console.error('Kupon oluşturulurken hata oluştu:', error);
+        res.status(500).send('Internal Server Error');
     }
 });
 
