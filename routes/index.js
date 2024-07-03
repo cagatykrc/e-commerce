@@ -4,6 +4,7 @@ const { Sequelize, Op } = require('sequelize');
 const nodemailer = require('nodemailer');
 const Urunler = require('../models/Urunler');
 const Users = require('../models/Users');
+const Coupon = require('../models/Coupon')
 const ShoppingCart = require('../models/ShoppingCart');
 const Kategoriler = require('../models/Kategoriler');
 const Kategorilertab = require('../models/Kategorilertab');
@@ -150,35 +151,71 @@ router.get('/sepet', async (req, res) => {
       where: { user_id: user.id },
       include: [{
         model: Urunler,
-        attributes: ['product_price','discount_price', 'resim', 'urun_basligi']
+        attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi'],
+        include:[{
+          model:Kategoriler,
+          attributes:['kategori_ad'],
+          as:'kategoriler',
+        }]
       }]
     });
 
     let totalCartPrice = 0;
     userCart.forEach(cartItem => {
-      const productPrice = parseFloat(cartItem.total_price);
-      const total = productPrice;
-      cartItem.totalPrice = total;
-      totalCartPrice += total;
+      const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;
+      const width = parseFloat(cartItem.width) || 0;
+      const height = parseFloat(cartItem.height) || 0;
+      const quantity = parseFloat(cartItem.quantity) || 0;
+
+      // Değerlerin kontrolü için konsol çıktıları
+      console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
+
+      if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
+        const squareMeters = (height * width) / 10000;
+        const totalPrice = squareMeters * productPrice * quantity;
+        cartItem.total_price = totalPrice;
+        totalCartPrice += totalPrice;
+      } else {
+        console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+      }
     });
+
+    console.log(`Total Cart Price before discount: ${totalCartPrice}`);
 
     let discount = 0;
     if (req.session.coupon) {
-      if (req.session.coupon.discount <= 1) {
-        // İndirim oranı
-        discount = totalCartPrice * req.session.coupon.discount;
-      } else {
+      const coupon = req.session.coupon;
+      const discountRate = parseFloat(coupon.discount_rate) || 0;
+      const discountPrice = parseFloat(coupon.discount_price) || 0;
+
+      if (discountRate > 0) {
+        // İndirim oranı (discountRate'in yüzde olarak olduğunu varsayıyoruz)
+        discount = totalCartPrice * (discountRate / 100);
+        console.log(`Discount Rate applied: ${discountRate / 100}`);
+      } else if (discountPrice > 0) {
         // Sabit indirim miktarı
-        discount = req.session.coupon.discount;
+        discount = discountPrice;
+        console.log(`Discount Price applied: ${discountPrice}`);
       }
+
       totalCartPrice -= discount;
+      console.log(`Discount applied: ${discount}`);
+      console.log(`Total Cart Price after discount: ${totalCartPrice}`);
     }
+
+    // Son kontroller
+    totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
+    discount = isNaN(discount) ? 0 : discount;
+
+    // Değerleri toFixed(2) ile formatlama
 
     res.render('cart', { userS: req.session.user, userCart, totalCartPrice, discount, coupon: req.session.coupon });
   } catch (error) {
+    console.error('Error:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 router.post('/:urunId/sepetekle', async (req, res) => {
   if (!req.session.user) {
@@ -198,9 +235,7 @@ router.post('/:urunId/sepetekle', async (req, res) => {
       return res.status(404).send('Urun bulunamadi');
     }
 
-    const productPrice = parseFloat(product.product_price);
-    const squareMeters = (height * width) / 10000;
-    const total_price = squareMeters * productPrice;
+
 
     await ShoppingCart.create({
       user_id: userS.id,
@@ -208,7 +243,6 @@ router.post('/:urunId/sepetekle', async (req, res) => {
       urun_id: urunId,
       width,
       height,
-      total_price
     });
 
     res.redirect('/sepet');
@@ -244,27 +278,27 @@ router.post('/:cartid/sepetsil', async (req, res) => {
   }
 });
 
-router.post('/kupon-uygula', async (req, res) => {
+router.post('/kuponUygula', async (req, res) => {
   const { coupon_code } = req.body;
-  if (!req.session.user) {
-    return res.redirect('/auth/giris');
-  }
 
   try {
-    const coupon = await Kuponlar.findOne({ where: { kupon_kodu: coupon_code, aktif: true } });
-    if (!coupon) {
-      return res.status(400).json({ success: false, message: 'Geçersiz veya süresi dolmuş kupon kodu.' });
-    }
+      const coupon = await Coupon.findOne({ where: { coupon_code } });
 
-    req.session.coupon = {
-      code: coupon.kupon_kodu,
-      discount: coupon.indirim_orani || coupon.indirim_miktari
-    };
-    
-    res.redirect('/sepet');
+      if (!coupon) {
+          return res.status(404).json({ success: false, message: 'Geçersiz kupon kodu.' });
+      }
+
+      // Kuponu session'a kaydet
+      req.session.coupon = {
+          coupon_code: coupon.coupon_code,
+          discount_rate: coupon.discount_rate,
+          discount_price: coupon.discount_price
+      };
+
+      res.json({ success: true, message: 'Kupon başarıyla uygulandı.' });
   } catch (error) {
-    console.error('Kupon kontrol edilirken hata oluştu: ', error);
-    res.status(500).json({ success: false, message: 'Bir hata oluştu.', error: error.message });
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Bir hata oluştu.' });
   }
 });
 

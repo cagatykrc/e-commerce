@@ -28,10 +28,6 @@ const ShoppingCart = sequelize.define('ShoppingCart', {
         type: DataTypes.INTEGER(3),  // Veya uygun veri tipini seçebilirsiniz
         allowNull: false,
     },
-    total_price:{
-        type:DataTypes.DECIMAL(10,2),
-        allowNull:true
-    },
 }, {
     // Modelin ayarlarını belirle
     tableName: 'shoppingcart', // Veritabanında kullanılacak tablo adı

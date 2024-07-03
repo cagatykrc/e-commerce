@@ -58,7 +58,10 @@ form{
   margin-top: unset;
   unicode-bidi: unset;
 }
-
+span.s-title {
+  color: #616161;
+  font-size: 15px;
+}
 a {
   text-decoration: none;
   -webkit-transition: .3s all ease;
@@ -137,6 +140,10 @@ a {
   align-items: center;
   justify-content: center;
 }
+.category-curtains-ul{
+  margin: auto;
+  display: flex;
+}
 ul.category-curtains-ul{
   display: flex;
   flex-direction: row;
@@ -145,6 +152,9 @@ ul.category-curtains-ul{
   align-items: center;
   justify-content: center;
   margin-top: 12px;
+}
+a.category-curtain-a{
+  margin: auto;
 }
 li.category-curtains-li{
   margin: auto;

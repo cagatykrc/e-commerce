@@ -38,11 +38,12 @@
                 <img src="/uploads/<%=cartItem.Urunler.resim%>" alt="Image" class="img-fluid">
               </td>
               <td class="product-name">
+                <span class="s-title"><%=cartItem.Urunler.kategoriler.kategori_ad%></span>
                 <h2 class="h5 text-black"><%=cartItem.Urunler.urun_basligi%></h2>
                 <span class="opacity-0"><%= cartItem.cart_id %></span>
               </td>
               <td><strike><%=cartItem.Urunler.discount_price%></strike><br>  ₺<%= cartItem.Urunler.product_price %></td>
-              <td><%= cartItem.width %>cm, En<br><%= cartItem.height %>cm, Boy</td>
+              <td><%= cartItem.width %>cm En,<br><%= cartItem.height %>cm Boy</td>
               <td>
                 <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
                   <div class="input-group-prepend">
@@ -54,7 +55,7 @@
                   </div>
                 </div>
               </td>
-              <td>₺<%=cartItem.total_price %></td>
+              <td>₺<%=cartItem.total_price.toFixed(2) %></td>
               <td><button type="button" class="btn btn-black btn-sm remove-item" data-cartid="<%= cartItem.cart_id %>">X</button></td>
             </tr>
             <% }); %>
@@ -73,16 +74,41 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <label class="text-black h4" for="coupon">Kupon</label>
-          <p>Kupon Kodunuz Varsa.</p>
+            <label class="text-black h4" for="coupon">Kupon</label>
+            <p>Kupon Kodunuz Varsa.</p>
         </div>
         <div class="col-md-8 mb-3 mb-md-0">
-          <input type="text" class="form-control py-3" id="coupon" name="coupon_code" placeholder="Kupon Kodu">
+            <input type="text" class="form-control py-3" id="coupon" name="coupon_code" placeholder="Kupon Kodu">
         </div>
         <div class="col-md-4">
-          <button class="btn btn-black" id="apply-coupon">Kupon Uygula</button>
+            <button class="btn btn-black" id="apply-coupon">Kupon Uygula</button>
         </div>
-      </div>
+    </div>
+    
+    <script>
+        document.getElementById('apply-coupon').addEventListener('click', async () => {
+            const couponCode = document.getElementById('coupon').value;
+            try {
+                const response = await fetch('/kuponUygula', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupon_code: couponCode })
+                });
+    
+                const result = await response.json();
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu.');
+            }
+        });
+    </script>
     </div>
     <div class="col-md-6 pl-5">
       <div class="row justify-content-end">
@@ -106,7 +132,7 @@
               <span class="text-black">İndirim</span>
             </div>
             <div class="col-md-6 text-right">
-              <strong class="text-black">₺<%= discount.toFixed(2) %></strong>
+              <strong class="text-black">-₺<%= discount.toFixed(2) %></strong>
             </div>
           </div>
           <% } %>
