@@ -15,8 +15,8 @@ const redis = require('redis');
 const { promisify } = require('util');
 
 const redisClient = redis.createClient({
-  host: '127.0.0.1', // veya uygun IP adresi
-  port: 6379, // veya uygun port numarası
+  host: '127.0.0.1', // or appropriate IP address
+  port: 6379, // or appropriate port number
 });
 
 // Promisify Redis get and set methods
@@ -36,12 +36,14 @@ redisClient.on('end', () => {
   console.log('Disconnected from Redis');
 });
 
-const connectRedis = () => {
+// Ensure Redis client is connected before performing any operations
+const ensureRedisConnected = () => {
   if (!redisClient.connected) {
-    redisClient.connect().catch((err) => {
+    return redisClient.connect().catch((err) => {
       console.error('Redis reconnect error: ', err);
     });
   }
+  return Promise.resolve();
 };
 // Nodemailer transporter
 
@@ -93,10 +95,8 @@ router.get('/', async (req, res) => {
   const userS = req.session.user;
 
   try {
-    // Redis istemcisinin bağlı olup olmadığını kontrol edin ve bağlayın
-    connectRedis();
+    await ensureRedisConnected();
 
-    // Cache'ten veri kontrolü
     let productType = await getAsync('productType');
     let urunler = await getAsync('urunler');
     let newProducts = await getAsync('newProducts');
@@ -104,7 +104,6 @@ router.get('/', async (req, res) => {
     let kategoriTabs = await getAsync('kategoriTabs');
     let kanatperdeProducts = await getAsync('kanatperdeProducts');
 
-    // Cache'deki veriler JSON string olarak saklanır, bu yüzden parse işlemi yapılmalı
     if (productType) productType = JSON.parse(productType);
     if (urunler) urunler = JSON.parse(urunler);
     if (newProducts) newProducts = JSON.parse(newProducts);
@@ -112,7 +111,6 @@ router.get('/', async (req, res) => {
     if (kategoriTabs) kategoriTabs = JSON.parse(kategoriTabs);
     if (kanatperdeProducts) kanatperdeProducts = JSON.parse(kanatperdeProducts);
 
-    // Cache'de veri yoksa veritabanından çek ve cache'e kaydet
     if (!productType) {
       productType = await Kategorilertab.findByPk(1, {
         include: [{ model: Kategoriler, as: 'kategoriler' }]
@@ -160,7 +158,7 @@ router.get('/', async (req, res) => {
     res.render('index', {
       duyurular,
       productType,
-      fonproduct:kanatperdeProducts,
+      fonproduct: kanatperdeProducts,
       newproducts: newProducts,
       products: urunler,
       userS,
@@ -172,7 +170,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Redis client'ı kapatmak için uygulama sonlandığında kapatma işlemi
 process.on('SIGINT', () => {
   redisClient.quit();
   console.log('Redis client disconnected and app is shutting down');
