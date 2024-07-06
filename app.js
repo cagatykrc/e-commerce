@@ -33,9 +33,9 @@ const sslOptions = isProduction ? {
 // Redis istemcisini oluştur ve bağlan
 let redisClient;
 async function initializeRedis() {
-  redisClient = redis.createClient({
+  redisClient = createClient({
     host: '127.0.0.1', // veya uygun IP adresi
-    port: 6379, // veya uygun port numarası
+    port: 6379,
   });
 
   redisClient.on('error', (err) => console.log('Redis Client Error', err));
