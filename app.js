@@ -1,4 +1,3 @@
-// app.js
 const express = require('express');
 const session = require('express-session');
 const crypto = require('crypto');
@@ -6,7 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
-const { createClient } = require('redis');
+
 const sequelize = require('./utility/database');
 const profileRoutes = require('./routes/profile');
 const authRoutes = require('./routes/auth');
@@ -16,11 +15,11 @@ const adminRoutes = require('./routes/admin');
 const categoryRoute = require('./routes/category');
 const paymentController = require('./controllers/paymentController');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-
 dotenv.config();
 
 const app = express();
 const secretKey = crypto.randomBytes(32).toString('hex');
+
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -30,23 +29,9 @@ const sslOptions = isProduction ? {
   cert: fs.readFileSync('path/to/certificate.crt')
 } : null;
 
-// Redis istemcisini oluştur ve bağlan
-let redisClient;
-async function initializeRedis() {
-  redisClient = createClient({
-    host: '127.0.0.1', // veya uygun IP adresi
-    port: 6379,
-  });
-
-  redisClient.on('error', (err) => console.log('Redis Client Error', err));
-  await redisClient.connect();
-}
-
-initializeRedis();
-
 const sessionStore = new SequelizeStore({
-  db: sequelize,
-});
+    db: sequelize,
+  });
 
 app.use(session({
   store: sessionStore,
@@ -67,12 +52,6 @@ app.use(express.urlencoded({ extended: true }));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Redis istemcisini her isteğe ekleyin
-app.use((req, res, next) => {
-  req.redisClient = redisClient;
-  next();
-});
 
 // Routes
 app.use('/profil', profileRoutes);
@@ -108,10 +87,3 @@ app.get('*', (req, res) => {
     console.error('Veritabanı modelleri senkronize edilirken bir hata oluştu:', error);
   }
 })();
-
-process.on('SIGINT', async () => {
-  if (redisClient) {
-    await redisClient.quit();
-  }
-  process.exit();
-});
