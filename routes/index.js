@@ -109,7 +109,7 @@ router.get('/', async (req, res) => {
     let duyurular = await getAsync('duyurular');
     let kategoriTabs = await getAsync('kategoriTabs');
     let kanatperdeProducts = await getAsync('kanatperdeProducts');
-
+    console.log('redis veri kontrolü');
     // Parse cached data
     if (productType) productType = JSON.parse(productType);
     if (urunler) urunler = JSON.parse(urunler);
@@ -162,7 +162,7 @@ router.get('/', async (req, res) => {
       });
       await setAsync('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
     }
-
+    console.log('data yazımı');
     res.render('index', {
       duyurular,
       productType,
