@@ -12,21 +12,17 @@ const Duyurular = require('../models/Duyurular');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
 const redis = require('redis');
-const { promisify } = require('util');
 
+// Redis client oluşturma
 const redisClient = redis.createClient({
-  host: '127.0.0.1', // or your appropriate IP address
-  port: 6379, // or your appropriate port number
+  host: '127.0.0.1', // veya uygun IP adresi
+  port: 6379, // veya uygun port numarası
+  retry_strategy: () => 1000, // Bağlantı kesildiğinde 1 saniye sonra yeniden bağlanmaya çalış
 });
-
-// Promisify Redis get and set methods
-const getAsync = promisify(redisClient.get).bind(redisClient);
-const setAsync = promisify(redisClient.set).bind(redisClient);
 
 // Redis client error handling
 redisClient.on('error', (err) => {
   console.error('Redis error: ', err);
-  connectRedis();
 });
 
 redisClient.on('connect', () => {
@@ -37,8 +33,9 @@ redisClient.on('end', () => {
   console.log('Disconnected from Redis');
 });
 
+// Redis bağlantısını kontrol etme ve bağlama
 const connectRedis = async () => {
-  if (!redisClient.connect) {
+  if (!redisClient.connected) {
     try {
       await redisClient.connect();
       console.log('Redis client connected');
@@ -47,6 +44,7 @@ const connectRedis = async () => {
     }
   }
 };
+
 
 connectRedis();
 // Initial connection to Redis
