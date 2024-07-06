@@ -101,7 +101,7 @@ router.get('/', async (req, res) => {
 
   try {
     await connectRedis(); // Ensure Redis connection
-
+    console.log('bağlandı');
     // Check cache data
     let productType = await getAsync('productType');
     let urunler = await getAsync('urunler');
