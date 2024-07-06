@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+
 const sequelize = require('./utility/database');
 const profileRoutes = require('./routes/profile');
 const authRoutes = require('./routes/auth');

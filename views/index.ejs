@@ -94,12 +94,19 @@
             </div>
             <!-- End Best Sellers Slider -->
 
+            <div class="category-icon-area">
+                <div class="category-icon-title">
+                    <div class="h1">Kategoriler</div>
+                </div>
+            </div>
+
+
             <div class="product-slider">
                 <div class="product-slider-title">
                     <h1 class="h1">Fon Perdeler</h1>
                 </div>
                 <div class="product-top-sellers-area">
-                    <% products.forEach(urun => { %>
+                    <% kanatperdeProducts.forEach(urun => { %>
                         <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
                             <a class="product-item" href="/urun/<%= urun.urun_id %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>

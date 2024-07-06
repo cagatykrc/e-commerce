@@ -11,7 +11,38 @@ const Kategorilertab = require('../models/Kategorilertab');
 const Duyurular = require('../models/Duyurular');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
+const redis = require('redis');
+const { promisify } = require('util');
 
+const redisClient = redis.createClient({
+  host: '127.0.0.1', // veya uygun IP adresi
+  port: 6379, // veya uygun port numarası
+});
+
+// Promisify Redis get and set methods
+const getAsync = promisify(redisClient.get).bind(redisClient);
+const setAsync = promisify(redisClient.set).bind(redisClient);
+
+// Redis client error handling
+redisClient.on('error', (err) => {
+  console.error('Redis error: ', err);
+});
+
+redisClient.on('connect', () => {
+  console.log('Connected to Redis');
+});
+
+redisClient.on('end', () => {
+  console.log('Disconnected from Redis');
+});
+
+const connectRedis = () => {
+  if (!redisClient.connected) {
+    redisClient.connect().catch((err) => {
+      console.error('Redis reconnect error: ', err);
+    });
+  }
+};
 // Nodemailer transporter
 
 
@@ -54,37 +85,100 @@ router.post('/contact', (req, res) => {
   });
 });
 
-// Ana Sayfa
+
+
 router.get('/', async (req, res) => {
   const message = req.session.message;
   delete req.session.message;
   const userS = req.session.user;
+
   try {
-    const productType = await Kategorilertab.findByPk(1, {
-      include: [{ model: Kategoriler, as: 'kategoriler' }]
-    });
+    // Redis istemcisinin bağlı olup olmadığını kontrol edin ve bağlayın
+    connectRedis();
 
-    const urunler = await Urunler.findAll({
-      include: [{ model: Kategoriler, as: 'kategoriler' }]
-    });
-    const newProducts = await Urunler.findAll({
-      include: [{ model: Kategoriler, as: 'kategoriler' }],
-      order: [['createdAt', 'DESC']],
-      limit: 8
-    });
-    const duyurular = await Duyurular.findAll();
-    const kategoriTabs = await Kategorilertab.findAll({
-      include: [{ model: Kategoriler, as: 'kategoriler' }],
-      order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
-    });
- 
+    // Cache'ten veri kontrolü
+    let productType = await getAsync('productType');
+    let urunler = await getAsync('urunler');
+    let newProducts = await getAsync('newProducts');
+    let duyurular = await getAsync('duyurular');
+    let kategoriTabs = await getAsync('kategoriTabs');
+    let kanatperdeProducts = await getAsync('kanatperdeProducts');
 
-    res.render('index', { duyurular, productType,newproducts:newProducts, products: urunler, userS, message, });
+    // Cache'deki veriler JSON string olarak saklanır, bu yüzden parse işlemi yapılmalı
+    if (productType) productType = JSON.parse(productType);
+    if (urunler) urunler = JSON.parse(urunler);
+    if (newProducts) newProducts = JSON.parse(newProducts);
+    if (duyurular) duyurular = JSON.parse(duyurular);
+    if (kategoriTabs) kategoriTabs = JSON.parse(kategoriTabs);
+    if (kanatperdeProducts) kanatperdeProducts = JSON.parse(kanatperdeProducts);
+
+    // Cache'de veri yoksa veritabanından çek ve cache'e kaydet
+    if (!productType) {
+      productType = await Kategorilertab.findByPk(1, {
+        include: [{ model: Kategoriler, as: 'kategoriler' }]
+      });
+      await setAsync('productType', JSON.stringify(productType));
+    }
+
+    if (!urunler) {
+      urunler = await Urunler.findAll({
+        include: [{ model: Kategoriler, as: 'kategoriler' }]
+      });
+      await setAsync('urunler', JSON.stringify(urunler));
+    }
+
+    if (!newProducts) {
+      newProducts = await Urunler.findAll({
+        include: [{ model: Kategoriler, as: 'kategoriler' }],
+        order: [['createdAt', 'DESC']],
+        limit: 8
+      });
+      await setAsync('newProducts', JSON.stringify(newProducts));
+    }
+
+    if (!duyurular) {
+      duyurular = await Duyurular.findAll();
+      await setAsync('duyurular', JSON.stringify(duyurular));
+    }
+
+    if (!kategoriTabs) {
+      kategoriTabs = await Kategorilertab.findAll({
+        include: [{ model: Kategoriler, as: 'kategoriler' }],
+        order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
+      });
+      await setAsync('kategoriTabs', JSON.stringify(kategoriTabs));
+    }
+
+    if (!kanatperdeProducts) {
+      kanatperdeProducts = await Urunler.findAll({
+        include: [{ model: Kategoriler, as: 'kategoriler' }],
+        where: { '$kategoriler.category_low$': 'kanatperde' }
+      });
+      await setAsync('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
+    }
+
+    res.render('index', {
+      duyurular,
+      productType,
+      fonproduct:kanatperdeProducts,
+      newproducts: newProducts,
+      products: urunler,
+      userS,
+      message
+    });
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
     return res.status(500).send('Internal Server Error');
   }
 });
+
+// Redis client'ı kapatmak için uygulama sonlandığında kapatma işlemi
+process.on('SIGINT', () => {
+  redisClient.quit();
+  console.log('Redis client disconnected and app is shutting down');
+  process.exit(0);
+});
+
 
 // Ürünler
 router.get('/urunler', async (req, res) => {
