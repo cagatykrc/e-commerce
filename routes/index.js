@@ -38,15 +38,17 @@ redisClient.on('end', () => {
 });
 
 const connectRedis = async () => {
-  if (!redisClient.isOpen) {
+  if (!redisClient.connect) {
     try {
       await redisClient.connect();
+      console.log('Redis client connected');
     } catch (err) {
       console.error('Redis reconnect error: ', err);
     }
   }
 };
 
+connectRedis();
 // Initial connection to Redis
 connectRedis().catch((err) => console.error('Initial Redis connect error: ', err));
 
@@ -94,23 +96,26 @@ router.post('/contact', (req, res) => {
 
 
 
+
+// Routes
 router.get('/', async (req, res) => {
   const message = req.session.message;
   delete req.session.message;
   const userS = req.session.user;
 
   try {
-    await connectRedis(); // Ensure Redis connection
-    console.log('bağlandı');
-    // Check cache data
-    let productType = await getAsync('productType');
-    let urunler = await getAsync('urunler');
-    let newProducts = await getAsync('newProducts');
-    let duyurular = await getAsync('duyurular');
-    let kategoriTabs = await getAsync('kategoriTabs');
-    let kanatperdeProducts = await getAsync('kanatperdeProducts');
-    console.log('redis veri kontrolü');
-    // Parse cached data
+    // Redis istemcisinin bağlı olup olmadığını kontrol edin ve bağlayın
+    await connectRedis();
+
+    // Cache'ten veri kontrolü
+    let productType = await redisClient.get('productType');
+    let urunler = await redisClient.get('urunler');
+    let newProducts = await redisClient.get('newProducts');
+    let duyurular = await redisClient.get('duyurular');
+    let kategoriTabs = await redisClient.get('kategoriTabs');
+    let kanatperdeProducts = await redisClient.get('kanatperdeProducts');
+
+    // Cache'deki veriler JSON string olarak saklanır, bu yüzden parse işlemi yapılmalı
     if (productType) productType = JSON.parse(productType);
     if (urunler) urunler = JSON.parse(urunler);
     if (newProducts) newProducts = JSON.parse(newProducts);
@@ -118,19 +123,19 @@ router.get('/', async (req, res) => {
     if (kategoriTabs) kategoriTabs = JSON.parse(kategoriTabs);
     if (kanatperdeProducts) kanatperdeProducts = JSON.parse(kanatperdeProducts);
 
-    // Fetch and cache data if not in cache
+    // Cache'de veri yoksa veritabanından çek ve cache'e kaydet
     if (!productType) {
       productType = await Kategorilertab.findByPk(1, {
         include: [{ model: Kategoriler, as: 'kategoriler' }]
       });
-      await setAsync('productType', JSON.stringify(productType));
+      await redisClient.set('productType', JSON.stringify(productType));
     }
 
     if (!urunler) {
       urunler = await Urunler.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }]
       });
-      await setAsync('urunler', JSON.stringify(urunler));
+      await redisClient.set('urunler', JSON.stringify(urunler));
     }
 
     if (!newProducts) {
@@ -139,12 +144,12 @@ router.get('/', async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: 8
       });
-      await setAsync('newProducts', JSON.stringify(newProducts));
+      await redisClient.set('newProducts', JSON.stringify(newProducts));
     }
 
     if (!duyurular) {
       duyurular = await Duyurular.findAll();
-      await setAsync('duyurular', JSON.stringify(duyurular));
+      await redisClient.set('duyurular', JSON.stringify(duyurular));
     }
 
     if (!kategoriTabs) {
@@ -152,7 +157,7 @@ router.get('/', async (req, res) => {
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
       });
-      await setAsync('kategoriTabs', JSON.stringify(kategoriTabs));
+      await redisClient.set('kategoriTabs', JSON.stringify(kategoriTabs));
     }
 
     if (!kanatperdeProducts) {
@@ -160,9 +165,9 @@ router.get('/', async (req, res) => {
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         where: { '$kategoriler.category_low$': 'kanatperde' }
       });
-      await setAsync('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
+      await redisClient.set('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
     }
-    console.log('data yazımı');
+
     res.render('index', {
       duyurular,
       productType,
