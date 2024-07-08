@@ -55,12 +55,12 @@ span.calculate-price {
   display: flex;
   flex-direction: row;
 }
-.float-price-area{
+.float-price-area {
   display: flex;
   flex-direction: column-reverse;
   line-height: 16px;
 }
-@media (max-width:998px) {
+@media (max-width: 998px) {
   .product-container {
     flex-direction: column; 
   }
@@ -68,14 +68,13 @@ span.calculate-price {
     display: flex;
     justify-content: center;
   }
-  .float-price-area{
+  .float-price-area {
     display: flex;
     flex-direction: column;
   }
-  .product-span-area{
+  .product-span-area {
     display: flex;
     flex-direction: row;
-  
   }
 }
 </style>
@@ -103,10 +102,16 @@ span.calculate-price {
           <h1>Sipariş Seçenekleri</h1>
           <span>Ölçü Bilgileri 'cm' cinsinden</span>
           <div class="cable-choose">
-            <input type="number" name="height" id="height" step="any" class="form-control" required placeholder="Boy cm Bilgisi" maxlength="3">
-            <input type="number" name="width" id="width" step="any" class="form-control" required placeholder="En cm Bilgisi" maxlength="3">
+            <label for="height">Boy (cm):</label>
+            <select name="height" id="height" class="form-control" required>
+            </select>
+            
+            <label for="width">En (cm):</label>
+            <select name="width" id="width" class="form-control" required>
+            </select>
+            <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
           </div>
-          <a href="/cok-sorulan-sorular#stor-measure">Stor ve Zebra Perde en ve Boy Ölçüsü Nasıl Alınır</a><br>
+          <a href="/cok-sorulan-sorular#curtain-measure">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a><br>
           <span>Takmatik Seçimi</span>
           <div class="cable-choose">
             <input type="button" class="form-control" value="Metal Klips">
@@ -124,7 +129,6 @@ span.calculate-price {
         </div>
         <% } %>
         <div class="float-price-area">
-          
           <% if (urun.discount_price) { %>
           <div class="price-page-area">
             <span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%= urun.discount_price %></strike></span>
@@ -136,7 +140,6 @@ span.calculate-price {
         </div>
       </div>
       <div class="product-price-add-cart">
-        <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
         <input type="submit" value="Sepete ekle" class="cart-btn">
       </div>
     </div>
@@ -149,6 +152,26 @@ span.calculate-price {
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+  
+  function populateSelect(elementId, start, end) {
+              const selectElement = document.getElementById(elementId);
+              for (let i = start; i <= end; i++) {
+                  const option = document.createElement("option");
+                  option.value = i;
+                  option.textContent = i;  // textContent kullanarak XSS açığını önleyin
+                  selectElement.appendChild(option);
+              }
+          }
+  
+          // Boy için 50'den 400 cm'ye kadar olan aralığı doldur
+          populateSelect("height", 50, 400);
+  
+          // En için 30'dan 300 cm'ye kadar olan aralığı doldur
+          populateSelect("width", 30, 300);
+  
+  
+  
 $(document).ready(function() {
   function calculateTotalPrice() {
     const height = parseFloat($('#height').val());

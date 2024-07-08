@@ -55,12 +55,12 @@ span.calculate-price {
   display: flex;
   flex-direction: row;
 }
-.float-price-area{
+.float-price-area {
   display: flex;
   flex-direction: column-reverse;
   line-height: 16px;
 }
-@media (max-width:998px) {
+@media (max-width: 998px) {
   .product-container {
     flex-direction: column; 
   }
@@ -68,14 +68,13 @@ span.calculate-price {
     display: flex;
     justify-content: center;
   }
-  .float-price-area{
+  .float-price-area {
     display: flex;
     flex-direction: column;
   }
-  .product-span-area{
+  .product-span-area {
     display: flex;
     flex-direction: row;
-  
   }
 }
 </style>
@@ -130,7 +129,6 @@ span.calculate-price {
         </div>
         <% } %>
         <div class="float-price-area">
-          
           <% if (urun.discount_price) { %>
           <div class="price-page-area">
             <span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%= urun.discount_price %></strike></span>
@@ -155,25 +153,25 @@ span.calculate-price {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
-function populateSelect(elementId, start, end) {
-            const selectElement = document.getElementById(elementId);
-            for (let i = start; i <= end; i++) {
-                const option = document.createElement("option");
-                option.value = i;
-                option.textContent = i;  // textContent kullanarak XSS açığını önleyin
-                selectElement.appendChild(option);
-            }
-        }
-
-        // Boy için 50'den 400 cm'ye kadar olan aralığı doldur
-        populateSelect("height", 50, 400);
-
-        // En için 30'dan 300 cm'ye kadar olan aralığı doldur
-        populateSelect("width", 30, 300);
-
-
-
-
+  
+  function populateSelect(elementId, start, end) {
+              const selectElement = document.getElementById(elementId);
+              for (let i = start; i <= end; i++) {
+                  const option = document.createElement("option");
+                  option.value = i;
+                  option.textContent = i;  // textContent kullanarak XSS açığını önleyin
+                  selectElement.appendChild(option);
+              }
+          }
+  
+          // Boy için 50'den 400 cm'ye kadar olan aralığı doldur
+          populateSelect("height", 50, 400);
+  
+          // En için 30'dan 300 cm'ye kadar olan aralığı doldur
+          populateSelect("width", 30, 300);
+  
+  
+  
 $(document).ready(function() {
   function calculateTotalPrice() {
     const height = parseFloat($('#height').val());

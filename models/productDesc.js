@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
-
+const Urunler = require('./Urunler')
 const productDesc = sequelize.define('productDesc', {
     productdesc_id: {
         type: DataTypes.INTEGER,

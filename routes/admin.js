@@ -19,7 +19,6 @@ const productDesc = require('../models/productDesc');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
-
 // const limiterDefaultRequests = createLimiter(15)
 // const limiterTwoRequests = createLimiter(1)
 router.get('/panel', verifyToken, (req, res) => {
