@@ -82,12 +82,18 @@
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
                                 <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>" class="img-fluid product-thumbnail">
                                 <h3 class="product-title"><%= urun.urun_basligi %></h3>
-                                <span class="product-price-unit">Metrekare fiyatı</span><br>
+                                <span class="product-price-unit">
+                                    <% if (urun.kategoriler && ['storperde', 'pliseperde', 'zebraperde'].includes(urun.kategoriler.category_low)) { %>
+                                        Metrekare fiyatı
+                                    <% } else { %>
+                                        Metre fiyatı
+                                    <% } %>
+                                </span><br>
                                 <% if(urun.discount_price) { %>
-                                <strong style="color:#6a6a6a;" class="product-price discount"><strike>₺<%= urun.discount_price %></strike></strong>
-                                <strong class="product-price">₺<%= urun.product_price %></strong>
+                                    <strong style="color:#6a6a6a;" class="product-price discount"><strike>₺<%= urun.discount_price %></strike></strong>
+                                    <strong class="product-price">₺<%= urun.product_price %></strong>
                                 <% } else { %>
-                                <strong class="product-price">₺<%= urun.product_price %></strong>
+                                    <strong class="product-price">₺<%= urun.product_price %></strong>
                                 <% } %>
                             </a>
                         </div>

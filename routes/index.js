@@ -46,7 +46,6 @@ const connectRedis = async () => {
 };
 
 
-connectRedis();
 // Initial connection to Redis
 connectRedis().catch((err) => console.error('Initial Redis connect error: ', err));
 
@@ -62,7 +61,7 @@ router.get('/cok-sorulan-sorular', (req, res) => {
 });
 
 router.get('/kullanici-sozlesmesi', (req, res) => {
-  res.render('useragreement', { userS: req.session.user });
+  res.redirect('/sartlar-kosullar');
 });
 router.get('/sartlar-kosullar', (req, res) => {
   res.render('termsandcondition', { userS: req.session.user });
