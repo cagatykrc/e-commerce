@@ -298,7 +298,7 @@ router.get('/:urunId/duzenle', async (req, res) => {
 
 
             // UrunDuzenle view'ine urun ve kategorileri gönder
-            res.render('admin/editProduct', { urun, userS, kategoriler });
+            res.render('admin/editProduct', { urun, userS, kategoriler, productDesc });
 
         } catch (error) {
             console.error('Urun bilgisi alınırken bir hata oluştu: ' + error);
