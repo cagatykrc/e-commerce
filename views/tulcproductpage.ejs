@@ -102,12 +102,15 @@ span.calculate-price {
           <h1>Sipariş Seçenekleri</h1>
           <span>Ölçü Bilgileri 'cm' cinsinden</span>
           <div class="cable-choose">
-            <label for="height">Boy (cm):</label>
-            <select name="height" id="height" class="form-control" required>
-            </select>
-            
-            <label for="width">En (cm):</label>
-            <select name="width" id="width" class="form-control" required>
+            <div class="height-area">
+              <label for="height">Boy (cm):</label>
+              <select name="height" id="height" class="form-control" required>
+              </select>
+            </div>
+            <div class="width-area">
+              <label for="width">En (cm):</label>
+              <select name="width" id="width" class="form-control" required>
+            </div>
             </select>
             <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
           </div>
