@@ -3,17 +3,19 @@
 
 <div class="header-category-area">
     <div class="category-curtain-types">
-		<ul class="category-curtains-ul">
-			<% productType.kategoriler.forEach(curtainc => { %>
-				<a class="category-curtain-a" href="/urunler?kategoriID=<%=curtainc.category_low%>"><li class="category-curtains-li"><%=curtainc.kategori_ad  %></li></a>
-				<% }); %>
-		</ul>
-	</div>
+        <ul class="category-curtains-ul">
+            <% productType.kategoriler.forEach(curtainc => { %>
+                <li class="category-curtains-li">
+                    <a class="category-curtain-a" href="/urunler?kategoriID=<%=curtainc.category_low%>" title="<%=curtainc.kategori_ad%>"><%=curtainc.kategori_ad %></a>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
 </div>
 
 <div class="banner-hero">
     <div class="banner-container">
-        <img src="/images/open-banner.png" class="">
+        <img src="/images/open-banner.png" alt="Open Banner" class="">
         <p><a href="/urunler" class="btn btn-white-outline">Daha fazla</a></p>
     </div>
 </div>
@@ -26,15 +28,15 @@
             <!-- Start New Products Slider -->
             <div class="product-slider">
                 <div class="product-slider-title">
-                    <h1 class="h1">Yeni Ürünler</h1>
+                    <h1>Yeni Ürünler</h1>
                 </div>
                 <div class="product-news-area">
                     <i class="fa-solid fa-angle-left angle-left"></i>
                     <% newproducts.forEach(urun => { %>
                         <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a class="product-item" href="/urun/<%= urun.urun_id %>">
+                            <a class="product-item" href="/urun/<%= urun.urun_id %>" title="<%= urun.urun_basligi %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
-                                <img src="/uploads/<%= urun.resim %>" class="img-fluid product-thumbnail">
+                                <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>" class="img-fluid product-thumbnail">
                                 <h3 class="product-title"><%= urun.urun_basligi %></h3>
                                 <span class="product-price-unit">Metrekare fiyatı</span><br>
                                 <% if(urun.discount_price) { %>
@@ -50,35 +52,35 @@
                 </div>
             </div>
             <!-- End New Products Slider -->
-			<div class="ads-area">
-				<div class="ads-divs">
-					<div class="ads-first">
-						<div class="banner-discount">
-							<span>Sepette %25'e varan indirim</span>
-						</div>
-						<div class="banner-ad-title">Fon Perdelerde İndirim</div>
-						<div class="banner-button"><a class="btn" href="/urunler?kategoriID=kanatperde">Şimdi Al</a></div>
-					</div>
-					<div class="ads-second">
-						<div class="banner-discount">
-							<span>Sepette %30'a varan indirim</span>
-						</div>
-						<div class="banner-ad-title">Stor Perdelerde İndirim</div>
-						<div class="banner-button"><a class="btn" href="/urunler?kategoriID=storperde">Şimdi Al</a></div>
-					</div>
-				</div>
-			</div>
+            <div class="ads-area">
+                <div class="ads-divs">
+                    <div class="ads-first">
+                        <div class="banner-discount">
+                            <span>Sepette %25'e varan indirim</span>
+                        </div>
+                        <div class="banner-ad-title">Fon Perdelerde İndirim</div>
+                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=kanatperde">Şimdi Al</a></div>
+                    </div>
+                    <div class="ads-second">
+                        <div class="banner-discount">
+                            <span>Sepette %30'a varan indirim</span>
+                        </div>
+                        <div class="banner-ad-title">Stor Perdelerde İndirim</div>
+                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=storperde">Şimdi Al</a></div>
+                    </div>
+                </div>
+            </div>
             <!-- Start Best Sellers Slider -->
             <div class="product-slider">
                 <div class="product-slider-title">
-                    <h1 class="h1">Çok Satanlar</h1>
+                    <h1>Çok Satanlar</h1>
                 </div>
                 <div class="product-top-sellers-area">
                     <% products.forEach(urun => { %>
                         <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a class="product-item" href="/urun/<%= urun.urun_id %>">
+                            <a class="product-item" href="/urun/<%= urun.urun_id %>" title="<%= urun.urun_basligi %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
-                                <img src="/uploads/<%= urun.resim %>" class="img-fluid product-thumbnail">
+                                <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>" class="img-fluid product-thumbnail">
                                 <h3 class="product-title"><%= urun.urun_basligi %></h3>
                                 <span class="product-price-unit">Metrekare fiyatı</span><br>
                                 <% if(urun.discount_price) { %>
@@ -96,21 +98,20 @@
 
             <div class="category-icon-area">
                 <div class="category-icon-title">
-                    <div class="h1">Kategoriler</div>
+                    <h1>Kategoriler</h1>
                 </div>
             </div>
 
-
             <div class="product-slider">
                 <div class="product-slider-title">
-                    <h1 class="h1">Fon Perdeler</h1>
+                    <h1>Fon Perdeler</h1>
                 </div>
                 <div class="product-top-sellers-area">
                     <% fonproduct.forEach(urun => { %>
                         <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                            <a class="product-item" href="/urun/<%= urun.urun_id %>">
+                            <a class="product-item" href="/urun/<%= urun.urun_id %>" title="<%= urun.urun_basligi %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
-                                <img src="/uploads/<%= urun.resim %>" class="img-fluid product-thumbnail">
+                                <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>" class="img-fluid product-thumbnail">
                                 <h3 class="product-title"><%= urun.urun_basligi %></h3>
                                 <span class="product-price-unit">Metrekare fiyatı</span><br>
                                 <% if(urun.discount_price) { %>
@@ -141,7 +142,7 @@
                     <div class="col-6 col-md-6">
                         <div class="feature">
                             <div class="icon">
-                                <img src="images/truck.svg" alt="Image" class="img-fluid">
+                                <img src="images/truck.svg" alt="Hızlı & Ücretsiz Teslimat" class="img-fluid">
                             </div>
                             <h3>Hızlı & Ücretsiz Teslimat</h3>
                             <p>Siparişlerinizi en kısa sürede ve ücretsiz olarak kapınıza kadar getiriyoruz. Zamanında teslimat konusunda bize güvenebilirsiniz.</p>
@@ -151,7 +152,7 @@
                     <div class="col-6 col-md-6">
                         <div class="feature">
                             <div class="icon">
-                                <img src="images/bag.svg" alt="Image" class="img-fluid">
+                                <img src="images/bag.svg" alt="Kolay Alışveriş" class="img-fluid">
                             </div>
                             <h3>Kolay Alışveriş</h3>
                             <p>Kullanıcı dostu web sitemiz ve mobil uygulamamız sayesinde, ihtiyaçlarınıza kolayca ulaşabilir ve rahatça alışveriş yapabilirsiniz.</p>
@@ -161,7 +162,7 @@
                     <div class="col-6 col-md-6">
                         <div class="feature">
                             <div class="icon">
-                                <img src="images/support.svg" alt="Image" class="img-fluid">
+                                <img src="images/support.svg" alt="24/7 Destek" class="img-fluid">
                             </div>
                             <h3>24/7 Destek</h3>
                             <p>Herhangi bir sorunuz veya sorununuz olduğunda, 7 gün 24 saat hizmet veren destek ekibimiz size yardımcı olmaktan mutluluk duyar.</p>
@@ -171,36 +172,24 @@
                     <div class="col-6 col-md-6">
                         <div class="feature">
                             <div class="icon">
-                                <img src="images/return.svg" alt="Image" class="img-fluid">
+                                <img src="images/return.svg" alt="Ücretsiz İade" class="img-fluid">
                             </div>
-                            <h3>Hızlı Geri Dönüş</h3>
-                            <p>Ürünlerimizden memnun kalmadığınızda, hızlı ve sorunsuz iade süreçlerimiz sayesinde rahatça geri gönderebilirsiniz.</p>
+                            <h3>Ücretsiz İade</h3>
+                            <p>Memnun kalmadığınız ürünleri, 30 gün içerisinde koşulsuz iade edebilirsiniz. Müşteri memnuniyeti bizim için ön planda.</p>
                         </div>
                     </div>
                 </div>
             </div>
-			<div class="col-lg-5">
-				<div class="img-wrap">
-					<img src="/images/banner-room.jpg" alt="Image" class="img-fluid">
-				</div>
-			</div>
+            <div class="col-lg-5">
+                <div class="img-wrap">
+                    <img src="images/why-choose-us-img.jpg" alt="Neden Bizi Seçmelisiniz" class="img-fluid">
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <!-- End Why Choose Us Section -->
 
-<script>
-    $(document).ready(function() {
-        $(".show-now .btn .btn-secondary me-2").click(function() {
-            $('html, body').scrollTop($(".product-section").offset().top);
-        });
-        console.log('çalıştı');
-    });
-
-    function toggleCategory(id) {
-        const element = document.getElementById(id);
-        element.style.display = (element.style.display === "none" || element.style.display === "") ? "block" : "none";
-    }
-</script>
-
+<!-- Start Footer Section -->
 <%- include('./partials/footer.ejs') %>
+<!-- End Footer Section -->
