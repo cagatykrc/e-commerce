@@ -34,6 +34,15 @@
             </div>
 
             <div class="form-group">
+                <label for="kategorisi">Açıklama:</label>
+                <select name="productdesc_id" id="productdesc_id" class="form-control admin-panel-input">
+                    <% productDesc.forEach(desc => { %>
+                        <option value="<%= desc.productdesc_id %>"><%= desc.desc_type %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="resim">Resim Dosyası:</label>
                 <input type="file" class="form-control admin-panel-input" id="resim" name="resim" required>
             </div>

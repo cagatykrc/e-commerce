@@ -131,7 +131,9 @@ router.get('/', async (req, res) => {
 
     if (!urunler) {
       urunler = await Urunler.findAll({
-        include: [{ model: Kategoriler, as: 'kategoriler' }]
+        include: [{ model: Kategoriler, as: 'kategoriler' }],
+        order:[['createdAt','DESC']],
+        limit:12,
       });
       await redisClient.set('urunler', JSON.stringify(urunler));
     }
@@ -161,7 +163,10 @@ router.get('/', async (req, res) => {
     if (!kanatperdeProducts) {
       kanatperdeProducts = await Urunler.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }],
-        where: { '$kategoriler.category_low$': 'kanatperde' }
+        where: { '$kategoriler.category_low$': 'kanatperde' },
+        order:[['createdAt', 'DESC']],
+        limit:8
+
       });
       await redisClient.set('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
     }

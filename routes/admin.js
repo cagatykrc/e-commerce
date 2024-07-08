@@ -15,6 +15,7 @@ const Kategorilertab = require('../models/Kategorilertab');
 const Duyurular = require('../models/Duyurular');
 const logger = require('../utility/logger');
 const Coupon = require('../models/Coupon');
+const productDesc = require('../models/productDesc');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
@@ -111,7 +112,8 @@ router.get('/urunolustur', verifyToken, async (req, res) => {
 
     try {
         const kategoriler = await Kategoriler.findAll();
-        res.render('admin/createProduct', { userS, kategoriler });
+        const productDesc = await productDesc.findAll();
+        res.render('admin/createProduct', { userS, kategoriler, productDesc });
     } catch (error) {
         console.error('Kategorileri çekerken bir hata oluştu: ' + error);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
@@ -201,7 +203,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
 
     const userID = req.session.user.id;
 
-    const { baslik, price, aciklama, kategorisi, turu } = req.body;
+    const { baslik, price, aciklama, kategorisi, turu,productdesc_id } = req.body;
 
     if (!req.files || !req.files['resim']) {
         console.error('Dosya yüklemesi başarısız oldu.');
@@ -219,6 +221,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
             product_price: parseFloat(price).toFixed(2),  // Fiyatı ondalıklı sayıya çevir ve iki basamaklı hale getir
             category_low: kategorisi,
             urun_turu: turu,
+            productdesc_id,
         });
 
         const ipAddress = req.socket.remoteAddress;
@@ -282,6 +285,7 @@ router.get('/:urunId/duzenle', async (req, res) => {
     if (userS && userS.role === 'admin') {
         try {
             // Kategorileri çek
+            const productDesc = await productDesc.findAll();
             const kategoriler = await Kategoriler.findAll();
 
             // Urunyi çek
