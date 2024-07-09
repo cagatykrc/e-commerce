@@ -258,7 +258,7 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
     }
 
     const urunId = req.params.urunId;
-    const { aciklama, resim, baslik, kategorisi, turu, price } = req.body;
+    const { aciklama, resim, baslik, kategorisi, turu,productdesc_id, price } = req.body;
 
     try {
         const urun = await Urunler.findByPk(urunId);
@@ -274,6 +274,7 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
             resim: resim,
             category_low: kategorisi,
             urun_turu: turu,
+            productdesc_id,
             product_price: parseFloat(price).toFixed(2), // Price alanını formatlayarak ekle
         });
 
@@ -299,9 +300,10 @@ router.get('/:urunId/duzenle', async (req, res) => {
     if (userS && userS.role === 'admin') {
         try {
             // Kategorileri çek
-            const productDesc = await productDesc.findAll();
+            console.log('çekti');
+            const productdesc= await productDesc.findAll()
             const kategoriler = await Kategoriler.findAll();
-
+            
             // Urunyi çek
             const urun = await Urunler.findByPk(urunId);
 
@@ -312,10 +314,10 @@ router.get('/:urunId/duzenle', async (req, res) => {
 
 
             // UrunDuzenle view'ine urun ve kategorileri gönder
-            res.render('admin/editProduct', { urun, userS, kategoriler, productDesc });
+            res.render('admin/editProduct', { urun, userS, kategoriler, productdesc });
 
         } catch (error) {
-            console.error('Urun bilgisi alınırken bir hata oluştu: ' + error);
+            console.error('Duzenleme bilgisi alınırken bir hata oluştu: ' + error);
             return res.status(500).send('Internal Server Error');
         }
     } else {

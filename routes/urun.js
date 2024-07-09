@@ -7,6 +7,7 @@ const verifyToken= require('../utility/verifyToken');
 const postlimiter= require('../utility/limiter');
 const logger = require('../utility/logger');
 const Kategoriler = require('../models/Kategoriler');
+const productDesc = require('../models/productDesc');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
@@ -33,7 +34,11 @@ router.get('/:urunid', async (req, res) => {
           {
             model: Kategoriler,
             as: 'kategoriler',
-          }
+          },
+          {
+            model: productDesc,
+            as: 'productdesc',
+          },
       ],
       });
   

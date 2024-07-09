@@ -61,8 +61,8 @@
                 <div class="form-group">
                     <label for="kategorisi">Açıklama:</label>
                     <select name="kategorisi" id="kategorisi" class="form-control">
-                        <% productDesc.forEach(desc => { %>
-                            <option value="<%=desc.productdesc_id %>" <%= desc.productdesc_id ==desc.productdesc_id ? 'selected' : '' %>><%=desc.desc_type %></option>
+                        <% productdesc.forEach(desc => { %>
+                            <option value="<%=desc.productdesc_id %>" <%= urun.productdesc_id ==desc.productdesc_id ? 'selected' : '' %>><%=desc.desc_type %></option>
                         <% }); %>
                     </select>
                 </div>
