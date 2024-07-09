@@ -6,9 +6,17 @@
         flex-direction: row;
         padding: 12px;
     }
+    .coupon-area{
+            margin-left: 64px;
+            display: flex;
+            align-items: center;
+        }
     @media (max-width:992px){
         .create-coupon-container{
             flex-direction: column;
+        }
+        .coupon-area{
+            margin-left: 0px;
         }
     }
     .create-coupon, .discount-area {
@@ -72,6 +80,7 @@
                     <table class="table table-striped table-bordered">
                         <thead class="thead-dark">
                             <tr>
+                                <th>Kupon id</th>
                                 <th>Kupon Kodu</th>
                                 <th>İndirim Oranı</th>
                                 <th>İndirim Fiyatı</th>
@@ -87,7 +96,10 @@
                                         <td><%= kupon.coupon_code %></td>
                                         <td><%= kupon.discount_rate %> %</td>
                                         <td><%= kupon.discount_price %> %</td>
-                                        <td></td>
+                                        <td><%= kupon.active%></td>
+                                        <td>
+                                            <button type="button" style="font-size: 1rem;" class="btn btn-black btn-sm remove-item" onclick="confirmDelete('<%= kupon.coupon_id %>')">X</button>
+                                        </td>
                                     </tr>
                                 <% }); %>
                             <% } else { %>

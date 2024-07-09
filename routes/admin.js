@@ -177,12 +177,27 @@ router.post('/kupon-olustur', async (req, res) => {
     const { coupon_code, discount_type, discount_value, expiry_date } = req.body;
 
     try {
-        await Coupon.create({
-            coupon_code,
-            discount_type,
-            discount_value,
-            active:1,    
-        });
+        if (discount_type === 'percentage') {
+            await Coupon.create({
+                coupon_code,
+                discount_rate: discount_value,
+                discount_type,
+                active: 1,
+                expiry_date
+            });
+        } else if (discount_type === 'fixed_amount') {
+            await Coupon.create({
+                coupon_code,
+                discount_price: discount_value,
+                discount_type,
+                active: 1,
+                expiry_date
+            });
+        } else {
+            res.status(400).send('Invalid discount type');
+            return;
+        }
+        
         res.redirect('/admin/kuponlar');
     } catch (error) {
         console.error('Kupon oluşturulurken hata oluştu:', error);

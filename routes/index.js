@@ -390,6 +390,9 @@ router.post('/kuponUygula', async (req, res) => {
   const { coupon_code } = req.body;
 
   try {
+      if (req.session.coupon) {
+        return res.status(404).json({success:false, message:'Kupon zaten kullanımda'});
+      }
       const coupon = await Coupon.findOne({ where: { coupon_code } });
 
       if (!coupon) {
