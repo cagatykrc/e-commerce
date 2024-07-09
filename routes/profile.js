@@ -39,9 +39,9 @@ router.get('/',async(req,res)=>{
           {
             model: Orders,
             as: 'orders',
+            order: [['createdAt', 'DESC']]
           }
-        ],
-        order:[['createdAt','DESC']],
+        ]
       });
   
       res.render('profileOrders', { userS, orders: userOrders.orders });
@@ -50,6 +50,7 @@ router.get('/',async(req,res)=>{
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
+  
 
   router.get('/adreslerim',async(req,res)=>{
     const userS = req.session.user;
