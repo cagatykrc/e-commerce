@@ -40,7 +40,8 @@ router.get('/',async(req,res)=>{
             model: Orders,
             as: 'orders',
           }
-        ]
+        ],
+        order:[['createdAt','DESC']],
       });
   
       res.render('profileOrders', { userS, orders: userOrders.orders });
