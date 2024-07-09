@@ -228,7 +228,6 @@ div#category-area.shop-categories-area li{
     overflow-y: scroll;
   }
   .filter-btn-area {
-    display: unset;
     position: fixed;
     bottom: 0;
   }
@@ -348,7 +347,6 @@ main.container{
     bottom: -10%;
 
   }
-
 
   .mobile-filter-open-area label{
     background: #fff;
@@ -1911,4 +1909,8 @@ textarea {
     padding: 2px;
     margin-bottom: 12px;
     font-size: .8rem;
+  }
+
+  .product-description-container{
+    margin-top: 64;
   }
