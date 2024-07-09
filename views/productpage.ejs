@@ -152,68 +152,70 @@ span.calculate-price {
     </form>
   </div>
 </main>
-<div class="product-description-container">
-  <h2>Açıklama</h2>
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered">
-      <% if (urun.productdesc) { %>
-        <thead class="thead-dark">
+<div class="container">
+  <div class="product-description-container">
+    <h2>Açıklama</h2>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <% if (urun.productdesc) { %>
+          <thead class="thead-dark">
 
-          <tr> 
-            <td>
-              <div class="table-title"><%=urun.kategoriler.kategori_ad%> Ürün Özellikleri</div>
-            </td> 
-        </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Markası: </td>
-            <td><%=urun.productdesc.brand%></td>
+            <tr> 
+              <td>
+                <div class="table-title"><%=urun.kategoriler.kategori_ad%> Ürün Özellikleri</div>
+              </td> 
           </tr>
-          <tr>
-          <td>Pile Sıklığı: </td>
-          <td><%=urun.productdesc.pile_frequency%></td>
-          </tr>
-          <tr>
-            <td>Dikiş: </td>
-            <td><%=urun.productdesc.stitching%></td>
-          </tr>
-          <tr>
-            <td>Ürün Temizlik: </td>
-            <td><%=urun.productdesc.cleaning%></td>
-          </tr>
-          <tr>
-            <td>Renk: </td>
-            <td><%=urun.productdesc.color%></td>
-          </tr>
-          <tr>
-            <td>Garanti: </td>
-            <td><%=urun.productdesc.warranty%></td>
-          </tr>
-          <tr>
-            <td>Ödeme Seçenekleri: </td>
-            <td><%=urun.productdesc.payment_options%></td>
-          </tr>
-          <tr>
-            <td>Tahmini Kargo: </td>
-            <td><%=urun.productdesc.delivery_time%></td>
-          </tr>
-          <tr>
-            <td>Neme Dayanıklılık: </td>
-            <td><%=urun.productdesc.moisture_resistance%></td>
-          </tr>
-          <tr>
-            <td>Ürün Detayları: </td>
-            <td><%=urun.productdesc.product_composition%></td>
-          </tr>
-          <tr>
-            <td>Montaj Şekli: </td>
-            <td><%=urun.productdesc.installation_areas%></td>
-          </tr>
-        </tbody>
-      <% } %>
-      
-    </table>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Markası: </td>
+              <td><%=urun.productdesc.brand%></td>
+            </tr>
+            <tr>
+            <td>Pile Sıklığı: </td>
+            <td><%=urun.productdesc.pile_frequency%></td>
+            </tr>
+            <tr>
+              <td>Dikiş: </td>
+              <td><%=urun.productdesc.stitching%></td>
+            </tr>
+            <tr>
+              <td>Ürün Temizlik: </td>
+              <td><%=urun.productdesc.cleaning%></td>
+            </tr>
+            <tr>
+              <td>Renk: </td>
+              <td><%=urun.productdesc.color%></td>
+            </tr>
+            <tr>
+              <td>Garanti: </td>
+              <td><%=urun.productdesc.warranty%></td>
+            </tr>
+            <tr>
+              <td>Ödeme Seçenekleri: </td>
+              <td><%=urun.productdesc.payment_options%></td>
+            </tr>
+            <tr>
+              <td>Tahmini Kargo: </td>
+              <td><%=urun.productdesc.delivery_time%></td>
+            </tr>
+            <tr>
+              <td>Neme Dayanıklılık: </td>
+              <td><%=urun.productdesc.moisture_resistance%></td>
+            </tr>
+            <tr>
+              <td>Ürün Detayları: </td>
+              <td><%=urun.productdesc.product_composition%></td>
+            </tr>
+            <tr>
+              <td>Montaj Şekli: </td>
+              <td><%=urun.productdesc.installation_areas%></td>
+            </tr>
+          </tbody>
+        <% } %>
+        
+      </table>
+    </div>
   </div>
 </div>
 

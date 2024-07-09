@@ -289,7 +289,7 @@ router.get('/sepet', async (req, res) => {
     });
 
     console.log(`Total Cart Price before discount: ${totalCartPrice}`);
-
+    let totalprice = totalCartPrice;
     let discount = 0;
     if (req.session.coupon) {
       const coupon = req.session.coupon;
@@ -317,7 +317,7 @@ router.get('/sepet', async (req, res) => {
 
     // Değerleri toFixed(2) ile formatlama
 
-    res.render('cart', { userS: req.session.user, userCart, totalCartPrice, discount, coupon: req.session.coupon });
+    res.render('cart', { userS: req.session.user, userCart,totalprice, totalCartPrice, discount, coupon: req.session.coupon });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).json({ error: error.message });

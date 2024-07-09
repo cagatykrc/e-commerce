@@ -123,7 +123,7 @@
               <span class="text-black">Ara Toplam</span>
             </div>
             <div class="col-md-6 text-right">
-              <strong class="text-black">₺<%= totalCartPrice.toFixed(2) %></strong>
+              <strong class="text-black">₺<%= totalprice.toFixed(2) %></strong>
             </div>
           </div>
           <% if (discount) { %>
@@ -132,7 +132,7 @@
               <span class="text-black">İndirim</span>
             </div>
             <div class="col-md-6 text-right">
-              <strong class="text-black">-₺<%= discount.toFixed(2) %></strong>
+              <strong class="text-black"><strike>-₺<%= discount.toFixed(2) %></strike></strong>
             </div>
           </div>
           <% } %>
