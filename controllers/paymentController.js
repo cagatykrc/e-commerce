@@ -9,6 +9,7 @@ const ShoppingCart = require('../models/ShoppingCart');
 const Users = require('../models/Users');
 const Urunler = require('../models/Urunler');
 const Orders = require('../models/Orders');
+const Kategoriler = require('../models/Kategoriler');
 const OrderItem = require('../models/OrderItem');
 dotenv.config();
 function formatDate(date) {
@@ -48,14 +49,38 @@ router.post("/siparisonayla", async (req, res) => {
           }
         }]
       });
-  
+      const userCart = await ShoppingCart.findAll({
+        where: { user_id: userS.id },
+        include: [{
+          model: Urunler,
+          attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi'],
+          include:[{
+            model:Kategoriler,
+            attributes:['kategori_ad'],
+            as:'kategoriler',
+          }]
+        }]
+      });
       let totalCartPrice = 0;
-      if (userDetails.length > 0 && userDetails[0].ShoppingCarts) {
-        userDetails[0].ShoppingCarts.forEach(cartItem => {
-          totalCartPrice += parseFloat(cartItem.total_price);
-        });
+    userCart.forEach(cartItem => {
+      const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;
+      const width = parseFloat(cartItem.width) || 0;
+      const height = parseFloat(cartItem.height) || 0;
+      const quantity = parseFloat(cartItem.quantity) || 0;
+
+      // Değerlerin kontrolü için konsol çıktıları
+      console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
+
+      if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
+        const squareMeters = (height * width) / 10000;
+        const totalPrice = squareMeters * productPrice * quantity;
+        cartItem.total_price = totalPrice;
+        totalCartPrice += totalPrice;
+      } else {
+        console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
       }
-  
+    });
+
       console.log(`Total Cart Price before discount: ${totalCartPrice}`);
       let totalprice = totalCartPrice;
       let discount = 0;
@@ -88,7 +113,7 @@ router.post("/siparisonayla", async (req, res) => {
       const totalCartPriceFormatted = totalCartPrice.toFixed(2);
       const discountFormatted = discount.toFixed(2);
   
-      res.render('checkout', { userS, userDetails: userDetails[0], totalCartPrice: totalCartPriceFormatted, discount: discountFormatted, coupon: req.session.coupon });
+      res.render('checkout', { userS, userDetails: userDetails[0],totalprice, totalCartPrice: totalCartPriceFormatted, discount: discountFormatted, coupon: req.session.coupon });
     } catch (error) {
       console.error('Error fetching user details and shopping cart:', error);
       res.status(500).send('Internal Server Error');
@@ -174,7 +199,7 @@ router.post("/", async function(req, res) {
     discount = isNaN(discount) ? 0 : discount;
 
     const user_basket = nodeBase64.encode(JSON.stringify(basket));
-    const payment_amount = totalCartPrice * 100;
+    const payment_amount = totalCartPrice.toFixed(2) * 100;
 
     try {
         const orderItems = userCart.map(cartItem => ({
@@ -182,7 +207,7 @@ router.post("/", async function(req, res) {
             product_id: cartItem.urun_id,
             quantity: cartItem.quantity,
             width: cartItem.width,
-            price: parseFloat(cartItem.total_price).toFixed(2),
+            price: totalCartPrice,
             order_date: formatDate(new Date()),
             height: cartItem.height,
         }));

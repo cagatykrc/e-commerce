@@ -36,15 +36,23 @@
                     <span class="text-black">Ara Toplam</span>
                 </div>
             <div class="col-md-6 text-right">
-                <strong class="text-black">₺<%= totalCartPrice.toFixed(2) %></strong>
+                <strong class="text-black">₺<%= totalprice.toFixed(2) %></strong><br>
             </div>
         </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="text-black">İndirim Tutarı</span>
+            </div>
+            <div class="col-md-6 text-right">
+                <strong class="text-black"><strike>-₺<%= discount %></strike></strong>
+            </div>
+    </div>
     <div class="row mb-5">
         <div class="col-md-6">
                 <span class="text-black">Toplam</span>
             </div>
         <div class="col-md-6 text-right">
-            <strong class="text-black">₺<%= totalCartPrice.toFixed(2) %></strong>
+            <strong class="text-black">₺<%= totalCartPrice %></strong>
         </div>
     </div>
     <input type="checkbox" name="mesafelisatissozlesmesi" required id="sellpolicy">
