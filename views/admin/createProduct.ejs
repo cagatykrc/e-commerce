@@ -36,7 +36,7 @@
             <div class="form-group">
                 <label for="kategorisi">Açıklama:</label>
                 <select name="productdesc_id" id="productdesc_id" class="form-control admin-panel-input">
-                    <% productDesc.forEach(desc => { %>
+                    <% productdesc.forEach(desc => { %>
                         <option value="<%= desc.productdesc_id %>"><%= desc.desc_type %></option>
                     <% }); %>
                 </select>

@@ -110,9 +110,9 @@ router.get('/urunolustur', verifyToken, async (req, res) => {
     }
 
     try {
+        const productdesc= await productDesc.findAll()
         const kategoriler = await Kategoriler.findAll();
-        const productDesc = await productDesc.findAll();
-        res.render('admin/createProduct', { userS, kategoriler, productDesc });
+        res.render('admin/createProduct', { userS, kategoriler, productdesc });
     } catch (error) {
         console.error('Kategorileri çekerken bir hata oluştu: ' + error);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
