@@ -18,57 +18,58 @@ const now = formattedDate.toLocaleString('tr-TR', options);
 
 
 
-router.get('/:urunid', async (req, res) => {
-    const urunId = req.params.urunid;
-    const userS = req.session.user;
-  
-    try {
-      // Sequelize ile urun bilgilerini çek
-      const urun = await Urunler.findByPk(urunId, {
-        include: [
-          {
+router.get('/:slug', async (req, res) => {
+  const slug = req.params.slug;
+  const userS = req.session.user;
+
+  try {
+    // Sequelize ile urun bilgilerini slug'a göre çek
+    const urun = await Urunler.findOne({
+      where: { slug: slug },
+      include: [
+        {
           model: Users,
           as: 'olusturanUser',
           attributes: ['first_name', 'last_name'],
-          },
-          {
-            model: Kategoriler,
-            as: 'kategoriler',
-          },
-          {
-            model: productDesc,
-            as: 'productdesc',
-          },
+        },
+        {
+          model: Kategoriler,
+          as: 'kategoriler',
+        },
+        {
+          model: productDesc,
+          as: 'productdesc',
+        },
       ],
-      });
-  
-      // Eğer urun bulunursa, indirim oranını hesapla
-    const discountRate = (( urun.discount_price-urun.product_price ) / urun.discount_price) * 100;
+    });
 
-      const olusturanUser = urun ? urun.olusturanUser : null;
-  
-      // Urun sayfasını render et
-      switch (urun.kategoriler.category_low) {
-        case 'tulperde':
-          res.render('tulcproductpage',{ urun, userS, olusturanUser,discountRate })
-          break;
-        case 'storperde':
-          res.render('storcproductpage',{ urun, userS, olusturanUser,discountRate })
-          break;
-        case 'fonperde':
-          res.render('foncproductpage',{ urun, userS, olusturanUser,discountRate })
-          break;
-        default:
-          res.render('productpage',{ urun, userS, olusturanUser,discountRate })
-          break;
-      }
+    // Eğer urun bulunursa, indirim oranını hesapla
+    const discountRate = ((urun.discount_price - urun.product_price) / urun.discount_price) * 100;
 
-    } catch (error) {
-      // Hata durumunda
-      console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);
-      res.status(500).send('Internal Server Error');
+    const olusturanUser = urun ? urun.olusturanUser : null;
+
+    // Urun sayfasını render et
+    switch (urun.kategoriler.category_low) {
+      case 'tulperde':
+        res.render('tulcproductpage', { urun, userS, olusturanUser, discountRate });
+        break;
+      case 'storperde':
+        res.render('storcproductpage', { urun, userS, olusturanUser, discountRate });
+        break;
+      case 'fonperde':
+        res.render('foncproductpage', { urun, userS, olusturanUser, discountRate });
+        break;
+      default:
+        res.render('productpage', { urun, userS, olusturanUser, discountRate });
+        break;
     }
-  });
+
+  } catch (error) {
+    // Hata durumunda
+    console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 router.post('/:urunId/yorumsil', verifyToken, async (req, res) => {
     const userS = req.session.user;

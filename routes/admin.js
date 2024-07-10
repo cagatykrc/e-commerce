@@ -21,6 +21,35 @@ const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
 // const limiterDefaultRequests = createLimiter(15)
 // const limiterTwoRequests = createLimiter(1)
+function slugify(text) {
+    // Türkçe karakterleri İngilizce eşdeğerlerine dönüştürme haritası
+    const turkishCharMap = {
+      'ç': 'c',
+      'ğ': 'g',
+      'ı': 'i',
+      'ö': 'o',
+      'ş': 's',
+      'ü': 'u',
+      'Ç': 'C',
+      'Ğ': 'G',
+      'İ': 'I',
+      'Ö': 'O',
+      'Ş': 'S',
+      'Ü': 'U'
+    };
+  
+    // Türkçe karakterleri dönüştür
+    text = text.replace(/[çğıöşüÇĞİÖŞÜ]/g, function(match) {
+      return turkishCharMap[match];
+    });
+  
+    return text.toString().toLowerCase()
+      .replace(/\s+/g, '-')           // Boşlukları tire ile değiştir
+      .replace(/[^\w\-]+/g, '')       // Geçersiz karakterleri kaldır
+      .replace(/\-\-+/g, '-')         // Birden fazla tireyi tek tireye indir
+      .replace(/^-+/, '')             // Baştaki tireleri kaldır
+      .replace(/-+$/, '');            // Sondaki tireleri kaldır
+  }
 router.get('/panel', verifyToken, (req, res) => {
     const userS = req.session.user;
 
@@ -216,8 +245,10 @@ router.post('/urunolustur', verifyToken, upload.fields([
     }
 
     const userID = req.session.user.id;
-
+    
     const { baslik, price, aciklama, kategorisi, turu,productdesc_id } = req.body;
+    const urunAdi = baslik;  // Bu ürün adını dinamik olarak alın
+    const slug = slugify(urunAdi);
 
     if (!req.files || !req.files['resim']) {
         console.error('Dosya yüklemesi başarısız oldu.');
@@ -235,6 +266,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
             product_price: parseFloat(price).toFixed(2),  // Fiyatı ondalıklı sayıya çevir ve iki basamaklı hale getir
             category_low: kategorisi,
             urun_turu: turu,
+            slug,
             productdesc_id,
         });
 
@@ -259,7 +291,8 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
 
     const urunId = req.params.urunId;
     const { aciklama, resim, baslik, kategorisi, turu,productdesc_id, price } = req.body;
-
+    const urunAdi = baslik;  // Bu ürün adını dinamik olarak alın
+    const slug = slugify(urunAdi);
     try {
         const urun = await Urunler.findByPk(urunId);
 
@@ -275,6 +308,7 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
             category_low: kategorisi,
             urun_turu: turu,
             productdesc_id,
+            slug,
             product_price: parseFloat(price).toFixed(2), // Price alanını formatlayarak ekle
         });
 

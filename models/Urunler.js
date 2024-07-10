@@ -11,6 +11,10 @@ const Urunler = sequelize.define('Urunler', {
         primaryKey: true,
         autoIncrement: true,
     },
+    slug: {
+        type: DataTypes.STRING,
+        allowNull:false
+    },
     aciklama: {
         type: DataTypes.TEXT,
         allowNull: false,
@@ -30,6 +34,10 @@ const Urunler = sequelize.define('Urunler', {
     discount_price:{
         type:DataTypes.DECIMAL(10, 2),
         allowNull: true,
+    },
+    product_type:{
+        type: DataTypes.STRING,
+        allowNull:true,
     },
     urun_basligi: {
         type: DataTypes.STRING,
