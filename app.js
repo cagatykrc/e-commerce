@@ -70,7 +70,7 @@ app.get('*', (req, res) => {
 // Sequelize modellerini senkronize et ve sunucuyu başlat
 (async () => {
   try {
-    await sequelize.sync({});
+    await sequelize.sync({alter:true});
 
     const PORT = process.env.PORT || 80;
 
