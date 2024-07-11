@@ -125,51 +125,50 @@ router.get('/', async (req, res) => {
       productType = await Kategorilertab.findByPk(1, {
         include: [{ model: Kategoriler, as: 'kategoriler' }]
       });
-      await redisClient.set('productType', JSON.stringify(productType));
+      await redisClient.setex('productType', 300, JSON.stringify(productType)); // 1 saat
     }
-
+    
     if (!urunler) {
       urunler = await Urunler.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         order:[['createdAt','DESC']],
         limit:12,
       });
-      await redisClient.set('urunler', JSON.stringify(urunler));
+      await redisClient.setex('urunler', 300, JSON.stringify(urunler)); // 1 saat
     }
-
+    
     if (!newProducts) {
       newProducts = await Urunler.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         order: [['createdAt', 'DESC']],
         limit: 8
       });
-      await redisClient.set('newProducts', JSON.stringify(newProducts));
+      await redisClient.setex('newProducts', 300, JSON.stringify(newProducts)); // 1 saat
     }
-
+    
     if (!duyurular) {
       duyurular = await Duyurular.findAll();
-      await redisClient.set('duyurular', JSON.stringify(duyurular));
+      await redisClient.setex('duyurular', 300, JSON.stringify(duyurular)); // 1 saat
     }
-
+    
     if (!kategoriTabs) {
       kategoriTabs = await Kategorilertab.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
       });
-      await redisClient.set('kategoriTabs', JSON.stringify(kategoriTabs));
+      await redisClient.setex('kategoriTabs', 300, JSON.stringify(kategoriTabs)); // 1 saat
     }
-
+    
     if (!kanatperdeProducts) {
       kanatperdeProducts = await Urunler.findAll({
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         where: { '$kategoriler.category_low$': 'kanatperde' },
         order:[['createdAt', 'DESC']],
         limit:8
-
       });
-      await redisClient.set('kanatperdeProducts', JSON.stringify(kanatperdeProducts));
+      await redisClient.setex('kanatperdeProducts', 300, JSON.stringify(kanatperdeProducts)); // 1 saat
     }
-
+    
     res.render('index', {
       duyurular,
       productType,
