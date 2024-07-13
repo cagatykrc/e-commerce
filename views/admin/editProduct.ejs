@@ -73,6 +73,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="color" class="form-label">Renk:</label>
+                    <input type="text" class="form-control admin-panel-input" id="color" name="color" value="<%=urun.product_color%>">
+                </div>
+
+                <div class="form-group">
                     <label for="price" class="form-label">Fiyat:</label>
                     <input type="text" id="price" name="price" class="form-control" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
                 </div>

@@ -1,0 +1,62 @@
+<%- include('../partials/header.ejs') %>
+<div class="custom-category-container">
+    <div style="width: auto;" class="custom-category-panel">
+        <div class="category-create-panel">
+            <h2 class="text-center mb-4">Açıklama Oluştur</h2>
+            <!-- Kategori Tab Oluşturma Formu -->
+
+            <!-- Kategori Oluşturma Formu -->
+            <form action="/admin/urunaciklamatipekle" method="POST">
+                <div class="form-group">
+                    <label for="desc_type">Ürün tipi:</label>
+                    <input type="text" class="form-control admin-panel-input" id="desc_type" maxlength="32" name="desc_type">
+                </div>
+                <div class="form-group">
+                    <label for="pile_frequency">Pile oranı:</label>
+                    <input type="text" class="form-control admin-panel-input" id="pile_frequency" maxlength="255" name="pile_frequency">
+                </div>
+                <div class="form-group">
+                    <label for="stitching">Dikiş:</label>
+                    <input type="text" class="form-control admin-panel-input" id="stitching" maxlength="255" name="stitching">
+                </div>
+                <div class="form-group">
+                    <label for="cleaning">Ürün Temizlik:</label>
+                    <input type="text" class="form-control admin-panel-input" id="cleaning" maxlength="255" name="cleaning">
+                </div>
+                <div class="form-group">
+                    <label for="warranty">Garanti:</label>
+                    <input type="text" class="form-control admin-panel-input" id="warranty" maxlength="255" name="warranty">
+                </div>
+                <div class="form-group">
+                    <label for="payment_options">Ödeme Seçenekleri:</label>
+                    <input type="text" class="form-control admin-panel-input" id="payment_options" maxlength="255" name="payment_options">
+                </div>
+                <div class="form-group">
+                    <label for="delivery_time">Tahmini Kargo:</label>
+                    <input type="text" class="form-control admin-panel-input" id="delivery_time" maxlength="255" name="delivery_time">
+                </div>
+                <div class="form-group">
+                    <label for="moisture_resistance">Neme dayanıklılık:</label>
+                    <input type="text" class="form-control admin-panel-input" id="moisture_resistance" maxlength="255" name="moisture_resistance">
+                </div>
+                <div class="form-group">
+                    <label for="product_composition">Ürün Detayları:</label>
+                    <input type="text" class="form-control admin-panel-input" id="product_composition" maxlength="255" name="product_composition">
+                </div>
+                <div class="form-group">
+                    <label for="installation_areas">Montaj Şekli:</label>
+                    <input type="text" class="form-control admin-panel-input" id="installation_areas" maxlength="255" name="installation_areas">
+                </div>
+                
+                <button type="submit" class="btn addbookbtn btn-primary">Oluştur</button>
+            </form>
+        </div>
+
+        <!-- Kategori Yönetim Paneli -->
+        <div style="margin-top: 50px;" class="category-management-panel">
+        </div>
+        <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
+    </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

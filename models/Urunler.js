@@ -39,6 +39,10 @@ const Urunler = sequelize.define('Urunler', {
         type: DataTypes.STRING,
         allowNull:true,
     },
+    product_color:{
+        type: DataTypes.STRING(11),
+        allowNull:true,
+    },
     urun_basligi: {
         type: DataTypes.STRING,
         allowNull: false,

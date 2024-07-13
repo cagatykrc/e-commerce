@@ -40,7 +40,7 @@ body {
   font-size: 1rem;
   background-color: #fff; 
   overflow-x: hidden;
-  max-width: 100dvh;
+  max-width: 100%;
 }
 .mobile-filter-open-area{
   display: none;
@@ -743,8 +743,8 @@ a{
       margin-bottom: 30px;
       position: relative;
       top: 0;
-      width: 248px;
-      height: 248px;
+      width: 25vw;
+      height: 25vw;
       object-fit: contain;
       -webkit-transition: .3s all ease;
       -o-transition: .3s all ease;

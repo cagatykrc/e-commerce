@@ -100,6 +100,19 @@ router.get('/duyuruolustur', async (req, res) => {
     res.render('admin/createAnnoucement', { userS, duyurular });
 });
 
+router.get('/urunaciklamatip', async (req, res) => {
+    const userS = req.session.user;
+
+    if (!(userS && userS.role === 'admin')) {
+        return res.render('404', { userS });
+    }
+
+    const duyurular = await Duyurular.findAll();
+
+    // Kullanıcı admin rolüne sahipse, sayfayı render et
+    res.render('admin/addProdDesc', { userS });
+});
+
 
 const uploadFolder = path.join(__dirname, '..', 'public', 'uploads');
 const storage = multer.diskStorage({
@@ -148,7 +161,32 @@ router.get('/urunolustur', verifyToken, async (req, res) => {
         return res.status(500).send('Internal Server Error');
     }
 });
+router.post('/urunaciklamatipekle', verifyToken,async(req,res) => {
+    const userS = req.session.user;
+    const {desc_type, pile_frequency, stitching, cleaning, warranty, payment_options, delivery_time, moisture_resistance, product_composition, installation_areas} = req.body;
+    
+    if (userS && userS.role === 'admin') {
 
+        const productdescadd = await productDesc.create({
+            desc_type,
+            pile_frequency,
+            stitching,
+            cleaning,
+            warranty,
+            payment_options,
+            delivery_time,
+            moisture_resistance,
+            product_composition,
+            installation_areas,
+
+        });
+        const ipAddress = req.socket.remoteAddress;
+        logger.info(userS.username+' '+'Açıklama Oluşturdu: '+ipAddress +'  //'+now);
+        res.redirect('/admin/urunaciklamatip');
+    } else {
+        res.redirect('/');
+    }
+});
 
 router.post('/duyuruolustur', verifyToken,async(req,res) => {
     const userS = req.session.user;
@@ -170,6 +208,7 @@ router.post('/duyuruolustur', verifyToken,async(req,res) => {
         res.redirect('/');
     }
 });
+
 router.post('/duyurusil', verifyToken, async (req, res) => {
     const userS = req.session.user;
 
@@ -639,6 +678,9 @@ router.post('/:kategoritabId/kategoritabsil', verifyToken, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+
+
 
 
 module.exports=router;
