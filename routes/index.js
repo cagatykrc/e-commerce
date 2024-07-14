@@ -47,7 +47,6 @@ const connectRedis = async () => {
 
 
 // Initial connection to Redis
-connectRedis().catch((err) => console.error('Initial Redis connect error: ', err));
 
 // Nodemailer transporter
 
@@ -125,7 +124,7 @@ router.get('/', async (req, res) => {
       productType = await Kategorilertab.findByPk(1, {
         include: [{ model: Kategoriler, as: 'kategoriler' }]
       });
-      await redisClient.setex('productType', 300, JSON.stringify(productType)); // 1 saat
+      await redisClient.set('productType', JSON.stringify(productType), {EX:60*5}); // 1 saat
     }
     
     if (!urunler) {
@@ -134,7 +133,7 @@ router.get('/', async (req, res) => {
         order:[['createdAt','DESC']],
         limit:12,
       });
-      await redisClient.setex('urunler', 300, JSON.stringify(urunler)); // 1 saat
+      await redisClient.set('urunler', JSON.stringify(urunler), {EX:60*5}); // 1 saat
     }
     
     if (!newProducts) {
@@ -143,12 +142,12 @@ router.get('/', async (req, res) => {
         order: [['createdAt', 'DESC']],
         limit: 8
       });
-      await redisClient.setex('newProducts', 300, JSON.stringify(newProducts)); // 1 saat
+      await redisClient.set('newProducts', JSON.stringify(newProducts), {EX:60*5}); // 1 saat
     }
     
     if (!duyurular) {
       duyurular = await Duyurular.findAll();
-      await redisClient.setex('duyurular', 300, JSON.stringify(duyurular)); // 1 saat
+      await redisClient.set('duyurular', JSON.stringify(duyurular), {EX:60*5}); // 1 saat
     }
     
     if (!kategoriTabs) {
@@ -156,7 +155,7 @@ router.get('/', async (req, res) => {
         include: [{ model: Kategoriler, as: 'kategoriler' }],
         order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
       });
-      await redisClient.setex('kategoriTabs', 300, JSON.stringify(kategoriTabs)); // 1 saat
+      await redisClient.set('kategoriTabs', JSON.stringify(kategoriTabs), {EX:60*5}); // 1 saat
     }
     
     if (!kanatperdeProducts) {
@@ -166,7 +165,7 @@ router.get('/', async (req, res) => {
         order:[['createdAt', 'DESC']],
         limit:8
       });
-      await redisClient.setex('kanatperdeProducts', 300, JSON.stringify(kanatperdeProducts)); // 1 saat
+      await redisClient.set('kanatperdeProducts', JSON.stringify(kanatperdeProducts), {EX:60*5}); // 1 saat
     }
     
     res.render('index', {
