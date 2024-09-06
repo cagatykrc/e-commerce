@@ -4,20 +4,26 @@
 <div class="header-category-area">
     <div class="category-curtain-types">
         <ul class="category-curtains-ul">
-            <% productType.kategoriler.forEach(curtainc => { %>
-                <li class="category-curtains-li">
-                    <a class="category-curtain-a" href="/urunler?kategoriID=<%=curtainc.category_low%>" title="<%=curtainc.kategori_ad%>"><%=curtainc.kategori_ad %></a>
-                </li>
-            <% }); %>
+            <% if (productType && productType.kategoriler) { %>
+                <% productType.kategoriler.forEach(curtainc => { %>
+                    <li class="category-curtains-li">
+                        <a class="category-curtain-a" href="/urunler?kategoriID=<%= curtainc.category_low %>" title="<%= curtainc.kategori_ad %>"><%= curtainc.kategori_ad %></a>
+                    </li>
+                <% }); %>
+            <% } else { %>
+                <li>No categories available.</li>
+            <% } %>
         </ul>
     </div>
 </div>
 
+
 <div class="banner-hero">
-    <div class="banner-container">
-        <img src="/images/open-banner.png" alt="Open Banner" class="">
-        <p><a href="/urunler" class="btn btn-white-outline">Daha fazla</a></p>
-    </div>
+    <a href="/urunler" class="btn btn-white-outline">
+        <div class="banner-container">
+            <img src="/images/open-banner.png" alt="Open Banner" class="small-image image-rounded object-fill">
+        </div>
+    </a>
 </div>
 
 <!-- Start Product Section -->
@@ -57,25 +63,59 @@
                     <i class="fa-solid fa-angle-right angle-right"></i>
                 </div>
             </div>
-            <!-- End New Products Slider -->
-            <div class="ads-area">
-                <div class="ads-divs">
-                    <div class="ads-first">
-                        <div class="banner-discount">
-                            <span>Sepette %25'e varan indirim</span>
+
+            <section id="latest-collection">
+                <div class="container">
+                  <div class="product-collection row">
+                    <div class="col-lg-7 col-md-12 left-content">
+                      <div class="collection-item">
+                        <div class="products-thumb">
+                          <img src="images/collection-item1.jpg" alt="collection item" class="large-image image-rounded">
                         </div>
-                        <div class="banner-ad-title">Fon Perdelerde İndirim</div>
-                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=kanatperde">Şimdi Al</a></div>
-                    </div>
-                    <div class="ads-second">
-                        <div class="banner-discount">
-                            <span>Sepette %30'a varan indirim</span>
+                        <div class="col-lg-6 col-md-6 col-sm-6 product-entry">
+                          <div class="categories">ilgi çekici</div>
+                          <h3 class="item-title">plise perde</h3>
+                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dignissim massa diam elementum.</p>
+                          <div class="btn-wrap">
+                            <a href="shop.html" class="d-flex align-items-center">daha fazla <i class="icon icon-arrow-io"></i>
+                            </a>
+                          </div>
                         </div>
-                        <div class="banner-ad-title">Stor Perdelerde İndirim</div>
-                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=storperde">Şimdi Al</a></div>
+                      </div>
                     </div>
+                    <div class="col-lg-5 col-md-12 right-content flex-wrap">
+                      <div class="collection-item top-item">
+                        <div class="products-thumb">
+                          <img src="images/collection-item2.jpg" alt="collection item" class="small-image image-rounded">
+                        </div>
+                        <div class="col-md-6 product-entry">
+                          <div class="categories">Önerilen Koleksiyon</div>
+                          <h3 class="item-title">stor perde.</h3>
+                          <div class="btn-wrap">
+                            <a href="shop.html" class="d-flex align-items-center">daha fazla <i class="icon icon-arrow-io"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="collection-item bottom-item">
+                        <div class="products-thumb">
+                          <img src="images/collection-item3.jpg" alt="collection item" class="small-image image-rounded">
+                        </div>
+                        <div class="col-md-6 product-entry">
+                          <div class="categories">Evinize şıklık katsın.</div>
+                          <h3 class="item-title">Fon Perde.</h3>
+                          <div class="btn-wrap">
+                            <a href="shop.html" class="d-flex align-items-center">daha fazla <i class="icon icon-arrow-io"></i>
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </section>
+            <!-- End New Products Slider -->
+           
             <!-- Start Best Sellers Slider -->
             <div class="product-slider">
                 <div class="product-slider-title">
@@ -107,7 +147,24 @@
                 </div>
             </div>
             <!-- End Best Sellers Slider -->
-
+            <div class="ads-area">
+                <div class="ads-divs">
+                    <div class="ads-first">
+                        <div class="banner-discount">
+                            <span>Sepette %25'e varan indirim</span>
+                        </div>
+                        <div class="banner-ad-title">Fon Perdelerde İndirim</div>
+                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=kanatperde">Şimdi Al</a></div>
+                    </div>
+                    <div class="ads-second">
+                        <div class="banner-discount">
+                            <span>Sepette %30'a varan indirim</span>
+                        </div>
+                        <div class="banner-ad-title">Stor Perdelerde İndirim</div>
+                        <div class="banner-button"><a class="btn" href="/urunler?kategoriID=storperde">Şimdi Al</a></div>
+                    </div>
+                </div>
+            </div>
 
             <div class="product-slider">
                 <div class="product-slider-title">
