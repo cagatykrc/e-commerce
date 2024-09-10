@@ -1,221 +1,134 @@
 <%- include('./partials/header.ejs') %>
-<style>
-html, body {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  color: #000;
-  font-family: "Inter", sans-serif;
-}
-.discount-rate {
-  background-color: #3c8526;
-  color: white;
-  width: 40px;
-  font-size: 18px;
-  font-family: sans-serif;
-  padding-left: 2px;
-  padding-right: 2px;
-  align-items: center;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  margin-right: 5px;
-}
-.calculate-price span, .price-page-area span {
-  font-size: 18px;
-  color: #000;
-  font-weight: 700;
-}
-.product-span-area {
-  border: 1px solid #e1ded9;
-  background-color: #fff;
-  display: inline-block;
-  padding: 10px;
-  border-radius: .8rem;
-  display: flex;
-  align-items: center;
-}
-span.calculate-price {
-  color: #000;
-  font-weight: 700;
-}
-.product-p-p {
-  color: #000;
-  font-weight: 700;
-  font-size: 24px;
-} 
-.product-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 15px;
-  display: flex;
-  flex-direction: row;
-}
-.product-span-area {
-  display: flex;
-  flex-direction: row;
-}
-.float-price-area {
-  display: flex;
-  flex-direction: column-reverse;
-  line-height: 16px;
-}
-.table-title{
-  text-transform: uppercase;
-}
-@media (max-width: 998px) {
-  .product-container {
-    flex-direction: column; 
-  }
-  .left-column {
-    display: flex;
-    justify-content: center;
-  }
-  .float-price-area {
-    display: flex;
-    flex-direction: column;
-  }
-  .product-span-area {
-    display: flex;
-    flex-direction: row;
-  }
-}
-</style>
 
-<main class="product-container">
+<main class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
   <!-- Left Column / Product Image -->
-  <div class="left-column">
-    <img data-image="red" class="product-image active" src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>">
+  <div class="flex-1 flex justify-center">
+    <img data-image="red" class="w-full max-w-md rounded-lg shadow-lg" src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>">
   </div>
 
   <!-- Right Column -->
-  <div class="right-column">
+  <div class="flex-1 space-y-6">
     <!-- Product Description -->
-    <div class="product-description">
-      <span><%= urun.kategoriler.kategori_ad %></span>
-      <h1><%= urun.urun_basligi %></h1>
-      <p><%= urun.aciklama %></p>
+    <div>
+      <span class="text-gray-500 text-sm"><%= urun.kategoriler.kategori_ad %></span>
+      <h1 class="text-3xl font-bold mt-2"><%= urun.urun_basligi %></h1>
+      <p class="text-gray-700 mt-4"><%= urun.aciklama %></p>
     </div>
 
     <!-- Product Configuration -->
-    <div class="product-configuration">
+    <div class="bg-white p-6 rounded-lg shadow-md">
       <form id="orderForm" action="/<%= urun.urun_id %>/sepetekle" method="POST">
-        <div class="cable-config">
-          <input type="hidden" name="urunId" value="<%= urun.urun_id %>">
-          <h1>Sipariş Seçenekleri</h1>
-          <span>Ölçü Bilgileri 'cm' cinsinden</span>
-          <div class="cable-choose">
-            <div class="height-area">
-              <label for="height">Boy (cm):</label>
-              <select name="height" id="height" class="form-control" required>
-              </select>
-            </div>
-            <div class="width-area">
-              <label for="width">En (cm):</label>
-              <select name="width" id="width" class="form-control" required>
-            </div>
+        <input type="hidden" name="urunId" value="<%= urun.urun_id %>">
+        <h2 class="text-xl font-semibold">Sipariş Seçenekleri</h2>
+        <p class="text-gray-600 mt-1">Ölçü Bilgileri 'cm' cinsinden</p>
+        <div class="mt-4 space-y-4">
+          <div>
+            <label for="height" class="block text-sm font-medium text-gray-700">Boy (cm):</label>
+            <select name="height" id="height" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" required>
             </select>
-            <span class="calculate-price">Toplam fiyat: <span id="totalPrice">₺0</span></span><br>
           </div>
-          <a href="/cok-sorulan-sorular#curtain-measure">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a><br>
-          <span>Takmatik Seçimi</span>
-          <div class="cable-choose">
-            <input type="button" class="form-control" value="Metal Klips">
-            <input type="button" class="form-control" value="Plastik Klips">
+          <div>
+            <label for="width" class="block text-sm font-medium text-gray-700">En (cm):</label>
+            <select name="width" id="width" class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" required>
+            </select>
           </div>
+          <span class="text-lg font-semibold">Toplam fiyat: <span id="totalPrice">₺0</span></span>
+          <a href="/cok-sorulan-sorular#curtain-measure" class="text-primary-600 hover:underline">Ölçü nedir? En ve Boy Ölçüsü Nasıl Alınır</a>
         </div>
+        <span class="block mt-4 text-gray-700 font-semibold">Takmatik Seçimi</span>
+        <div class="mt-2 flex gap-4">
+          <button type="button" class="w-full bg-gray-200 py-2 rounded-lg shadow-md hover:bg-gray-300">Metal Klips</button>
+          <button type="button" class="w-full bg-gray-200 py-2 rounded-lg shadow-md hover:bg-gray-300">Plastik Klips</button>
+        </div>
+        <div class="mt-6">
+          <input type="submit" value="Sepete ekle" class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+        </div>
+      </form>
     </div>
 
     <!-- Product Pricing -->
-    <div class="product-page-price">
-      <div class="product-span-area">
+    <div class="mt-6">
+      <div class="flex items-center gap-3">
         <% if (discountRate > 8) { %>
-        <div class="discount-rate">
-          <span style="color: #fff;">%<%= discountRate.toFixed(0) %></span>
+        <div class="bg-green-600 text-white text-center text-sm font-semibold w-12 h-12 flex items-center justify-center rounded-full">
+          %<%= discountRate.toFixed(0) %>
         </div>
         <% } %>
-        <div class="float-price-area">
+        <div class="flex flex-col">
           <% if (urun.discount_price) { %>
-          <div class="price-page-area">
-            <span style="color: #6a6a6a; margin-right: 8px;" class="product-p-p"><strike>₺<%= urun.discount_price %></strike></span>
-            <span class="product-p-p">₺<%= urun.product_price %></span>
+          <div class="flex items-center gap-2">
+            <span class="text-gray-500 line-through">₺<%= urun.discount_price %></span>
+            <span class="text-xl font-bold text-gray-900">₺<%= urun.product_price %></span>
           </div>
           <% } else { %>
-            <span class="product-p-p">₺<%= urun.product_price %></span>
+          <span class="text-xl font-bold text-gray-900">₺<%= urun.product_price %></span>
           <% } %>
         </div>
       </div>
-      <div class="product-price-add-cart">
-        <input type="submit" value="Sepete ekle" class="cart-btn">
-      </div>
     </div>
-    </form>
   </div>
 </main>
-<div class="container">
-  <div class="product-description-container">
-    <h2>Açıklama</h2>
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <% if (urun.productdesc) { %>
-          <thead class="thead-dark">
 
-            <tr> 
-              <td>
-                <div class="table-title"><%=urun.kategoriler.kategori_ad%> Ürün Özellikleri</div>
-              </td> 
+<div class="max-w-7xl mx-auto px-4 py-6">
+  <div class="bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-2xl font-semibold mb-4">Açıklama</h2>
+    <% if (urun.productdesc) { %>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"><%= urun.kategoriler.kategori_ad %> Ürün Özellikleri</th>
           </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Markası: </td>
-              <td><%=urun.productdesc.brand%></td>
-            </tr>
-            <tr>
-            <td>Pile Sıklığı: </td>
-            <td><%=urun.productdesc.pile_frequency%></td>
-            </tr>
-            <tr>
-              <td>Dikiş: </td>
-              <td><%=urun.productdesc.stitching%></td>
-            </tr>
-            <tr>
-              <td>Ürün Temizlik: </td>
-              <td><%=urun.productdesc.cleaning%></td>
-            </tr>
-            <tr>
-              <td>Renk: </td>
-              <td><%=urun.productdesc.color%></td>
-            </tr>
-            <tr>
-              <td>Garanti: </td>
-              <td><%=urun.productdesc.warranty%></td>
-            </tr>
-            <tr>
-              <td>Ödeme Seçenekleri: </td>
-              <td><%=urun.productdesc.payment_options%></td>
-            </tr>
-            <tr>
-              <td>Tahmini Kargo: </td>
-              <td><%=urun.productdesc.delivery_time%></td>
-            </tr>
-            <tr>
-              <td>Neme Dayanıklılık: </td>
-              <td><%=urun.productdesc.moisture_resistance%></td>
-            </tr>
-            <tr>
-              <td>Ürün Detayları: </td>
-              <td><%=urun.productdesc.product_composition%></td>
-            </tr>
-            <tr>
-              <td>Montaj Şekli: </td>
-              <td><%=urun.productdesc.installation_areas%></td>
-            </tr>
-          </tbody>
-        <% } %>
-        
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Markası:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.brand %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Pile Sıklığı:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.pile_frequency %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Dikiş:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.stitching %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Ürün Temizlik:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.cleaning %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Renk:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.color %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Garanti:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.warranty %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Ödeme Seçenekleri:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.payment_options %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Tahmini Kargo:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.delivery_time %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Neme Dayanıklılık:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.moisture_resistance %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Ürün Detayları:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.product_composition %></td>
+          </tr>
+          <tr>
+            <td class="px-6 py-4 whitespace-nowrap">Montaj Şekli:</td>
+            <td class="px-6 py-4 whitespace-nowrap"><%= urun.productdesc.installation_areas %></td>
+          </tr>
+        </tbody>
       </table>
     </div>
+    <% } %>
   </div>
 </div>
 
@@ -224,41 +137,37 @@ span.calculate-price {
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-
-  
   function populateSelect(elementId, start, end) {
-              const selectElement = document.getElementById(elementId);
-              for (let i = start; i <= end; i++) {
-                  const option = document.createElement("option");
-                  option.value = i;
-                  option.textContent = i;  // textContent kullanarak XSS açığını önleyin
-                  selectElement.appendChild(option);
-              }
-          }
-  
-          // Boy için 50'den 400 cm'ye kadar olan aralığı doldur
-          populateSelect("height", 50, 400);
-  
-          // En için 30'dan 300 cm'ye kadar olan aralığı doldur
-          populateSelect("width", 30, 300);
-  
-  
-  
-$(document).ready(function() {
-  function calculateTotalPrice() {
-    const height = parseFloat($('#height').val());
-    const width = parseFloat($('#width').val());
-    const productPrice = parseFloat('<%= urun.product_price %>');
-
-    if (!isNaN(height) && !isNaN(width)) {
-      const squareMeters = (height * width) / 10000;
-      const totalPrice = squareMeters * productPrice;
-      $('#totalPrice').text(`₺${totalPrice.toFixed(2)}`);
-    } else {
-      $('#totalPrice').text('₺0');
+    const selectElement = document.getElementById(elementId);
+    for (let i = start; i <= end; i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = i;
+      selectElement.appendChild(option);
     }
   }
 
-  $('#height, #width').on('input', calculateTotalPrice);
-});
+  // Boy için 50'den 400 cm'ye kadar olan aralığı doldur
+  populateSelect("height", 50, 400);
+
+  // En için 30'dan 300 cm'ye kadar olan aralığı doldur
+  populateSelect("width", 30, 300);
+
+  $(document).ready(function() {
+    function calculateTotalPrice() {
+      const height = parseFloat($('#height').val());
+      const width = parseFloat($('#width').val());
+      const productPrice = parseFloat('<%= urun.product_price %>');
+
+      if (!isNaN(height) && !isNaN(width)) {
+        const squareMeters = (height * width) / 10000;
+        const totalPrice = squareMeters * productPrice;
+        $('#totalPrice').text(`₺${totalPrice.toFixed(2)}`);
+      } else {
+        $('#totalPrice').text('₺0');
+      }
+    }
+
+    $('#height, #width').on('input', calculateTotalPrice);
+  });
 </script>

@@ -165,7 +165,7 @@ a {
   top: 50%;
 }
 .product-slider-title{
-  margin-bottom: 64px;
+  margin-bottom: 24px;
   display: flex;
   flex-direction: row;
   text-align: center;
@@ -251,6 +251,12 @@ img {
   font-size: 3.2em;
   width: 80%;
   margin: 0;
+}
+@media  screen and (min-width: 1200px) 
+{
+  .shop-categories-navbar{
+    display: none;
+  }
 }
 @media screen and (max-width: 1200px) {
   #latest-collection .right-content {
@@ -1775,7 +1781,6 @@ textarea {
       font-family: "DM Sans", sans-serif;
   }
   .shop-categories-navbar{
-    display: flex;
     justify-content: space-between;
     padding: 18px 19px 18px 29px;
     font-size: 16px;
@@ -2010,9 +2015,7 @@ textarea {
   #sort-area-active{
     display: none;
   }
-  .shop-categories-navbar{
-    display: none;
-  }
+
   @media (max-width:998px) {
     .order-page{
       width: 100%;
