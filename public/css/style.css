@@ -652,7 +652,6 @@ ul.custom-navbar-cta{
   flex-direction: row;
   display: flex;
   justify-content: center;
-  margin-top: 12px;
 }
 .custom-navbar-cta i{
   font-size: 18px;
