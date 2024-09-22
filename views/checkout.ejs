@@ -1,64 +1,268 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
-<div class="main">
-    <form class="submitorderform" action="/odeme/" method="post">
-        <h2>Ödeme Bilgileri</h2>
-        <div class="form-group">
-            <label for="firstname">İsim: </label>
-            <input class="form-control" id="firstname" type="text" name="firstname" required value="<%=userDetails.first_name%>">
-        </div>
-        <div class="form-group">
-            <label for="lastname">Soyisim: </label>
-            <input class="form-control" id="lastname" type="text" name="lastname" required value="<%=userDetails.last_name%>">
-        </div>
-        <div class="form-group">
-            <label for="email">Email: </label>
-            <input class="form-control" id="email" type="text" name="email" required value="<%=userDetails.email%>">
-        </div>
-        <div class="form-group">
-            <label for="address">Adres: </label>
-            <textarea class="form-control" id="address" name="address" required value="<%=userDetails.address%>"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="phone">Telefon: </label>
-            <input class="form-control" type="text" id="phone" name="phone" required value="<%=userDetails.phone%>">
-        </div>
-    <div class="col-md-6 pl-5">
-        <div class="row">
-            <div class="col-md-7">
-                <div class="row">
-                    <div class="col-md-12 text-right border-bottom mb-5">
-                        <h3 class="text-black h4 text-uppercase">Toplam</h3>
-                    </div>
+<div class="container m-auto">
+<section class="bg-white py-8 antialiased  md:py-16">
+    <form action="/odeme/" class="mx-auto max-w-screen-xl px-4 2xl:px-0" method="post">
+      <ol class="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-500  sm:text-base">
+        <li class="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200  sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
+          <span class="flex items-center after:mx-2 after:text-gray-200 after:content-['/']sm:after:hidden">
+            <svg class="me-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Sepet
+          </span>
+        </li>
+  
+        <li class="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
+          <span class="flex items-center after:mx-2 after:text-gray-200 after:content-['/'] sm:after:hidden">
+            <svg class="me-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            Sipariş
+          </span>
+        </li>
+  
+        <li class="flex shrink-0 items-center">
+          <svg class="me-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          Ödeme Tamamlaması
+        </li>
+      </ol>
+  
+      <div class="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+        <div class="min-w-0 flex-1 space-y-8">
+          <div class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-900 ">Teslimat Detayları</h2>
+  
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label for="your_name" class="mb-2 block text-sm font-medium text-gray-900 "> Ad </label>
+                <input type="text" name="firstname" id="your_name" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="İsim" required />
+              </div>
+              <div>
+                <label for="your_last" class="mb-2 block text-sm font-medium text-gray-900 "> Soyad </label>
+                <input type="text" name="lastname" id="your_last" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="Soyisim" required />
+              </div>
+  
+              <div>
+                <label for="your_email" class="mb-2 block text-sm font-medium text-gray-900 "> E-posta* </label>
+                <input type="email" name="email" id="your_email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="email@posta.com" value="<%=userDetails.email%>" required />
+              </div>
+  
+              <div>
+                <div class="mb-2 flex items-center gap-2">
+                  <label for="select-country-input-3" class="block text-sm font-medium text-gray-900"> Ülke* </label>
                 </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <span class="text-black">Ara Toplam</span>
+                <select id="select-country-input-3" name="country" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                  <option selected>Türkiye</option>
+
+                </select>
+              </div>
+  
+              <div>
+                <div class="mb-2 flex items-center gap-2">
+                  <label for="select-city-input-3" class="block text-sm font-medium text-gray-900 "> İl* </label>
                 </div>
-            <div class="col-md-6 text-right">
-                <strong class="text-black">₺<%= totalprice.toFixed(2) %></strong><br>
+                <select id="select-city-input-3" name="city" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                  <option selected>Ağrı</option>
+                  <option value="NY">New York</option>
+                  <option value="LA">Los Angeles</option>
+                  <option value="CH">Chicago</option>
+                  <option value="HU">Houston</option>
+                </select>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center gap-2">
+                  <label for="select-district-input-3" name="district" class="block text-sm font-medium text-gray-900 "> İlçe* </label>
+                </div>
+                <select id="select-district-input-3" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                  <option selected>Doğubayazıt</option>
+                  <option value="NY">New York</option>
+                  <option value="LA">Los Angeles</option>
+                  <option value="CH">Chicago</option>
+                  <option value="HU">Houston</option>
+                </select>
+              </div>
+  
+              <div>
+                <label for="phone-input-3" class="mb-2 block text-sm font-medium text-gray-900 "> Telefon Numarası* </label>
+                <div class="flex items-center">
+                  <button id="dropdown-phone-button-3" data-dropdown-toggle="dropdown-phone-3" class="z-10 inline-flex shrink-0 items-center rounded-s-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus:ring-4 focus:ring-gray-100 " type="button">
+                    <svg class="w-5 h-5" enable-background="new 0 0 512 512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><circle cx="256" cy="256" fill="#d80027" r="256"/><g fill="#f0f0f0"><path d="m245.518 209.186 21.005 28.945 34.017-11.03-21.038 28.92 21.002 28.944-34.005-11.072-21.037 28.92.022-35.761-34.006-11.072 34.018-11.03z"/><path d="m188.194 328.348c-39.956 0-72.348-32.392-72.348-72.348s32.392-72.348 72.348-72.348c12.458 0 24.18 3.151 34.414 8.696-16.055-15.702-38.012-25.392-62.24-25.392-49.178 0-89.043 39.866-89.043 89.043s39.866 89.043 89.043 89.043c24.23 0 46.186-9.691 62.24-25.392-10.234 5.547-21.956 8.698-34.414 8.698z"/></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></svg>
+                    +90
+                    <svg class="-me-0.5 ms-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div id="dropdown-phone-3" class="z-10 hidden w-56 divide-y divide-gray-100 rounded-lg bg-white shadow ">
+                    <ul class="p-2 text-sm font-medium text-gray-700 " aria-labelledby="dropdown-phone-button-2">
+                      <li>
+                        <button type="button" class="inline-flex w-full rounded-md px-3 py-2 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-900 " role="menuitem">
+                          <span class="inline-flex items-center">
+                            <svg fill="none" aria-hidden="true" class="me-2 h-4 w-4" viewBox="0 0 20 15">
+                              <rect width="19.6" height="14" y=".5" fill="#fff" rx="2" />
+                              <mask id="a" style="mask-type:luminance" width="20" height="15" x="0" y="0" maskUnits="userSpaceOnUse">
+                                <rect width="19.6" height="14" y=".5" fill="#fff" rx="2" />
+                              </mask>
+                              <g mask="url(#a)">
+                                <path fill="#D02F44" fill-rule="evenodd" d="M19.6.5H0v.933h19.6V.5zm0 1.867H0V3.3h19.6v-.933zM0 4.233h19.6v.934H0v-.934zM19.6 6.1H0v.933h19.6V6.1zM0 7.967h19.6V8.9H0v-.933zm19.6 1.866H0v.934h19.6v-.934zM0 11.7h19.6v.933H0V11.7zm19.6 1.867H0v.933h19.6v-.933z" clip-rule="evenodd" />
+                                <path fill="#46467F" d="M0 .5h8.4v6.533H0z" />
+                                <g filter="url(#filter0_d_343_121520)">
+                                  <path
+                                    fill="url(#paint0_linear_343_121520)"
+                                    fill-rule="evenodd"
+                                    d="M1.867 1.9a.467.467 0 11-.934 0 .467.467 0 01.934 0zm1.866 0a.467.467 0 11-.933 0 .467.467 0 01.933 0zm1.4.467a.467.467 0 100-.934.467.467 0 000 .934zM7.467 1.9a.467.467 0 11-.934 0 .467.467 0 01.934 0zM2.333 3.3a.467.467 0 100-.933.467.467 0 000 .933zm2.334-.467a.467.467 0 11-.934 0 .467.467 0 01.934 0zm1.4.467a.467.467 0 100-.933.467.467 0 000 .933zm1.4.467a.467.467 0 11-.934 0 .467.467 0 01.934 0zm-2.334.466a.467.467 0 100-.933.467.467 0 000 .933zm-1.4-.466a.467.467 0 11-.933 0 .467.467 0 01.933 0zM1.4 4.233a.467.467 0 100-.933.467.467 0 000 .933zm1.4.467a.467.467 0 11-.933 0 .467.467 0 01.933 0zm1.4.467a.467.467 0 100-.934.467.467 0 000 .934zM6.533 4.7a.467.467 0 11-.933 0 .467.467 0 01.933 0zM7 6.1a.467.467 0 100-.933.467.467 0 000 .933zm-1.4-.467a.467.467 0 11-.933 0 .467.467 0 01.933 0zM3.267 6.1a.467.467 0 100-.933.467.467 0 000 .933zm-1.4-.467a.467.467 0 11-.934 0 .467.467 0 01.934 0z"
+                                    clip-rule="evenodd"
+                                  />
+                                </g>
+                              </g>
+                              <defs>
+                                <linearGradient id="paint0_linear_343_121520" x1=".933" x2=".933" y1="1.433" y2="6.1" gradientUnits="userSpaceOnUse">
+                                  <stop stop-color="#fff" />
+                                  <stop offset="1" stop-color="#F0F0F0" />
+                                </linearGradient>
+                                <filter id="filter0_d_343_121520" width="6.533" height="5.667" x=".933" y="1.433" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+                                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                  <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+                                  <feOffset dy="1" />
+                                  <feColorMatrix values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.06 0" />
+                                  <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_343_121520" />
+                                  <feBlend in="SourceGraphic" in2="effect1_dropShadow_343_121520" result="shape" />
+                                </filter>
+                              </defs>
+                            </svg>
+                            Türkiye (+90)
+                          </span>
+                        </button>
+                      </li>
+                      
+                    </ul>
+                  </div>
+                  <div class="relative w-full">
+                    <input type="text" name="phone" id="phone-input" class="z-20 block w-full rounded-e-lg border border-s-0 border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500" pattern="" placeholder="5550001122" required />
+                  </div>
+                </div>
+              </div>
+  
+  
+              <div>
+                <label for="address" class="mb-2 block text-sm font-medium text-gray-900"> Adres* </label>
+                <p class="text-sm">Kargonuzun size sorunsuz bir şekilde ulaşabilmesi için mahalle, cadde, sokak, bina gibi detay bilgileri eksiksiz girdiğinizden emin olun.</p>
+                <textarea type="text" name="address" id="address" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500" placeholder="Cadde, mahalle sokak ve diğer bilgileri giriniz." required ></textarea>
+              </div>
+              <div>
+                <label for="address-title" class="mb-2 block text-sm font-medium text-gray-900"> Adres Başlığı* </label>
+                <input type="text" name="adress-title" id="address-title" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500" placeholder="İş yeri, Ev ve Aparatman isimeri " required />
+              </div>
+  
+            </div>
+          </div>
+  
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-900 ">Ödeme</h3>
+  
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                <div class="flex items-start">
+                  <div class="flex h-5 items-center">
+                    <input id="paytr" aria-describedby="paytr-text" type="radio" name="payment-method" value="" class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 " checked />
+                  </div>
+  
+                  <div class="ms-4 text-sm">
+                    <label for="paytr" class="font-medium leading-none text-gray-900 "> PayTR </label>
+                    <p id="paytr-text" class="mt-1 text-xs font-normal text-gray-500 ">PayTR altyapısı ile Güvenilir Ödeme</p>
+                  </div>
+                </div>
+              </div>
+  
+
+  
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                <div class="flex items-start">
+                  <div class="flex h-5 items-center">
+                    <input id="shopier" aria-describedby="shopier-text" type="radio" name="payment-method" value="" class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600  " />
+                  </div>
+  
+                  <div class="ms-4 text-sm">
+                    <label for="shopier" class="font-medium leading-none text-gray-900 "> Shopier </label>
+                    <p id="shopier-text" class="mt-1 text-xs font-normal text-gray-500 ">Shopier Altyapısı ile Güvenli Ödeme</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-900 ">Kargo Seçenekleri</h3>
+  
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                <div class="flex items-start">
+                  <div class="flex h-5 items-center">
+                    <input id="ptt" aria-describedby="ptt-text" type="radio" name="delivery-method" value="" class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 " checked />
+                  </div>
+  
+                  <div class="ms-4 text-sm">
+                    <label for="ptt" class="font-medium leading-none text-gray-900"> ₺85 - PTT </label>
+                    <p id="ptt-text" class="mt-1 text-xs font-normal text-gray-500">Ertesi Gün Kargo</p>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4 ps-4 ">
+                <div class="flex items-start">
+                  <div class="flex h-5 items-center">
+                    <input id="surat" aria-describedby="surat-text" type="radio" name="delivery-method" value="" class="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600" />
+                  </div>
+  
+                  <div class="ms-4 text-sm">
+                    <label for="surat" class="font-medium leading-none text-gray-900 "> ₺100 - Sürat Kargo </label>
+                    <p id="surat-text" class="mt-1 text-xs font-normal text-gray-500 ">Ertesi Gün Kargo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
+          <div class="flow-root">
+            <div class="-my-3 divide-y divide-gray-200 ">
+              <dl class="flex items-center justify-between gap-4 py-3">
+                <dt class="text-base font-normal text-gray-500 ">Ara Toplam</dt>
+                <dd class="text-base font-medium text-gray-900">₺<%= totalprice.toFixed(2) %></dd>
+              </dl>
+              
+              
+              
+              <dl class="flex items-center justify-between gap-4 py-3">
+                  <dt class="text-base font-normal text-gray-500 ">8% KDV</dt>
+                  <dd class="text-base font-medium text-gray-900 ">₺<%= withoutkdv.toFixed(2) %></dd>
+                </dl>
+                <% if(discount){ %>
+                <dl class="flex items-center justify-between gap-4 py-3">
+                  <dt class="text-base font-normal text-gray-500 ">İndirim</dt>
+                  <dd class="text-base font-medium text-green-500">-₺<%= discount %></dd>
+                </dl>
+                <% }else{} %>
+  
+              <dl class="flex items-center justify-between gap-4 py-3">
+                <dt class="text-base font-bold text-gray-900 ">Toplam</dt>
+                <dd class="text-base font-bold text-gray-900 ">₺<%= totalCartPrice %></dd>
+              </dl>
+            </div>
+          </div>
+  
+          <div class="space-y-3">
+              <input type="checkbox" name="mesafelisatissozlesmesi" required id="sellpolicy">
+              <label class="spec-text text-sm" for="sellpolicy"><a class="a-text" href="/mesafeli-satis-sozlesmesi">Mesafeli satış sözleşmesini</a> okudum ve onaylıyorum</label>
+              <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-lime-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 ">Siparişi Tamamla</button>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <span class="text-black">İndirim Tutarı</span>
-            </div>
-            <div class="col-md-6 text-right">
-                <strong class="text-black"><strike>-₺<%= discount %></strike></strong>
-            </div>
-    </div>
-    <div class="row mb-5">
-        <div class="col-md-6">
-                <span class="text-black">Toplam</span>
-            </div>
-        <div class="col-md-6 text-right">
-            <strong class="text-black">₺<%= totalCartPrice %></strong>
-        </div>
-    </div>
-    <input type="checkbox" name="mesafelisatissozlesmesi" required id="sellpolicy">
-    <label class="spec-text" for="sellpolicy"><a class="a-text" href="/mesafeli-satis-sozlesmesi">Mesafeli satış sözleşmesini</a> okudum ve onaylıyorum</label>
-    <input class="btn btn-black btn-lg py-3 btn-block" type="submit" value="Siparişi Onayla">
-</form>
+      </div>
+    </form>
+  </section>
 </div>
 
 <%- include('./partials/footer.ejs') %>

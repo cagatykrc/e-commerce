@@ -3,106 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <meta name="description" content="Fatoş Perde - Kaliteli ve uygun fiyatlı perdeler. Açılışa özel indirim fırsatlarını kaçırmayın!">
+    <meta name="keywords" content="perde,fonperde,plise perde,stor perde, zebra perde,tül perde,perde modelleri, uygun fiyatlı perdeler, kaliteli perdeler">
+    <meta name="author" content="Fatoş Perde">
+    <!-- <link href="/css/bootstrap.min.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/tiny-slider.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="/favicon/favicon3.ico" />
-    <link href="css/tiny-slider.css" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="icon" type="image/x-icon" href="/images/logo.png">
+    <link href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="icomoon/icomoon.css">
+    <!-- <link rel="stylesheet" type="text/css" media="all" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="css/vendor.css">
     <script>
     $(document).ready(function(){
-         
+        // Any custom jQuery code
     });
     </script>
-    <title>YEDİTEPE KÜLTÜR VE SANAT DERGİSİ</title>
+    <title>Fatoş Perde - Kaliteli ve Uygun Fiyatlı Perdeler</title>
 </head>
 <body>
-    
-    <nav id="navbar" class="navbar">
-        <a href="/" class="logo">
-            <img src="/images/newLogoWhiteColorTransparent.png" class="hide-bg" alt="LOGO" height="95" width="98">
-        </a>
-        <input type="checkbox" id="toggler">
-        <label for="toggler"><i class="fa fa-bars"></i></label>
-        <div class="menu">
-            <ul class="list">
-                <% if (userS && userS.username) { %>
-                    <!-- Kullanıcı giriş yapmışsa -->
-                    <li class="navbar"><a href="/">Anasayfa</a></li>
-                    <li class="navbar"><a href="/hakkimizda">Hakkımızda</a></li>
-                    <li class="navbar"><a href="/iletisim">İletişim</a></li>
-                    <% if(userS && userS.role==='admin'){ %>
-                        <!-- Kullanıcı yöneticiyse -->
-                        <li class="item">
-                            <a class="navbar" href="/admin/Panel">Kontrol Paneli</a>
-                        </li>
-                        <% } %>
-                        <li class="navbar dropdown">
-                        <button class="dropdown-btn ">Merhaba, <%= userS.firstName %><i class='bx bxs-chevron-down arrow' ></i></button>
-                            <div class="dropdown-content">
-                                <a href="">
-                                    <form action="/auth/cikis" method="POST">
-                                        <button class="out-button">Çıkış yap</button>
-                                    </form>
-                                </a>
-                              </div>
-                        </li>
-                    
-                <% } else { %>
-                    <!-- Kullanıcı giriş yapmamışsa -->
-                    <li class="navbar"><a href="/">Anasayfa</a></li>
-                    <li class="navbar"><a href="/hakkimizda">Hakkımızda</a></li>
-                    <li class="navbar"><a href="/iletisim">İletişim</a></li>
-                    <li class="navbar navbar-link">
-                        <a class="item" href="/auth/giris">Giriş Yap</a>
-                    </li>
-                    <li class="navbar navbar-link-reg">
-                        <a class="item" href="/auth/kayit">Kayıt Ol</a>
-                    </li>
-                <% } %>
-            </ul>
+    <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+        <div class="navbar-header-d">
+            <span>Açılışa özel %50 indirim !!!</span>
         </div>
-    </nav>
-    <% if (typeof message !== 'undefined') {%>
-        <div class="notification-panel">
-            <div class="notification-panel-content">
-                <i class='bx bx-message-alt-error'></i>
-                <div style="color: rgb(248, 55, 55);" class="notification-comment"><p><%= message %></p></div>
+        <div class="container">
+            <div class="navbar-brand-area">
+                <div class="links-container">
+                    <!-- Links can be added here -->
+                </div>
+                <div class="navbar-brand">
+                    <label for="sidebar-active" class="content-center open-sidebar-button"><i class="fa-solid fa-bars"></i></label>
+                    <a class="navbar-brand-logo text-black" href="/">Fatoş Perde<span>.</span></a>
+                </div>
+            </div>
+            <div class="ftp-navbar flex-row flex" id="navbarsFurni">
+                <div class="left-nav-area flex-row">
+                    <input type="checkbox" name="" id="sidebar-active">
+                    <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0 flex flex-column lg:flex-row">
+                        <label class="close-sidebar-button" for="sidebar-active">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                        </label>
+                        
+                        <% if (typeof productType !== 'undefined' && productType) { %>
+                            <% if (!productType.kategoriler || productType.kategoriler.length === 0) { %>
+                                <div class="category-m-l">
+                                <p>Veri bulunamadı.</p>
+                                <% } else { %>
+                                    <li><a class="ftp-nav-link m-li" href="blog.html">YENİ ÜRÜNLER</a></li>
+                                    <li><a class="ftp-nav-link m-li" href="/iletisim">ÇOK SATANLAR</a></li>
+                                    <div class="shop-categories-filter flex">
+                                    <div class="shop-categories-navbar" onclick="toggleCategory('category-area')">
+                                        <h3 class="spec-text gap-2">Perdeler</h3>
+                                        <i class="fa-solid fa-plus"></i>
+                                    </div>
+                                    <div id="category-area" class="shop-categories-area">
+                                        <ul class="spec-ul">
+                                        <% productType.kategoriler.forEach(kategori => { %>
+                                            <li class="spec-li m-li"><a href="/urunler?kategoriID=<%=kategori.category_low%>"><%= kategori.kategori_ad %></a></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            </div>
+                            <% } %>
+                        <% } %>
+                        <script>
+                        function toggleCategory(id) {
+                            const element = document.getElementById(id);
+                            if (element.style.display === "block") {
+                                element.style.display = "none";
+                            } else {
+                                element.style.display = "block";
+                            }
+                        }
+                    </script>
+
+                        <li> <a class="ftp-nav-link head" href="/">Anasayfa</a></li> 
+                        <li><a class="ftp-nav-link" href="/urunler">Ürünler</a></li>
+                        <li><a class="ftp-nav-link" href="/hakkimizda">Hakkımızda</a></li>
+                        <li><a class="ftp-nav-link" href="/cok-sorulan-sorular">Destek</a></li>
+                        <li><a class="ftp-nav-link" href="/iletisim">İletişime Geçin</a></li>
+                        <% if (userS && userS.role === 'admin') { %>
+                        <li><a class="ftp-nav-link" href="/admin/panel">Admin</a></li>
+                        <% }else{} %>
+                    </ul>
+                </div>
+                <div class="right-nav-area">
+                    <ul class="custom-navbar-cta content-center items-center">
+                        <% if (!userS) {%>
+                            <li><a class="ftp-nav-link" href="/auth/giris"><i class="fa-regular fa-user"></i></a></li>
+                        <% }else { %>
+                            <li><a class="ftp-nav-link" href="/profil/"><i class="fa-regular fa-user"></i></a></li>
+
+                        <% } %>
+                        <li><a class="ftp-nav-link" href="/sepet"><i class="fa-solid fa-cart-shopping"></i></a></li>
+                    </ul>
+                </div>
             </div>
         </div>
-      <% } %>
-    <script>
-        var dropdown = document.getElementsByClassName("dropdown-btn");
-        var i;
-
-        for (i = 0; i < dropdown.length; i++) {
-        dropdown[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            var dropdownContent = document.querySelector('.dropdown-content');
-            if (dropdownContent.style.display === "unset") {
-            dropdownContent.style.display = "none";
-            } else {
-            dropdownContent.style.display = "unset";
-            }
-        });
-        } 
-
-
-
-        var prevScrollpos = window.pageYOffset;
-        window.onscroll = function() {
-        var currentScrollPos = window.pageYOffset;
-        if (prevScrollpos > currentScrollPos) {
-            document.getElementById("navbar").style.top = "0";
-        } else {
-            document.getElementById("navbar").style.top = "-100px";
-        }
-        prevScrollpos = currentScrollPos;
-        } 
-    </script>
+    </nav>
+    <div class="a-s"></div>
     
+    <script src="/js/custom.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-PbHX7of8LQQcdiBye2w2/kVfV1Kl3HHG9h8ncZnlD8zSKeGrSjt+7tj4oN2iC2w7" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-LdEtrbybOjcgoVfBExF8R3rOys2tp2sJEL8VPRla2r8QXG5BK8N9gE3CCOu9x1Gq" crossorigin="anonymous"></script>
-
 

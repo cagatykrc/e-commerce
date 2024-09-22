@@ -100,80 +100,65 @@ router.get('/', async (req, res) => {
   const userS = req.session.user;
 
   try {
-    // Redis istemcisinin bağlı olup olmadığını kontrol edin ve bağlayın
-    await connectRedis();
+    // Veritabanından verileri çek
+    const productType = await Kategorilertab.findByPk(1, {
+      include: [{ model: Kategoriler, as: 'kategoriler' }]
+    });
+    
+    const urunler = await Urunler.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [['createdAt', 'DESC']],
+      limit: 12,
+    });
+    
+    const newProducts = await Urunler.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [['createdAt', 'DESC']],
+      limit: 8
+    });
 
-    // Cache'ten veri kontrolü
-    let productType = await redisClient.get('productType');
-    let urunler = await redisClient.get('urunler');
-    let newProducts = await redisClient.get('newProducts');
-    let duyurular = await redisClient.get('duyurular');
-    let kategoriTabs = await redisClient.get('kategoriTabs');
-    let kanatperdeProducts = await redisClient.get('kanatperdeProducts');
+    const duyurular = await Duyurular.findAll();
+    
+    const kategoriTabs = await Kategorilertab.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
+    });
 
-    // Cache'deki veriler JSON string olarak saklanır, bu yüzden parse işlemi yapılmalı
-    if (productType) productType = JSON.parse(productType);
-    if (urunler) urunler = JSON.parse(urunler);
-    if (newProducts) newProducts = JSON.parse(newProducts);
-    if (duyurular) duyurular = JSON.parse(duyurular);
-    if (kategoriTabs) kategoriTabs = JSON.parse(kategoriTabs);
-    if (kanatperdeProducts) kanatperdeProducts = JSON.parse(kanatperdeProducts);
+    const kanatperdeProducts = await Urunler.findAll({
+      include: [{ model: Kategoriler, as: 'kategoriler' }],
+      where: { '$kategoriler.category_low$': 'kanatperde' },
+      order: [['createdAt', 'DESC']],
+      limit: 8
+    });
 
-    // Cache'de veri yoksa veritabanından çek ve cache'e kaydet
-    if (!productType) {
-      productType = await Kategorilertab.findByPk(1, {
-        include: [{ model: Kategoriler, as: 'kategoriler' }]
-      });
-      await redisClient.set('productType', JSON.stringify(productType), {EX:60*5}); // 1 saat
-    }
-    
-    if (!urunler) {
-      urunler = await Urunler.findAll({
-        include: [{ model: Kategoriler, as: 'kategoriler' }],
-        order:[['createdAt','DESC']],
-        limit:12,
-      });
-      await redisClient.set('urunler', JSON.stringify(urunler), {EX:60*5}); // 1 saat
-    }
-    
-    if (!newProducts) {
-      newProducts = await Urunler.findAll({
-        include: [{ model: Kategoriler, as: 'kategoriler' }],
-        order: [['createdAt', 'DESC']],
-        limit: 8
-      });
-      await redisClient.set('newProducts', JSON.stringify(newProducts), {EX:60*5}); // 1 saat
-    }
-    
-    if (!duyurular) {
-      duyurular = await Duyurular.findAll();
-      await redisClient.set('duyurular', JSON.stringify(duyurular), {EX:60*5}); // 1 saat
-    }
-    
-    if (!kategoriTabs) {
-      kategoriTabs = await Kategorilertab.findAll({
-        include: [{ model: Kategoriler, as: 'kategoriler' }],
-        order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
-      });
-      await redisClient.set('kategoriTabs', JSON.stringify(kategoriTabs), {EX:60*5}); // 1 saat
-    }
-    
-    if (!kanatperdeProducts) {
-      kanatperdeProducts = await Urunler.findAll({
-        include: [{ model: Kategoriler, as: 'kategoriler' }],
-        where: { '$kategoriler.category_low$': 'kanatperde' },
-        order:[['createdAt', 'DESC']],
-        limit:8
-      });
-      await redisClient.set('kanatperdeProducts', JSON.stringify(kanatperdeProducts), {EX:60*5}); // 1 saat
-    }
-    
+    // İndirim yüzdesini basit bir şekilde hesapla
+    const calculateDiscountPercentage = (product_price, discountPrice) => {
+      // Fiyat geçerli değilse 0 döner
+      if (discountPrice <= product_price) return 0; // İndirim yoksa 0 döner
+      return Math.floor(((discountPrice - product_price) / discountPrice) * 100); // Yüzde tam sayı olarak
+    };
+
+    const productsWithDiscounts = urunler.map(product => ({
+      ...product.toJSON(), // Sequelize nesnesini düzleştir
+      discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
+    }));
+    console.log(productsWithDiscounts);
+    const newProductsWithDiscounts = newProducts.map(product => ({
+      ...product.toJSON(),
+      discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
+    }));
+
+    const kanatperdeProductsWithDiscounts = kanatperdeProducts.map(product => ({
+      ...product.toJSON(),
+      discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
+    }));
+
     res.render('index', {
       duyurular,
       productType,
-      fonproduct: kanatperdeProducts,
-      newproducts: newProducts,
-      products: urunler,
+      fonproduct: kanatperdeProductsWithDiscounts,
+      newproducts: newProductsWithDiscounts,
+      products: productsWithDiscounts,
       userS,
       message
     });
@@ -182,6 +167,7 @@ router.get('/', async (req, res) => {
     return res.status(500).send('Internal Server Error');
   }
 });
+
 
 // Handle Redis client disconnection on app shutdown
 process.on('SIGINT', () => {
@@ -248,6 +234,8 @@ router.get('/urunler', async (req, res) => {
 
 // Sepet
 router.get('/sepet', async (req, res) => {
+  const notification = req.session.notification;
+  req.session.notification = null;
   if (!req.session.user) {
     return res.redirect('/auth/giris');
   }
@@ -289,11 +277,13 @@ router.get('/sepet', async (req, res) => {
     console.log(`Total Cart Price before discount: ${totalCartPrice}`);
     let totalprice = totalCartPrice;
     let discount = 0;
+    let withoutkdv = 0;
+    let kdvprice = 0;
     if (req.session.coupon) {
       const coupon = req.session.coupon;
-      const discountRate = parseFloat(coupon.discount_rate) || 0;
-      const discountPrice = parseFloat(coupon.discount_price) || 0;
-
+      const discountRate = parseFloat(coupon.discount_rate);
+      const discountPrice = parseFloat(coupon.discount_price);
+      console.log(discountRate, discountPrice);
       if (discountRate > 0) {
         // İndirim oranı (discountRate'in yüzde olarak olduğunu varsayıyoruz)
         discount = totalCartPrice * (discountRate / 100);
@@ -303,19 +293,24 @@ router.get('/sepet', async (req, res) => {
         discount = discountPrice;
         console.log(`Discount Price applied: ${discountPrice}`);
       }
-
       totalCartPrice -= discount;
       console.log(`Discount applied: ${discount}`);
       console.log(`Total Cart Price after discount: ${totalCartPrice}`);
     }
-
+    
     // Son kontroller
+    kdvprice = totalCartPrice*(1+8/100).toFixed(2)
+    withoutkdv = kdvprice -totalCartPrice
+    totalCartPrice = kdvprice
     totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
     discount = isNaN(discount) ? 0 : discount;
+    
+    console.log(`kdvprice: ${kdvprice}`);
+    console.log(discount);
 
     // Değerleri toFixed(2) ile formatlama
 
-    res.render('cart', { userS: req.session.user, userCart,totalprice, totalCartPrice, discount, coupon: req.session.coupon });
+    res.render('cart', { userS: req.session.user, userCart,totalprice, totalCartPrice, discount,kdvprice,withoutkdv,notification:notification, coupon: req.session.coupon });
   } catch (error) {
     console.error('Error:', error.message);
     res.status(500).json({ error: error.message });
@@ -373,6 +368,7 @@ router.post('/:cartid/sepetsil', async (req, res) => {
     if (userS && userS.id === cartItem.user_id) {
       await cartItem.destroy();
       console.log(`Sepet öğesi ${cartId} başarıyla silindi.`);
+
       return res.json({ success: true, message: 'Sepet öğesi başarıyla silindi.' });
     } else {
       console.error(`Kullanıcı ${userS.id} bu sepet öğesini silme yetkisine sahip değil.`);
@@ -389,12 +385,15 @@ router.post('/kuponUygula', async (req, res) => {
 
   try {
       if (req.session.coupon == coupon_code) {
-        return res.status(404).json({success:false, message:'Kupon zaten kullanımda'});
+        console.log('zatenvarmk');
+        req.session.notification = {title:'Kupon zaten kullanımda.',type:'danger'};
+        return res.redirect('/sepet');
       }
       const coupon = await Coupon.findOne({ where: { coupon_code } });
 
       if (!coupon) {
-          return res.status(404).json({ success: false, message: 'Geçersiz kupon kodu.' });
+        req.session.notification = {title:'Geçersiz kupon kodu.',type:'danger'};
+        return res.redirect('/sepet');
       }
 
       // Kuponu session'a kaydet
@@ -404,10 +403,12 @@ router.post('/kuponUygula', async (req, res) => {
           discount_price: coupon.discount_price
       };
 
-      res.json({ success: true, message: 'Kupon başarıyla uygulandı.' });
+      req.session.notification = {title:'Kupon başarıyla uygulandı.',type:'success'};
+      return res.redirect('/sepet');
   } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, message: 'Bir hata oluştu.' });
+      req.session.notification = {title:'Bir hata oluştu.',type:'danger'};
+
   }
 });
 

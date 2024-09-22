@@ -84,12 +84,14 @@ router.post("/siparisonayla", async (req, res) => {
       console.log(`Total Cart Price before discount: ${totalCartPrice}`);
       let totalprice = totalCartPrice;
       let discount = 0;
-  
+      let kdvprice = 0;
+      let withoutkdv = 0;
+      console.log(req.session.coupon);
       if (req.session.coupon) {
         const coupon = req.session.coupon;
-        const discountRate = parseFloat(coupon.discount_rate) || 0;
-        const discountPrice = parseFloat(coupon.discount_price) || 0;
-  
+        const discountRate = parseFloat(coupon.discount_rate);
+        const discountPrice = parseFloat(coupon.discount_price);
+        console.log(discountRate, discountPrice);
         if (discountRate > 0) {
           // İndirim oranı (discountRate'in yüzde olarak olduğunu varsayıyoruz)
           discount = totalCartPrice * (discountRate / 100);
@@ -99,13 +101,15 @@ router.post("/siparisonayla", async (req, res) => {
           discount = discountPrice;
           console.log(`Discount Price applied: ${discountPrice}`);
         }
-  
         totalCartPrice -= discount;
         console.log(`Discount applied: ${discount}`);
         console.log(`Total Cart Price after discount: ${totalCartPrice}`);
       }
   
       // Son kontroller
+      kdvprice = totalCartPrice*(1+8/100).toFixed(2)
+      withoutkdv = kdvprice -totalCartPrice
+      totalCartPrice = kdvprice
       totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
       discount = isNaN(discount) ? 0 : discount;
   
@@ -113,7 +117,7 @@ router.post("/siparisonayla", async (req, res) => {
       const totalCartPriceFormatted = totalCartPrice.toFixed(2);
       const discountFormatted = discount.toFixed(2);
   
-      res.render('checkout', { userS, userDetails: userDetails[0],totalprice, totalCartPrice: totalCartPriceFormatted, discount: discountFormatted, coupon: req.session.coupon });
+      res.render('checkout', { userS, userDetails: userDetails[0],totalprice, totalCartPrice: totalCartPriceFormatted, discount: discountFormatted,kdvprice,withoutkdv, coupon: req.session.coupon });
     } catch (error) {
       console.error('Error fetching user details and shopping cart:', error);
       res.status(500).send('Internal Server Error');
