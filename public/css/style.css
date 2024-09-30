@@ -808,10 +808,7 @@ h2{
     color: #212529;
     font-weight: 700;
    }
-   input[type='checkbox']{
-    border-radius: 5px;
-    margin: -.16rem 1.1875rem 0 0;
-   }
+
    .submitorderform input[type='checkbox']{
     margin: 0;
    }

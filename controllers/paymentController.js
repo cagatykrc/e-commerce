@@ -134,7 +134,7 @@ router.post("/", async function(req, res) {
         return res.redirect('/sepet');
     }
 
-    const { email, address, phone, firstname, lastname } = req.body;
+    const { email, address,country,district,city,address_title, phone, firstname, lastname } = req.body;
     const user_ip = req.ip;
     const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Benzersiz ve alfanumerik bir sipariş ID'si oluşturun
 
@@ -180,7 +180,8 @@ router.post("/", async function(req, res) {
     console.log(`Total Cart Price before discount: ${totalCartPrice}`);
     let totalprice = totalCartPrice;
     let discount = 0;
-
+    let withoutkdv = 0;
+    let kdvprice = 0;
     if (req.session.coupon) {
         const coupon = req.session.coupon;
         const discountRate = parseFloat(coupon.discount_rate) || 0;
@@ -198,12 +199,15 @@ router.post("/", async function(req, res) {
         console.log(`Discount applied: ${discount}`);
         console.log(`Total Cart Price after discount: ${totalCartPrice}`);
     }
-
+    kdvprice = totalCartPrice*(1+8/100).toFixed(2)
+    withoutkdv = kdvprice -totalCartPrice
+    totalCartPrice = kdvprice
     totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
     discount = isNaN(discount) ? 0 : discount;
 
     const user_basket = nodeBase64.encode(JSON.stringify(basket));
-    const payment_amount = totalCartPrice.toFixed(2) * 100;
+    const payment_amount = Math.round(totalCartPrice * 100);
+
 
     try {
         const orderItems = userCart.map(cartItem => ({
@@ -251,7 +255,7 @@ router.post("/", async function(req, res) {
             payment_amount: payment_amount,
             merchant_oid: merchant_oid,
             user_name: `${firstname} ${lastname}`,
-            user_address: address,
+            user_address: country+', '+ city+', '+district+', '+address+', '+address_title ,
             user_phone: phone,
             merchant_ok_url: 'http://184.72.145.255/odeme/odeme_basarili',
             merchant_fail_url: 'http://184.72.145.255/odeme/odeme_hata',
@@ -285,7 +289,7 @@ router.post("/", async function(req, res) {
 
 router.get("/odeme_basarili", async function (req,res) {
     const userS = req.session.user;
-    if (!userS) {
+    if (userS) {
         await ShoppingCart.destroy({
             where: { user_id: userS.id }
            });

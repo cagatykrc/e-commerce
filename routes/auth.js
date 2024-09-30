@@ -15,25 +15,28 @@ require('dotenv').config();
 // const limiterTwoRequests = createLimiter(2);
 // const limiterDefaultRequests = createLimiter(15);
 router.get('/giris', (req, res) => {
+  const notification = req.session.notification;
+  req.session.notification = null;
   const userS = req.session.user;
-
   if (userS) {
     return res.redirect('/');
   }
 
-  res.render('giris', { userS });
+  res.render('giris', { userS, notification:notification });
 });
 
 
 
 router.get('/kayit', (req, res) => {
+  const notification = req.session.notification;
+  req.session.notification = null;
   const userS = req.session.user;
 
   if (userS) {
     return res.redirect('/');
   }
 
-  res.render('kayit', { userS });
+  res.render('kayit', { userS, notification:notification });
 });
 
 
@@ -51,11 +54,13 @@ router.post('/kayit', postlimiter, async (req, res) => {
   });
 
   if (verifypassword !== password) {
-    return res.render('kayit',  {userS, message: 'Şifreler Uyuşmuyor.', messagecolor: '#FF0000'});
+    req.session.notification = {title:'Şifreler Uyuşmuyor.',type:'danger'};
+    return res.redirect('/auth/kayit')
   }
 
   if (existingUser) {
-    return res.render('kayit',  {userS, message: 'Bu kullanıcı adı veya e-posta zaten kullanımda', messagecolor: '#FF0000'});
+    req.session.notification = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
+    return res.redirect('/auth/kayit')
   }
 
   try {
@@ -111,13 +116,15 @@ router.post('/giris', postlimiter, async (req, res) => {
     });
 
     if (!user) {
-      return res.render('giris', { userS, message: 'Eposta bulunamadı', messagecolor: '#FF0000' });
+      req.session.notification = {title:'Eposta bulunamadı',type:'danger'};
+      return res.redirect('/auth/giris')
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.render('giris', { userS, message: 'Hatalı Şifre!', messagecolor: '#FF0000' });
+      req.session.notification = {title:'Hatalı Şifre!',type:'danger'};
+      return res.redirect('/auth/giris')
     }
 
     req.session.user = {
@@ -152,7 +159,8 @@ router.post('/cikis', (req, res) => {
   const userS = req.session.user;
 
   if (!userS) {
-      return res.redirect('/');
+    req.session.notification = {title:'Çıkış yapıldı',type:'success'};
+    return res.redirect('/')
   }
 
   req.session.destroy();

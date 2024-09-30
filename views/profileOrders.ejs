@@ -1,38 +1,59 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
-<div class="profile-main main">
-    <div class="profile-links">
-        <ul class="profile-ul">
-            <li class="profile-li"><a href="/profil/">Kişisel Bilgiler</a></li>
-            <li class="profile-li"><a href="/profil/siparislerim">Siparişlerim</a></li>
-            <li class="profile-li"><a href="/profil/adreslerim">Adreslerim</a></li>
-            <form action="/auth/cikis" method="post">
-                <li class="profile-li"><a href="/auth/cikis"><input class="danger-badge" type="submit" value="Çıkış Yap"></a></li>
 
-            </form>
-        </ul>
-    </div>
-    <div class="profile-container">
-        <div class="profile-title">
-            <h2>Siparişlerim</h2>
-        </div>
-            <%orders.forEach(order =>{%>
-                <div class="profile-order-cnt">
-                    <a href="/orders/<%= order.order_id %>">
-                        <div class="orders-page-title">
-                            <span>sipariş: #<%= order.order_id %></span>
-                            <span><strong>detaylar</strong></span>
+<div class="bg-white py-24">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row">
+            <!-- Profile Links -->
+            <div class="w-full lg:w-1/4 bg-white rounded-lg shadow-md p-6 mb-6 lg:mb-0">
+                <h3 class="text-lg font-semibold mb-4">Profil Menüsü</h3>
+                <ul class="space-y-2">
+                    <li><a href="/profil/" class="text-gray-700 hover:text-indigo-600">Kişisel Bilgiler</a></li>
+                    <li><a href="/profil/siparislerim" class="text-gray-700 hover:text-indigo-600">Siparişlerim</a></li>
+                    <li><a href="/profil/adreslerim" class="text-gray-700 hover:text-indigo-600">Adreslerim</a></li>
+                    <li>
+                        <form action="/auth/cikis" method="post">
+                            <button type="submit" class="w-full text-left text-red-600 hover:text-red-500">
+                                Çıkış Yap
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Profile Container -->
+            <div class="w-full lg:w-3/4 bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold mb-6">Siparişlerim</h2>
+                <% orders.forEach(order => { %>
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <a href="/siparisler/<%= order.order_id %>" class="flex justify-between items-center p-4 hover:bg-gray-100 transition duration-200 rounded-lg">
+                        <div>
+                            <div class="flex flex-row  lg:block">
+                                <p class="font-medium text-base leading-7 text-black ">Sipariş Kodu: <span
+                                    class="text-slate-950 uppercase">#<%=order.order_id%></p>
+                            </div>
+                            <div class="flex flex-row  lg:block">
+                                <p class="font-medium text-base leading-7 text-black ">Sipariş Tarihi: <span
+                                    class="text-slate-950"><%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></span></p>
+                            </div>
+                            <div class="flex flex-row  lg:block">
+                                <p class="font-medium text-base leading-7 text-black ">Toplam Tutar: <span
+                                    class="text-slate-950">₺<%= order.total_price %></span></p>
+                            </div>
+                            <div class="flex flex-row  lg:block">
+                                <p class="font-medium text-base leading-7 text-black "><span
+                                    class="text-slate-950">Durum:</span></p>
+                                <p
+                                    class="font-medium text-sm leading-6 whitespace-nowrap py-0.5 px-3 rounded-full lg:mt-3 bg-emerald-50 text-emerald-600">
+                                    <%= order.status %></p>
+                            </div>
                         </div>
-                        <div class="profile-order-content">
-                            <p><strong>Sipariş Tarihi:</strong> <%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %></p>
-                            <p><strong>Toplam Tutar:</strong> <%= order.total_price %> TL</p>
-                            <p><strong>Ödeme:</strong> <%= order.payment_status %></p>
-                            <p><strong>Durum:</strong> <%= order.status %></p>
-                        </div>
+                        <span class="text-slate-950 font-medium">Detaylar</span>
                     </a>
                 </div>
-           <% }); %>
-
+                <% }); %>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -55,7 +55,7 @@ const connectRedis = async () => {
 router.get('/hakkimizda', (req, res) => {
   res.render('about', { userS: req.session.user });
 });
-router.get('/cok-sorulan-sorular', (req, res) => {
+router.get('/sss', (req, res) => {
   res.render('maq', { userS: req.session.user });
 });
 
@@ -95,8 +95,8 @@ router.post('/contact', (req, res) => {
 
 // Routes
 router.get('/', async (req, res) => {
-  const message = req.session.message;
-  delete req.session.message;
+  const notification = req.session.notification;
+  req.session.notification = null;
   const userS = req.session.user;
 
   try {
@@ -160,7 +160,7 @@ router.get('/', async (req, res) => {
       newproducts: newProductsWithDiscounts,
       products: productsWithDiscounts,
       userS,
-      message
+      notification:notification
     });
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
@@ -413,7 +413,7 @@ router.post('/kuponUygula', async (req, res) => {
 });
 
 // Sipariş Detayları
-router.get('/orders/:orderId', async (req, res) => {
+router.get('/siparisler/:orderId', async (req, res) => {
   const orderId = req.params.orderId;
   const userS = req.session.user;
   try {

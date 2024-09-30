@@ -274,8 +274,15 @@ router.post('/kupon-olustur', async (req, res) => {
 });
 
 
+function generateProductId(category, uniqueId) {
+    const categoryInitial = category.charAt(0).toUpperCase(); // Kategorinin ilk harfini al
+    return `${categoryInitial}${uniqueId}`;
+}
+
 router.post('/urunolustur', verifyToken, upload.fields([
-    { name: 'resim', maxCount: 1 }
+    { name: 'resim', maxCount: 1 },
+    { name: 'resim2', maxCount: 1 },
+    { name: 'resim3', maxCount: 1 }
 ]), async (req, res) => {
     const userS = req.session.user;
 
@@ -284,8 +291,8 @@ router.post('/urunolustur', verifyToken, upload.fields([
     }
 
     const userID = req.session.user.id;
-    
-    const { baslik, price, aciklama, kategorisi, turu,productdesc_id } = req.body;
+
+    const { baslik, price, aciklama, kategorisi, turu, productdesc_id } = req.body;
     const urunAdi = baslik;  // Bu ürün adını dinamik olarak alın
     const slug = slugify(urunAdi);
 
@@ -295,18 +302,26 @@ router.post('/urunolustur', verifyToken, upload.fields([
     }
 
     const resimDosya = req.files['resim'][0];
+    const resimDosya2 = req.files['resim2'] ? req.files['resim2'][0].filename : null;
+    const resimDosya3 = req.files['resim3'] ? req.files['resim3'][0].filename : null;
 
     try {
+        // Benzersiz bir ID oluştur
+        const uniqueId = (baslik); // Veya başka bir yöntem
+        const productId = generateProductId(kategorisi, uniqueId);
+
         const result = await Urunler.create({
             aciklama,
             resim: resimDosya.filename,
+            resim2: resimDosya2,  // İkinci resim
+            resim3: resimDosya3,  // Üçüncü resim
             olusturan_user_id: userID,
             urun_basligi: baslik,
-            product_price: parseFloat(price).toFixed(2),  // Fiyatı ondalıklı sayıya çevir ve iki basamaklı hale getir
+            product_price: parseFloat(price).toFixed(2),
             category_low: kategorisi,
             urun_turu: turu,
             slug,
-            productdesc_id,
+            productdesc_id, // Ürün kimliğini ekle
         });
 
         const ipAddress = req.socket.remoteAddress;
@@ -318,6 +333,8 @@ router.post('/urunolustur', verifyToken, upload.fields([
         return res.status(500).send('Internal Server Error');
     }
 });
+
+module.exports = router;
 
 
 

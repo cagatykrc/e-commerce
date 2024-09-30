@@ -23,6 +23,14 @@ const Urunler = sequelize.define('Urunler', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    resim2: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    resim3: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     olusturan_user_id: {
         type: DataTypes.STRING,
         allowNull: true,
