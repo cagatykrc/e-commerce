@@ -15,28 +15,38 @@ require('dotenv').config();
 // const limiterTwoRequests = createLimiter(2);
 // const limiterDefaultRequests = createLimiter(15);
 router.get('/giris', (req, res) => {
-  const notification = req.session.notification;
-  req.session.notification = null;
+
   const userS = req.session.user;
   if (userS) {
     return res.redirect('/');
   }
 
-  res.render('giris', { userS, notification:notification });
+  const notification = req.session.notification;
+  if (req.session.notification) {
+    // Burada bildirimi HTML'de göster
+    res.render('giris', { notification:notification,userS });
+    delete req.session.notification; // Bildirimi gösterdikten sonra sil
+} else {
+    res.render('giris', {userS ,notification:notification}); // Normal render
+}
 });
 
 
 
 router.get('/kayit', (req, res) => {
-  const notification = req.session.notification;
-  req.session.notification = null;
   const userS = req.session.user;
 
   if (userS) {
     return res.redirect('/');
   }
-
-  res.render('kayit', { userS, notification:notification });
+  const notification = req.session.notification;
+  if (req.session.notification) {
+    // Burada bildirimi HTML'de göster
+    res.render('kayit', { notification:notification,userS });
+    delete req.session.notification; // Bildirimi gösterdikten sonra sil
+} else {
+    res.render('kayit', {userS ,notification:notification}); // Normal render
+}
 });
 
 
@@ -47,7 +57,6 @@ router.post('/kayit', postlimiter, async (req, res) => {
   const existingUser = await Users.findOne({
     where: {
       [Op.or]: [
-        { username: username },
         { email: email }
       ]
     }
@@ -87,10 +96,12 @@ const newUser = await Users.create({
 
     const ipAddress = req.socket.remoteAddress;
     logger.info(username + " Adında " + 'Kayıt Oluşturuldu: ' + ipAddress + '  //' + now);
-    res.redirect('/auth/giris');
+    req.session.notification = {title:'Başarıyla Kayıt Olundu.',type:'danger'};
+    return res.redirect('/auth/giris');
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Bir hata oluştu.' });
+    req.session.notification = {title:'Bir Hata Oluştu',type:'danger'};
+    return res.redirect('/auth/kayit')
   }
 });
 
@@ -124,7 +135,8 @@ router.post('/giris', postlimiter, async (req, res) => {
 
     if (!passwordMatch) {
       req.session.notification = {title:'Hatalı Şifre!',type:'danger'};
-      return res.redirect('/auth/giris')
+      res.redirect('/auth/giris')
+      return
     }
 
     req.session.user = {

@@ -192,16 +192,40 @@
               </dl>
               <% } %>
             </div>
-
-            <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 ">
-              <dt class="text-base font-bold text-gray-900 ">Toplam</dt>
-              <dd class="text-base font-bold text-gray-900 ">₺<%= totalCartPrice.toFixed(2) %></dd>
+            <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
+              <dt class="text-base font-bold text-gray-900">Toplam</dt>
+              <dd class="text-base font-bold text-gray-900">₺<%= totalCartPrice.toFixed(2) %></dd>
             </dl>
-          </div>
-          <form action="/odeme/siparisonayla" method="POST">
-            <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-lime-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 ">Siparişi Tamamla</button>
-
-          </form>
+            </div>
+            <form action="/odeme/siparisonayla" method="POST">
+              <button 
+                type="submit" 
+                id="purchaseButton" 
+                class="flex w-full items-center justify-center rounded-lg bg-lime-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300"
+                <%= totalCartPrice <= 0 ? 'disabled' : '' %>
+              >
+                Siparişi Tamamla
+              </button>
+            </form>
+            
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                const totalCartPrice = <%= totalCartPrice %>; // Sunucu tarafından gönderilen değişken
+                const purchaseButton = document.getElementById('purchaseButton');
+            
+                // Butonu devre dışı bırak veya etkinleştir
+                purchaseButton.disabled = totalCartPrice <= 0;
+            
+                // İstersen burada form submit kontrolü ekleyebilirsin
+                const form = document.querySelector('form');
+                form.addEventListener('submit', function(event) {
+                  if (totalCartPrice <= 0) {
+                    event.preventDefault(); // Formun gönderilmesini engelle
+                    alert('Toplam tutar 0 veya daha düşük olamaz.'); // Kullanıcıya bilgi ver
+                  }
+                });
+              });
+            </script>
 
           <div class="flex items-center justify-center gap-2">
             <span class="text-sm font-normal text-gray-500 "> ya da </span>

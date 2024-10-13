@@ -1,27 +1,37 @@
 <%- include('../partials/header.ejs') %>
-<div class="container">
-    <div style="margin-top: 64px;" class="card-body">
-        <div style="padding: 12px; border-radius: 12px;" class="card-header">
-            <h4 class="mb-0">Kontrol Paneli</h4>
-        </div>
-                    <div class="title">
-                        <% if(userS && userS.firstName){ %>
-                            <p>Merhaba, <%= userS.firstName %> Kontrol paneline hoş geldiniz.</p>
-                        <% } else { %>
-                            <p>Merhaba, Anonim Kontrol paneline hoş geldiniz.</p>
-                        <% } %>
-                </div>
-                <div class="admin-panel-bottom-body">
-                    <a href="/admin/urunolustur"><button class="mb-1 btn btn-primary">Ürün Oluştur</button></a>
-                    <a href="/admin/urunyonetim"><button class="mb-1 btn btn-primary">Ürün Paneli</button></a>
-                    <a href="/admin/kuponlar"><button class="mb-1 btn btn-primary">Kupon Paneli</button></a>
-                    <a href="/admin/kullaniciyonetim"><button class="mb-1 btn btn-primary">Kullanıcı Yetkileri</button></a>
-                    <a href="/admin/kategoriyonetim"><button class="mb-1 btn btn-primary">Kategori Seçenekleri</button></a>
-                    <a href="/admin/duyuruolustur"><button class="mb-1 btn btn-primary">Duyuru Oluştur</button></a>
-                    <a href="/admin/logizleme"><button class="mb-1 btn btn-primary">Log Geçmişi</button></a>
-                </div>
-                    <!-- Diğer içerikleri buraya ekleyebilirsiniz -->
-                </div>
+<div class="container mx-auto px-4">
+    <div class="mt-16">
+        <div class="bg-white shadow-md rounded-lg p-6">
+            <h4 class="text-xl font-semibold mb-4">Kontrol Paneli</h4>
+            <div class="title mb-6">
+                <% if(userS && userS.firstName){ %>
+                    <p class="text-gray-700">Merhaba, <%= userS.firstName %> Kontrol paneline hoş geldiniz.</p>
+                <% } else { %>
+                    <p class="text-gray-700">Merhaba, Anonim Kontrol paneline hoş geldiniz.</p>
+                <% } %>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/admin/urunolustur" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Ürün Oluştur</button>
+                </a>
+                <a href="/admin/urunyonetim" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Ürün Paneli</button>
+                </a>
+                <a href="/admin/kuponlar" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Kupon Paneli</button>
+                </a>
+                <a href="/admin/kullaniciyonetim" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Kullanıcı Yetkileri</button>
+                </a>
+                <a href="/admin/kategoriyonetim" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Kategori Seçenekleri</button>
+                </a>
+                <a href="/admin/duyuruolustur" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Duyuru Oluştur</button>
+                </a>
+                <a href="/admin/logizleme" class="block">
+                    <button class="w-full mb-2 bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Log Geçmişi</button>
+                </a>
             </div>
         </div>
     </div>

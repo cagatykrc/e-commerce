@@ -1,62 +1,56 @@
 <%- include('../partials/header.ejs') %>
 
-
-
-
-
-
-
-
-<div class="untree_co-section before-footer-section">
-        <div class="container">
-          <div class="row mb-5">
-            <form class="col-md-12" method="post">
-              <div class="site-blocks-table">
-                <table class="table">
-                  <thead>
-                    <tr>
-                        <th class="product-image">Görsel</th>
-                        <th class="product-name">Başlık</th>
-                        <th class="product-price">Fiyat</th>
-                        <th class="product-category">Kategori</th>
-                      <th class="product-remove">Düzenle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% urunler.forEach(urun => { %>
-                        <tr>
-                            <td class="product-thumbnail">
-                        <img src="/uploads/<%=urun.resim%>" alt="Image" class="img-fluid">
-                    </td>
-                      <td class="product-name">
-                          <h2 class="h5 text-black"><%=urun.urun_basligi%></h2>
-                        <span class="opacity-0"><%= urun.cart_id %></span>
-                    </td>
-                      <td>₺<%= urun.product_price %></td>
-                      <td>Stor Perde</td>
-                      <td>
-                        <a href="/admin/<%= urun.urun_id %>/duzenle"><button style="font-size: 1.2rem;" type="button" class="btn btn-black btn-sm remove-item"><i class="fa-regular fa-pen-to-square"></i></button></a>
-                        <button type="button" style="font-size: 1.2rem;" class="btn btn-black btn-sm remove-item" onclick="confirmDelete('<%= urun.urun_id %>')">X</button>
-                    </td>
-                    </tr>
-                    <% }); %>
-                  </tbody>
-                </table>
-              </div>
+<div class="container mx-auto px-4 mt-8">
+    <div class="untree_co-section before-footer-section">
+        <div class="mb-5">
+            <form method="post">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white shadow-md rounded-lg">
+                        <thead>
+                            <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                <th class="py-3 px-6 text-left">Görsel</th>
+                                <th class="py-3 px-6 text-left">Başlık</th>
+                                <th class="py-3 px-6 text-left">Fiyat</th>
+                                <th class="py-3 px-6 text-left">Kategori</th>
+                                <th class="py-3 px-6 text-left">Düzenle</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 text-sm font-light">
+                            <% urunler.forEach(urun => { %>
+                                <tr class="border-b border-gray-200 hover:bg-gray-100">
+                                    <td class="py-4 px-6 text-left">
+                                        <img src="/uploads/<%= urun.resim %>" alt="Image" class="w-16 h-16 object-cover rounded">
+                                    </td>
+                                    <td class="py-4 px-6 text-left">
+                                        <h2 class="text-lg font-semibold text-black"><%= urun.urun_basligi %></h2>
+                                        <span class="opacity-0"><%= urun.cart_id %></span>
+                                    </td>
+                                    <td class="py-4 px-6 text-left">₺<%= urun.product_price %></td>
+                                    <td class="py-4 px-6 text-left">Stor Perde</td>
+                                    <td class="py-4 px-6 text-left">
+                                        <a href="/admin/<%= urun.urun_id %>/duzenle" class="inline-block">
+                                            <button type="button" class="bg-blue-600 text-white font-semibold rounded-md px-2 py-1 text-sm">
+                                                <i class="fa-regular fa-pen-to-square text-white"></i>
+                                            </button>
+                                        </a>
+                                        <button type="button" class="bg-red-600 text-white font-semibold rounded-md px-2 py-1 text-sm ml-2" onclick="confirmDelete('<%= urun.urun_id %>')">X</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
             </form>
-          </div>
-          <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
-
-
-          
-
-
         </div>
+        <a href="/admin/panel">
+            <button class="mt-4 bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200">Geri</button>
+        </a>
+    </div>
+</div>
 
-        <script>
-            function confirmDelete(urunId) {
+<script>
+    function confirmDelete(urunId) {
         if (confirm('Emin misiniz?')) {
-            // Silme işlemi için POST isteği gönder
             fetch('/admin/' + urunId + '/sil', {
                 method: 'POST',
                 headers: {
@@ -66,8 +60,6 @@
             })
             .then(response => response.json())
             .then(data => {
-
-                // Başarılı bir şekilde silindiğinde sayfayı yenile veya başka bir işlem yapabilirsiniz.
                 window.location.reload();
             })
             .catch(error => {

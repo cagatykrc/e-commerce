@@ -1,70 +1,73 @@
 <%- include('../partials/header.ejs') %>
 
-<div style="padding: 12px;" class="container mt-4">
-    <div class="create-dergi">
-        <h1>Dergi Oluştur</h1>
+<div class="container mx-auto px-4 mt-8">
+    <div class="bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">Ürün Oluştur</h1>
         <form action="/admin/urunolustur" method="POST" enctype="multipart/form-data">
-
-            <div class="form-group">
-                <label for="baslik">Başlık:</label>
-                <input type="text" class="form-control admin-panel-input" id="baslik" maxlength="55" name="baslik" required>
-            </div>
-            <div class="form-group">
-                <label for="price">Fiyat:</label>
-                <input type="text" class="form-control admin-panel-input" id="price" name="price" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
+            
+            <div class="mb-4">
+                <label for="baslik" class="block text-sm font-medium text-gray-700">Başlık:</label>
+                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="baslik" maxlength="55" name="baslik" required>
             </div>
 
-            <div class="form-group">
-                <label for="aciklama">Açıklama:</label>
-                <textarea class="form-control admin-panel-input" id="aciklama" name="aciklama"></textarea>
+            <div class="mb-4">
+                <label for="price" class="block text-sm font-medium text-gray-700">Fiyat:</label>
+                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="price" name="price" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
             </div>
 
-            <div class="form-group">
-                <label for="turu">Türü:</label>
-                <input type="text" class="form-control admin-panel-input" id="turu" name="turu">
-            </div>
-            <div class="form-group">
-                <label for="color">Renk:</label>
-                <input type="text" class="form-control admin-panel-input" id="color" name="color">
+            <div class="mb-4">
+                <label for="aciklama" class="block text-sm font-medium text-gray-700">Açıklama:</label>
+                <textarea class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="aciklama" name="aciklama"></textarea>
             </div>
 
+            <div class="mb-4">
+                <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
+                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="turu" name="turu">
+            </div>
 
-            <div class="form-group">
-                <label for="kategorisi">Kategoriler:</label>
-                <select name="kategorisi" id="kategorisi" class="form-control admin-panel-input">
+            <div class="mb-4">
+                <label for="color" class="block text-sm font-medium text-gray-700">Renk:</label>
+                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color">
+            </div>
+
+            <div class="mb-4">
+                <label for="kategorisi" class="block text-sm font-medium text-gray-700">Kategoriler:</label>
+                <select name="kategorisi" id="kategorisi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                     <% kategoriler.forEach(kategori => { %>
                         <option value="<%= kategori.category_id %>"><%= kategori.kategori_ad %></option>
                     <% }); %>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="kategorisi">Açıklama:</label>
-                <select name="productdesc_id" id="productdesc_id" class="form-control admin-panel-input">
+            <div class="mb-4">
+                <label for="productdesc_id" class="block text-sm font-medium text-gray-700">Açıklama:</label>
+                <select name="productdesc_id" id="productdesc_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                     <% productdesc.forEach(desc => { %>
                         <option value="<%= desc.productdesc_id %>"><%= desc.desc_type %></option>
                     <% }); %>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="resim">Resim Dosyası:</label>
-                <input type="file" class="form-control admin-panel-input" id="resim" name="resim" required>
+            <div class="mb-4">
+                <label for="resim" class="block text-sm font-medium text-gray-700">Resim Dosyası:</label>
+                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim" name="resim" required>
             </div>
 
-            <div class="form-group">
-                <label for="resim2">2. Resim Dosyası:</label>
-                <input type="file" class="form-control admin-panel-input" id="resim2" name="resim2" required>
+            <div class="mb-4">
+                <label for="resim2" class="block text-sm font-medium text-gray-700">2. Resim Dosyası:</label>
+                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim2" name="resim2" required>
             </div>
 
-            <div class="form-group">
-                <label for="resim3">3. Resim Dosyası:</label>
-                <input type="file" class="form-control admin-panel-input" id="resim3" name="resim3" required>
+            <div class="mb-4">
+                <label for="resim3" class="block text-sm font-medium text-gray-700">3. Resim Dosyası:</label>
+                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim3" name="resim3" required>
             </div>
 
-            <button type="submit" class="btn addbookbtn btn-primary">Ürünü Oluştur</button>
+            <button type="submit" class="w-full mt-4 bg-slate-900 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Ürünü Oluştur</button>
         </form>
-        <a href="/admin/panel"><button class="btn btn-danger">Geri</button></a>
+        <a href="/admin/panel" class="block mt-4">
+            <button class="w-full bg-slate-950 text-white font-semibold py-2 rounded hover:bg-red-700 transition duration-200">Geri</button>
+        </a>
     </div>
 </div>
 

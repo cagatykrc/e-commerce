@@ -1,106 +1,77 @@
 <%- include('../partials/header.ejs') %>
 
-<style>
-    .edit-product-container {
-        display: flex;
-        flex-direction: row;
-        padding: 12px;
-    }
-    @media (max-width:992px){
-        .edit-product-container{
-            flex-direction: column;
-        }
-    }
-    .edit-product, .discount-area {
-        margin-top: 20px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-    }
-
-    .form-group, .mb-3 {
-        margin-bottom: 15px;
-    }
-
-    .btn {
-        margin-right: 10px;
-    }
-</style>
-
-<div class="container mt-4">
-    <div class="edit-product-container">
-        <div class="edit-product">
-            <h1>Dergi Düzenle</h1>
+<div class="container mx-auto px-4 mt-8">
+    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+        <div class="edit-product bg-white shadow-lg rounded-lg p-6 flex-1">
+            <h1 class="text-2xl font-bold mb-4">Dergi Düzenle</h1>
             <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
-                <div class="form-group">
+                <div class="mb-4">
                     <div class="resim-goster mt-4">
-                        <img src="/uploads/<%= urun.resim %>" alt="Dergi Kapağı" class="img-fluid">
+                        <img src="/uploads/<%= urun.resim %>" alt="Dergi Kapağı" class="w-2/5 rounded-md">
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="baslik" class="form-label">Başlık:</label>
-                    <input type="text" id="baslik" name="baslik" class="form-control" value="<%= urun.urun_basligi %>" required>
+                <div class="mb-4">
+                    <label for="baslik" class="block text-sm font-medium text-slate-950 ">Başlık:</label>
+                    <input type="text" id="baslik" name="baslik" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.urun_basligi %>" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="turu" class="form-label">Türü:</label>
-                    <input type="text" id="turu" name="turu" class="form-control" value="<%= urun.urun_turu %>" required>
+                <div class="mb-4">
+                    <label for="turu" class="block text-sm font-medium text-black">Türü:</label>
+                    <input type="text" id="turu" name="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.urun_turu %>" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="kategorisi">Kategoriler:</label>
-                    <select name="kategorisi" id="kategorisi" class="form-control">
+                <div class="mb-4">
+                    <label for="kategorisi" class="block text-sm font-medium text-black">Kategoriler:</label>
+                    <select name="kategorisi" id="kategorisi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                         <% kategoriler.forEach(kategori => { %>
                             <option value="<%= kategori.category_id %>" <%= urun.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
                         <% }); %>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="productdesc_id">Açıklama:</label>
-                    <select name="productdesc_id" id="productdesc_id" class="form-control">
+                <div class="mb-4">
+                    <label for="productdesc_id" class="block text-sm font-medium text-black">Açıklama:</label>
+                    <select name="productdesc_id" id="productdesc_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                         <% productdesc.forEach(desc => { %>
-                            <option value="<%=desc.productdesc_id %>" <%= urun.productdesc_id ==desc.productdesc_id ? 'selected' : '' %>><%=desc.desc_type %></option>
+                            <option value="<%= desc.productdesc_id %>" <%= urun.productdesc_id == desc.productdesc_id ? 'selected' : '' %>><%= desc.desc_type %></option>
                         <% }); %>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="aciklama" class="form-label">Açıklama:</label>
-                    <textarea id="aciklama" name="aciklama" class="form-control"><%= urun.aciklama %></textarea>
+                <div class="mb-4">
+                    <label for="aciklama" class="block text-sm font-medium text-black">Açıklama:</label>
+                    <textarea id="aciklama" name="aciklama" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"><%= urun.aciklama %></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label for="color" class="form-label">Renk:</label>
-                    <input type="text" class="form-control admin-panel-input" id="color" name="color" value="<%=urun.product_color%>">
+                <div class="mb-4">
+                    <label for="color" class="block text-sm font-medium text-black">Renk:</label>
+                    <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color" value="<%= urun.product_color %>">
                 </div>
 
-                <div class="form-group">
-                    <label for="price" class="form-label">Fiyat:</label>
-                    <input type="text" id="price" name="price" class="form-control" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
+                <div class="mb-4">
+                    <label for="price" class="block text-sm font-medium text-black">Fiyat:</label>
+                    <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="resim" class="form-label">Kapak Adı:</label>
-                    <input type="text" id="resim" name="resim" class="form-control" value="<%= urun.resim %>" required>
+                <div class="mb-4">
+                    <label for="resim" class="block text-sm font-medium text-black">Kapak Adı:</label>
+                    <input type="text" id="resim" name="resim" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.resim %>" required>
                 </div>
 
-                <!-- Diğer bilgileri ekle -->
-
-                <button type="submit" class="btn btn-primary">Dergiyi Düzenle</button>
-                <a class="btn btn-secondary mt-1" href="/admin/urunyonetim">Geri</a>
+                <button type="submit" class="mt-4 w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Dergiyi Düzenle</button>
+                <a class="mt-2 w-full block text-center text-blue-600 font-semibold" href="/admin/urunyonetim">Geri</a>
             </form>
         </div>
 
-        <div class="discount-area">
+        <div class="discount-area bg-white shadow-lg rounded-lg p-6">
+            <h2 class="text-xl font-bold mb-4">İndirim Uygula</h2>
             <form action="/admin/<%= urun.urun_id %>/indirim" method="post">
-                <div class="form-group">
-                    <label for="discount_price" class="form-label">İndirimli Fiyat:</label>
-                    <input type="number" name="discount_price" class="form-control" step="0.01" placeholder="İndirimli fiyatı girin">
+                <div class="mb-4">
+                    <label for="discount_price" class="block text-sm font-medium text-black">İndirimli Fiyat:</label>
+                    <input type="number" name="discount_price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" step="0.01" placeholder="İndirimli fiyatı girin">
                 </div>
-                <button class="btn btn-success" type="submit">İndirim Uygula</button>
+                <button class="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700 transition duration-200" type="submit">İndirim Uygula</button>
             </form>
         </div>
     </div>

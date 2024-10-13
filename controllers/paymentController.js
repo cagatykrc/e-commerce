@@ -36,6 +36,7 @@ router.post("/siparisonayla", async (req, res) => {
     if (!userS) {
       return res.redirect('/sepet');
     }
+
     
     try {
       const userDetails = await Users.findAll({
@@ -61,6 +62,9 @@ router.post("/siparisonayla", async (req, res) => {
           }]
         }]
       });
+      if(userCart < 0){
+        return res.redirect('/sepet')
+      }
       let totalCartPrice = 0;
     userCart.forEach(cartItem => {
       const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;

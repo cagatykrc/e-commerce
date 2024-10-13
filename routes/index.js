@@ -95,9 +95,9 @@ router.post('/contact', (req, res) => {
 
 // Routes
 router.get('/', async (req, res) => {
-  const notification = req.session.notification;
-  req.session.notification = null;
   const userS = req.session.user;
+  const notification = req.session.notification;
+
 
   try {
     // Veritabanından verileri çek
@@ -152,7 +152,19 @@ router.get('/', async (req, res) => {
       ...product.toJSON(),
       discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
     }));
-
+    if (req.session.notification) {
+      // Burada bildirimi HTML'de göster
+      res.render('index', {
+        duyurular,
+        productType,
+        fonproduct: kanatperdeProductsWithDiscounts,
+        newproducts: newProductsWithDiscounts,
+        products: productsWithDiscounts,
+        userS,
+        notification:notification
+      });
+      delete req.session.notification; // Bildirimi gösterdikten sonra sil
+  } else {
     res.render('index', {
       duyurular,
       productType,
@@ -161,7 +173,10 @@ router.get('/', async (req, res) => {
       products: productsWithDiscounts,
       userS,
       notification:notification
-    });
+    }); // Normal render
+    delete req.session.notification;
+  }
+
   } catch (error) {
     console.error('Ürün verilerini çekerken bir hata oluştu: ' + error);
     return res.status(500).send('Internal Server Error');

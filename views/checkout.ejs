@@ -47,7 +47,7 @@
   
               <div>
                 <label for="your_email" class="mb-2 block text-sm font-medium text-gray-900 "> E-posta* </label>
-                <input type="email" name="email" id="your_email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="email@posta.com" value="<%=userDetails.email%>" required />
+                <input type="email" name="email" id="your_email" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="email@posta.com" value="" required />
               </div>
   
               <div>
@@ -62,26 +62,18 @@
   
               <div>
                 <div class="mb-2 flex items-center gap-2">
-                  <label for="select-city-input-3" class="block text-sm font-medium text-gray-900 "> İl* </label>
+                  <label for="Iller" class="block text-sm font-medium text-gray-900 "> İl* </label>
                 </div>
-                <select id="select-city-input-3" name="city" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
-                  <option selected">Ağrı</option>
-                  <option value="NY">New York</option>
-                  <option value="LA">Los Angeles</option>
-                  <option value="CH">Chicago</option>
-                  <option value="HU">Houston</option>
+                <select id="Iller" name="city" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                  <option value="0">Lütfen Bir İl Seçiniz</option>
                 </select>
               </div>
               <div>
                 <div class="mb-2 flex items-center gap-2">
-                  <label for="select-district-input-3" name="district" class="block text-sm font-medium text-gray-900 "> İlçe* </label>
+                  <label for="Ilceler" name="district" class="block text-sm font-medium text-gray-900 "> İlçe* </label>
                 </div>
-                <select id="select-district-input-3" name="district" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
-                  <option selected value="Doğubayazıt">Doğubayazıt</option>
-                  <option value="NY">New York</option>
-                  <option value="LA">Los Angeles</option>
-                  <option value="CH">Chicago</option>
-                  <option value="HU">Houston</option>
+                <select id="Ilceler" name="district" disabled="disabled" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                  <option value="0">Lütfen Önce bir İl seçiniz</option>
                 </select>
               </div>
   
@@ -264,7 +256,7 @@
     </form>
   </section>
 </div>
-
+<script src="/js/shipmentcnf.js"></script>
 <%- include('./partials/footer.ejs') %>
 
 
