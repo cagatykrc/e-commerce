@@ -321,8 +321,9 @@ router.get('/sepet', async (req, res) => {
           console.log(`Total Cart Price after discount: ${totalCartPrice}`);
       }
       kdvprice = rawprice*(1+8/100).toFixed(2)
-      withoutkdv = kdvprice -totalCartPrice
-      totalCartPrice = kdvprice
+      const withoutkdv = kdvprice -rawprice
+      const total = totalCartPrice + withoutkdv
+      totalCartPrice = total
       totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
       discount = isNaN(discount) ? 0 : discount;
 

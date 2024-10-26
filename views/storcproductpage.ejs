@@ -7,13 +7,13 @@
         <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>t"
                     class="w-full h-auto rounded-lg shadow-md mb-4" id="mainImage">
         <div class="flex gap-4 py-4 justify-center overflow-x-auto">
+          <img src="/uploads/<%= urun.resim %>" alt="<%= urun.urun_basligi %>"
+                        class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
+                        onclick="changeImage(this.src)">
           <img src="/uploads/<%= urun.resim2 %>" alt="<%= urun.urun_basligi %>"
                         class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                         onclick="changeImage(this.src)">
           <img src="/uploads/<%= urun.resim3 %>" alt="<%= urun.urun_basligi %>"
-                        class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                        onclick="changeImage(this.src)">
-          <img src="/uploads/<%= urun.resim4 %>" alt="<%= urun.urun_basligi %>"
                         class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                         onclick="changeImage(this.src)">
         </div>

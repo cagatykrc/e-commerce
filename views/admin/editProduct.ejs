@@ -17,8 +17,11 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="turu" class="block text-sm font-medium text-black">Türü:</label>
-                    <input type="text" id="turu" name="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.urun_turu %>" required>
+                    <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
+                    <select name="turu" id="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
+                        <option value="1">Perde</option>
+                        <option value="0">Mekanik Perde</option>
+                    </select>
                 </div>
 
                 <div class="mb-4">
