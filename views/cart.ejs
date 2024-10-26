@@ -1,7 +1,18 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
 <%- include('./partials/notification.ejs')%>
+<% if(!userCart){%>
+  <section class="bg-white py-8 antialiased md:py-16 flex align-center justify-content-center h-60">
+    <div class="bgwhite width-30 height-30 m-auto">
+      <div class="flex justify-content-center align-center">
+        <i class="fa-solid fa-cart-shopping"></i>
 
+      </div>
+          
+      <h2 class="text-xl font-semibold text-slate-950 sm:text-2xl">Sepetinizde Ürün Bulunmamaktadır.</h2>
+    </div>
+  </section>
+  <% }else{ %>
 <section class="bg-white py-8 antialiased  md:py-16">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 class="text-xl font-semibold text-gray-900  sm:text-2xl">Alışveriş Sepeti</h2>
@@ -33,12 +44,27 @@
                   </button>
                 </div>
                 <div class="text-end md:order-4 md:w-32">
-                  <% if(cartItem.Urunler.discount_price) { %>
-                  <p class="text-base font-bold text-gray-900 "><strike>₺<%=cartItem.Urunler.discount_price%></strike><br>₺<%= cartItem.Urunler.product_price %></p>
-                  <% }else{ %>
-                    <p class="text-base font-bold text-gray-900 "><br>₺<%= cartItem.Urunler.product_price %></p>
-                    <% } %>
+                  <% if (cartItem.Urunler.discount_price) { %>
+                    <p class="text-base font-bold text-gray-900 ">
+                      <strike>₺<%= cartItem.Urunler.discount_price %></strike><br>₺<%= cartItem.Urunler.product_price %>
+                    </p>
+                    <p class="text-base font-bold text-gray-900 ">
+                      <br>₺<%= cartItem.Urunler.product_price %></p>
+                  <% } else { %>
+                    <p class="text-base font-bold text-gray-900 ">
+                      <br>₺<%= cartItem.Urunler.product_price %></p>
+                  <% } %>
+                  
+                  <% 
+                    const quantity = parseFloat(cartItem.quantity) || 1; // Miktar değeri
+                    const unitPrice = (cartItem.total_price / quantity).toFixed(2); // Birim fiyatı hesapla
+                  %>
+                  
+                  <p class="text-base font-bold text-gray-900 ">
+                    Ürüne Düşen Fiyat: ₺<%= unitPrice %>
+                  </p>
                 </div>
+                
               </div>
 
               <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
@@ -179,7 +205,7 @@
             <div class="space-y-2">
               <dl class="flex items-center justify-between gap-4">
                 <dt class="text-base font-normal text-gray-500 ">Tutar</dt>
-                <dd class="text-base font-medium text-gray-900 ">₺<%= totalprice.toFixed(2) %></dd>
+                <dd class="text-base font-medium text-gray-900 ">₺<%= rawprice %></dd>
               </dl>
               <dl class="flex items-center justify-between gap-4">
                 <dt class="text-base font-normal text-gray-500 ">%8 KDV</dt>
@@ -251,7 +277,7 @@
     </div>
   </div>
 </section>
-    
+    <% } %>
 <script>
   document.getElementById('apply-coupon').addEventListener('click', async () => {
       const couponCode = document.getElementById('coupon').value;

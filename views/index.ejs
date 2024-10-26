@@ -1,8 +1,8 @@
-<%- include('./partials/header.ejs') %>
+<%- include('./partials/indexheader.ejs') %>
 <%- include('./partials/loader.ejs') %>
 <%- include('./partials/notification.ejs') %>
 
-<div class="header-category-area">
+<!-- <div class="header-category-area">
     <div class="category-curtain-types">
         <ul class="category-curtains-ul">
             <% if (productType && productType.kategoriler) { %>
@@ -16,17 +16,106 @@
             <% } %>
         </ul>
     </div>
+</div> -->
+<!-- Slider -->
+<div x-data="{
+    slides: [
+        {
+            imgSrc: 'https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp',
+            imgAlt: 'Vibrant abstract painting with swirling blue and light pink hues on a canvas.',
+        },
+        {
+            imgSrc: 'https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp',
+            imgAlt: 'Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.',
+        },
+        {
+            imgSrc: '/images/open-banner.png',
+            imgAlt: 'Vibrant abstract painting with swirling blue and purple hues on a canvas.',
+        },
+    ],
+    currentSlideIndex: 1,
+    touchStartX: null,
+    touchEndX: null,
+    swipeThreshold: 50,
+    autoSlideInterval: null,
+
+    previous() {
+        if (this.currentSlideIndex > 1) {
+            this.currentSlideIndex = this.currentSlideIndex - 1;
+        } else {
+            this.currentSlideIndex = this.slides.length;
+        }
+    },
+    next() {
+        if (this.currentSlideIndex < this.slides.length) {
+            this.currentSlideIndex = this.currentSlideIndex + 1;
+        } else {
+            this.currentSlideIndex = 1;
+        }
+    },
+    handleTouchStart(event) {
+        this.touchStartX = event.touches[0].clientX;
+    },
+    handleTouchMove(event) {
+        this.touchEndX = event.touches[0].clientX;
+    },
+    handleTouchEnd() {
+        if (this.touchEndX) {
+            if (this.touchStartX - this.touchEndX > this.swipeThreshold) {
+                this.next();
+            }
+            if (this.touchStartX - this.touchEndX < -this.swipeThreshold) {
+                this.previous();
+            }
+            this.touchStartX = null;
+            this.touchEndX = null;
+        }
+    },
+    startAutoSlide() {
+        this.autoSlideInterval = setInterval(() => {
+            this.next();
+        }, 3000); // 3 saniye
+    },
+    stopAutoSlide() {
+        clearInterval(this.autoSlideInterval);
+    }
+}" class="relative w-full overflow-hidden" x-init="startAutoSlide" x-on:mouseenter="stopAutoSlide" x-on:mouseleave="startAutoSlide">
+
+    <!-- previous button -->
+    <button type="button" class="absolute left-5 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center  p-2 text-neutral-600 transition hover:bg-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:outline-offset-0 " aria-label="previous slide" x-on:click="previous()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="3" class="size-5 md:size-6 pr-0.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+    </button>
+
+    <!-- next button -->
+    <button type="button" class="absolute right-5 top-1/2 z-20 flex rounded-full -translate-y-1/2 items-center justify-center  p-2 text-neutral-600 transition hover:bg-white/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:outline-offset-0 " aria-label="next slide" x-on:click="next()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="3" class="size-5 md:size-6 pl-0.5" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>
+    </button>
+
+    <!-- slides -->
+    <div class="relative min-h-[70svh] w-full" x-on:touchstart="handleTouchStart($event)" x-on:touchmove="handleTouchMove($event)" x-on:touchend="handleTouchEnd()">
+        <template x-for="(slide, index) in slides">
+            <div x-show="currentSlideIndex == index + 1" class="absolute inset-0" x-transition.opacity.duration.700ms>
+                <img class="absolute w-full h-full inset-0 object-cover text-neutral-600 dark:text-neutral-300" x-bind:src="slide.imgSrc" x-bind:alt="slide.imgAlt" />
+            </div>
+        </template>
+    </div>
+
+    <div class="absolute rounded-md bottom-3 md:bottom-5 left-1/2 z-20 flex -translate-x-1/2 gap-4 md:gap-3 px-1.5 py-1 md:px-2" role="group" aria-label="slides" >
+    <template x-for="(slide, index) in slides" :key="index">
+        <button class="size-2 cursor-pointer rounded-full transition" x-on:click="currentSlideIndex = index + 1" 
+                x-bind:class="[currentSlideIndex === index + 1 ? 'bg-neutral-300' : 'bg-neutral-300/50']"
+                x-bind:aria-label="'slide ' + (index + 1)"></button>
+    </template>
 </div>
 
 
-<div class="banner-hero">
-    <a href="/urunler" class="btn btn-white-outline">
-        <div class="banner-container">
-            <img src="/images/open-banner.png" alt="Open Banner" class="small-image image-rounded object-fill">
-        </div>
-    </a>
 </div>
 
+<!-- End Slider -->
 <!-- Start Product Section -->
 <div class="product-section p-5">
     <div class="container">
@@ -39,46 +128,46 @@
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
                     <% products.forEach(urun => { %>
-                        <div class="relative inline-block m-2 w-full max-w-xs flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+                        <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
                                 <img class="object-cover" src="/uploads/<%= urun.resim %>" alt="product image" />
                                 <%if (urun.discountPercentage>1) { %>
-                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
+                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-base font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
                                 <% }else{} %>
                                     
                             </a>
                             <div class="mt-4 px-5 pb-5">
                                 <a href="/urun/<%= urun.slug  %>">
-                                    <h5 class="text-xl tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
-                                    <span class="product-price-unit">
-                                        <% if (urun.kategoriler && ['storperde', 'pliseperde', 'zebraperde'].includes(urun.kategoriler.category_low)) { %>
+                                    <h5 class="text-l tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
+                                    <span class="product-price-unit text-sm lg:text-xl">
+                                        <% if (urun.urun_turu === 0) { %>
                                             Metrekare fiyatı
-                                        <% } else { %>
+                                        <% } else if (urun.urun_turu === 1) { %>
                                             Metre fiyatı
                                         <% } %>
                                     </span><br>
                                 </a>
-                                <div class="mt-2 mb-5 flex items-center justify-between">
+                                <div class="mt-2 mb-5 lg:h-8 h-12 flex items-center justify-between">
 
                                     <p>
                                     <% if(urun.discount_price) { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <span class="text-sm text-slate-900 line-through">₺<%= urun.discount_price %></span>
                                         <% } else { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <% } %>
                                     </p>
                                     <div class="flex items-center">
-                                        <svg aria-hidden="true" class="h-5 w-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <svg aria-hidden="true" class="h-4 w-4 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                         </svg>
 
                                         <span class="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
                                       </div>
                                 </div>
-                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center lg:text-sm text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 lg:h-6 lg:w-6 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     Hemen Al
@@ -147,46 +236,46 @@
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
                     <% products.forEach(urun => { %>
-                        <div class="relative inline-block m-2 w-full max-w-xs flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+                        <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
                                 <img class="object-cover" src="/uploads/<%= urun.resim %>" alt="product image" />
                                 <%if (urun.discountPercentage>1) { %>
-                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
+                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-base font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
                                 <% }else{} %>
                                     
                             </a>
                             <div class="mt-4 px-5 pb-5">
                                 <a href="/urun/<%= urun.slug  %>">
-                                    <h5 class="text-xl tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
-                                    <span class="product-price-unit">
-                                        <% if (urun.kategoriler && ['storperde', 'pliseperde', 'zebraperde'].includes(urun.kategoriler.category_low)) { %>
+                                    <h5 class="text-l tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
+                                    <span class="product-price-unit text-sm lg:text-xl">
+                                        <% if (urun.urun_turu === 0) { %>
                                             Metrekare fiyatı
-                                        <% } else { %>
+                                        <% } else if (urun.urun_turu === 1) { %>
                                             Metre fiyatı
                                         <% } %>
                                     </span><br>
                                 </a>
-                                <div class="mt-2 mb-5 flex items-center justify-between">
+                                <div class="mt-2 mb-5 lg:h-8 h-12 flex items-center justify-between">
 
                                     <p>
                                     <% if(urun.discount_price) { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <span class="text-sm text-slate-900 line-through">₺<%= urun.discount_price %></span>
                                         <% } else { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <% } %>
                                     </p>
                                     <div class="flex items-center">
-                                        <svg aria-hidden="true" class="h-5 w-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <svg aria-hidden="true" class="h-4 w-4 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                         </svg>
 
                                         <span class="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
                                       </div>
                                 </div>
-                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center lg:text-sm text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 lg:h-6 lg:w-6 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     Hemen Al
@@ -221,46 +310,46 @@
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
                     <% products.forEach(urun => { %>
-                        <div class="relative inline-block m-2 w-full max-w-xs flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+                        <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
                                 <img class="object-cover" src="/uploads/<%= urun.resim %>" alt="product image" />
                                 <%if (urun.discountPercentage>1) { %>
-                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
+                                    <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-base font-medium text-white">%<%=urun.discountPercentage%> İndirim</span>
                                 <% }else{} %>
                                     
                             </a>
                             <div class="mt-4 px-5 pb-5">
                                 <a href="/urun/<%= urun.slug  %>">
-                                    <h5 class="text-xl tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
-                                    <span class="product-price-unit">
-                                        <% if (urun.kategoriler && ['storperde', 'pliseperde', 'zebraperde'].includes(urun.kategoriler.category_low)) { %>
+                                    <h5 class="text-l tracking-tight text-slate-900"><%= urun.urun_basligi %></h5>
+                                    <span class="product-price-unit text-sm lg:text-xl">
+                                        <% if (urun.urun_turu === 0) { %>
                                             Metrekare fiyatı
-                                        <% } else { %>
+                                        <% } else if (urun.urun_turu === 1) { %>
                                             Metre fiyatı
                                         <% } %>
                                     </span><br>
                                 </a>
-                                <div class="mt-2 mb-5 flex items-center justify-between">
+                                <div class="mt-2 mb-5 lg:h-8 h-12 flex items-center justify-between">
 
                                     <p>
                                     <% if(urun.discount_price) { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <span class="text-sm text-slate-900 line-through">₺<%= urun.discount_price %></span>
                                         <% } else { %>
-                                        <span class="text-3xl font-bold text-slate-900">₺<%= urun.product_price %></span>
+                                        <span class="text-xl lg:text-2xl font-bold text-slate-900">₺<%= urun.product_price %></span>
                                         <% } %>
                                     </p>
                                     <div class="flex items-center">
-                                        <svg aria-hidden="true" class="h-5 w-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <svg aria-hidden="true" class="h-4 w-4 text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                                         </svg>
 
                                         <span class="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">5.0</span>
                                       </div>
                                 </div>
-                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <a href="/urun/<%= urun.slug %>" class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center lg:text-sm text-xs font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 lg:h-6 lg:w-6 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     Hemen Al
@@ -357,7 +446,7 @@
         </div>
     </div>
 </div>
-
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <!-- End Why Choose Us Section -->
 

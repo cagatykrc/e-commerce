@@ -15,21 +15,26 @@ require('dotenv').config();
 // const limiterTwoRequests = createLimiter(2);
 // const limiterDefaultRequests = createLimiter(15);
 router.get('/giris', (req, res) => {
-
   const userS = req.session.user;
+
   if (userS) {
     return res.redirect('/');
   }
 
-  const notification = req.session.notification;
-  if (req.session.notification) {
-    // Burada bildirimi HTML'de göster
-    res.render('giris', { notification:notification,userS });
-    delete req.session.notification; // Bildirimi gösterdikten sonra sil
-} else {
-    res.render('giris', {userS ,notification:notification}); // Normal render
-}
+  // Öncelikle bildirimi kontrol et
+  const notification = req.session.notification || null;
+
+  // Eğer bir bildirim varsa
+  if (notification) {
+    // Bildirimi göster ve sil
+    res.render('giris', { notification: notification, userS });
+    return delete req.session.notification; // Bildirimi gösterdikten sonra sil
+  } else {
+    // Bildirim yoksa normal render yap
+    return res.render('giris', { userS, notification: null });
+  }
 });
+
 
 
 
@@ -43,7 +48,7 @@ router.get('/kayit', (req, res) => {
   if (req.session.notification) {
     // Burada bildirimi HTML'de göster
     res.render('kayit', { notification:notification,userS });
-    delete req.session.notification; // Bildirimi gösterdikten sonra sil
+    req.session.notification; // Bildirimi gösterdikten sonra sil
 } else {
     res.render('kayit', {userS ,notification:notification}); // Normal render
 }
@@ -96,7 +101,7 @@ const newUser = await Users.create({
 
     const ipAddress = req.socket.remoteAddress;
     logger.info(username + " Adında " + 'Kayıt Oluşturuldu: ' + ipAddress + '  //' + now);
-    req.session.notification = {title:'Başarıyla Kayıt Olundu.',type:'danger'};
+    req.session.notification = {title:'Başarıyla Kayıt Olundu.',type:'success'};
     return res.redirect('/auth/giris');
   } catch (error) {
     console.error(error);

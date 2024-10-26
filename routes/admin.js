@@ -87,7 +87,7 @@ router.post('/logtemizle', verifyToken, (req, res) => {
     res.redirect('/admin/logizleme');
 });
 
-router.get('/duyuruolustur', async (req, res) => {
+router.get('/duyuruolustur', verifyToken,async (req, res) => {
     const userS = req.session.user;
 
     if (!(userS && userS.role === 'admin')) {
@@ -100,14 +100,13 @@ router.get('/duyuruolustur', async (req, res) => {
     res.render('admin/createAnnoucement', { userS, duyurular });
 });
 
-router.get('/urunaciklamatip', async (req, res) => {
+router.get('/urunaciklamatip',  verifyToken,async (req, res) => {
     const userS = req.session.user;
 
     if (!(userS && userS.role === 'admin')) {
         return res.render('404', { userS });
     }
 
-    const duyurular = await Duyurular.findAll();
 
     // Kullanıcı admin rolüne sahipse, sayfayı render et
     res.render('admin/addProdDesc', { userS });
@@ -134,7 +133,10 @@ router.get('/urunyonetim', verifyToken, async (req, res) => {
     }
 
     try {
-        const urunler = await Urunler.findAll();
+        const urunler = await Urunler.findAll({
+            include: [{ model: Kategoriler ,as:'kategoriler'}],
+        });
+        console.log(urunler);
         res.render('admin/managementProduct', { urunler, userS });
     } catch (error) {
         console.error('Urun verilerini çekerken bir hata oluştu: ' + error);
@@ -652,7 +654,7 @@ router.post('/:kategoriId/kategorisil', verifyToken, async (req, res) => {
         // Kategori silme işlemi
         await Kategoriler.destroy({
             where: {
-                kategori_id: kategoriId,
+                category_id: kategoriId,
             },
         });
         const ipAddress = req.socket.remoteAddress;

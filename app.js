@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+const helmet = require('helmet'); 
 
 const sequelize = require('./utility/database');
 const profileRoutes = require('./routes/profile');
@@ -28,6 +29,7 @@ const sslOptions = isProduction ? {
   key: fs.readFileSync('path/to/private-key.key'),
   cert: fs.readFileSync('path/to/certificate.crt')
 } : null;
+
 
 const sessionStore = new SequelizeStore({
     db: sequelize,

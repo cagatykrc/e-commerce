@@ -71,18 +71,32 @@ router.post("/siparisonayla", async (req, res) => {
       const width = parseFloat(cartItem.width) || 0;
       const height = parseFloat(cartItem.height) || 0;
       const quantity = parseFloat(cartItem.quantity) || 0;
+      const productType = parseInt(cartItem.Urunler.urun_turu);
 
       // Değerlerin kontrolü için konsol çıktıları
       console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
+        if (productType === 0) {
+            if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
+                const squareMeters = (height * width) / 10000;
+                const totalPrice = squareMeters * productPrice * quantity;
+                cartItem.total_price = totalPrice;
+                totalCartPrice += totalPrice;
+              } else {
+                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+              }
+        } else {
+            if (productPrice > 0 && width > 0 && height < 300 && quantity > 0) {
+                const Meters = (width *3) / 100;
+                const totalPrice = Meters * productPrice * quantity;
+                cartItem.total_price = totalPrice;
+                totalCartPrice += totalPrice;
+              } else {
+                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+              }
+        }
 
-      if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
-        const squareMeters = (height * width) / 10000;
-        const totalPrice = squareMeters * productPrice * quantity;
-        cartItem.total_price = totalPrice;
-        totalCartPrice += totalPrice;
-      } else {
-        console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
-      }
     });
 
       console.log(`Total Cart Price before discount: ${totalCartPrice}`);
@@ -111,9 +125,10 @@ router.post("/siparisonayla", async (req, res) => {
       }
   
       // Son kontroller
-      kdvprice = totalCartPrice*(1+8/100).toFixed(2)
-      withoutkdv = kdvprice -totalCartPrice
-      totalCartPrice = kdvprice
+      const rawtotal = totalCartPrice
+      kdvprice = totalprice*(1+8/100).toFixed(2)
+      withoutkdv = kdvprice -totalprice
+      totalCartPrice = rawtotal + withoutkdv
       totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
       discount = isNaN(discount) ? 0 : discount;
   
@@ -159,23 +174,43 @@ router.post("/", async function(req, res) {
             const width = parseFloat(cartItem.width) || 0;
             const height = parseFloat(cartItem.height) || 0;
             const quantity = parseFloat(cartItem.quantity) || 0;
+            const productType = parseInt(cartItem.Urunler.urun_turu);
 
             console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
-
-            if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
-                const squareMeters = (height * width) / 10000;
-                const totalPrice = squareMeters * productPrice * quantity;
-                cartItem.total_price = totalPrice;
-                totalCartPrice += totalPrice;
-
-                basket.push([
-                    cartItem.Urunler.urun_basligi,
-                    totalPrice.toFixed(2),
-                    cartItem.quantity
-                ]);
+            if (productType === 0) {
+                if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
+                    const squareMeters = (height * width) / 10000;
+                    const totalPrice = squareMeters * productPrice * quantity;
+                    cartItem.total_price = totalPrice;
+                    totalCartPrice += totalPrice;
+    
+                    basket.push([
+                        cartItem.Urunler.urun_basligi,
+                        totalPrice.toFixed(2),
+                        cartItem.quantity
+                    ]);
+                } else {
+                    console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                    return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+                }
             } else {
-                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                if (productPrice > 0 && width > 0 && height < 300 && quantity > 0) {
+                    const Meters = (width * 3) / 100;
+                    const totalPrice = Meters * productPrice * quantity;
+                    cartItem.total_price = totalPrice;
+                    totalCartPrice += totalPrice;
+    
+                    basket.push([
+                        cartItem.Urunler.urun_basligi,
+                        totalPrice.toFixed(2),
+                        cartItem.quantity
+                    ]);
+                } else {
+                    console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                    return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+                }
             }
+
         });
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -203,9 +238,10 @@ router.post("/", async function(req, res) {
         console.log(`Discount applied: ${discount}`);
         console.log(`Total Cart Price after discount: ${totalCartPrice}`);
     }
-    kdvprice = totalCartPrice*(1+8/100).toFixed(2)
-    withoutkdv = kdvprice -totalCartPrice
-    totalCartPrice = kdvprice
+    const rawtotal = totalCartPrice
+    kdvprice = totalprice*(1+8/100).toFixed(2)
+    withoutkdv = kdvprice -totalprice
+    totalCartPrice = withoutkdv + rawtotal
     totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
     discount = isNaN(discount) ? 0 : discount;
 

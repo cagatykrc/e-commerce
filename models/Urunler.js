@@ -13,7 +13,8 @@ const Urunler = sequelize.define('Urunler', {
     },
     slug: {
         type: DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        unique:true,
     },
     aciklama: {
         type: DataTypes.TEXT,
@@ -54,6 +55,7 @@ const Urunler = sequelize.define('Urunler', {
     urun_basligi: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique:true,
     },
     category_low:{
         type: DataTypes.INTEGER,
@@ -64,7 +66,7 @@ const Urunler = sequelize.define('Urunler', {
         allowNull: true,
     },
     urun_turu: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: true,
     },
 }, {

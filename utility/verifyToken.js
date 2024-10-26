@@ -1,13 +1,28 @@
 const jwt = require('jsonwebtoken');
+const express = require('express');
+const Users = require('../models/Users');
+const router = express.Router();
 // const crypto = require('crypto');
 // const secretKey = crypto.randomBytes(32).toString('hex');
 // const dotenv = require('dotenv');
 // const cookieParser = require('cookie-parser');
 // require('dotenv').config();
-const verifyToken = (req, res, next) => {
+const verifyToken = async(req, res, next) => {
     // const token = req.body.token || req.query.token || req.headers['x-acces-token'];
 
+    const userS = req.session.user;
 
+    if (!userS) {
+        return res.render('404', {userS});
+    }
+
+    const UserRole = await Users.findOne({
+        where:{user_id: userS.id},
+        attributes:['role']
+    });
+    if (UserRole.dataValues.role != 'admin'){
+        return res.render('404',{userS})
+    }
 
     // if (!token) {
     //     return res.status(403).json({ error: 'Forbidden - Token not present' });

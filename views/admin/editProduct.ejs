@@ -1,6 +1,6 @@
 <%- include('../partials/header.ejs') %>
 
-<div class="container mx-auto px-4 mt-8">
+<div class="container mx-auto px-4 mt-8 text-slate-950">
     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
         <div class="edit-product bg-white shadow-lg rounded-lg p-6 flex-1">
             <h1 class="text-2xl font-bold mb-4">Dergi Düzenle</h1>
@@ -53,7 +53,13 @@
                     <label for="price" class="block text-sm font-medium text-black">Fiyat:</label>
                     <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
                 </div>
-
+                <div class="mb-4">
+                    <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
+                    <select name="turu" id="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
+                        <option value="1" <%= urun.urun_turu === 1 ? 'selected' : '' %>>Perde</option>
+                        <option value="0" <%= urun.urun_turu === 0 ? 'selected' : '' %>>Mekanik Perde</option>
+                    </select>
+                </div>
                 <div class="mb-4">
                     <label for="resim" class="block text-sm font-medium text-black">Kapak Adı:</label>
                     <input type="text" id="resim" name="resim" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.resim %>" required>

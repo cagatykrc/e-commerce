@@ -81,11 +81,11 @@
         </div>
         <div class="mb-6">
           <label for="height" class="block text-sm font-medium text-gray-700 mb-1">En (cm):</label>
-          <select id="height" class="w-full" name="height" required></select>
+          <select id="height" class="w-full bg-white rounded-sm border-slate-50" name="height" required></select>
         </div>
         <div class="mb-6">
           <label for="width" class="block text-sm font-medium text-gray-700 mb-1">Boy (cm):</label>
-          <select id="width" class="w-full" name="width"></select>
+          <select id="width" class="w-full bg-white text-xl rounded-sm border-slate-50" name="width"></select>
         </div>
         <span class="text-lg text-slate-950 font-semibold">Toplam fiyat: <span id="totalPrice">₺0</span></span>
         <div class="flex space-x-4 mb-6">
@@ -205,7 +205,7 @@
     for (let i = start; i <= end; i++) {
       const option = document.createElement("option");
       option.value = i;
-      option.textContent = i;  // textContent kullanarak XSS açığını önleyin
+      option.textContent = i;  // XSS açığını önlemek için textContent kullanılıyor
       selectElement.appendChild(option);
     }
   }
@@ -221,10 +221,19 @@
       const height = parseFloat($('#height').val());
       const width = parseFloat($('#width').val());
       const productPrice = parseFloat('<%= urun.product_price %>');
+      const productType = parseInt('<%= urun.urun_turu %>'); // urun_turu değerini al
+
+      let totalPrice = 0;
 
       if (!isNaN(height) && !isNaN(width)) {
-        const squareMeters = (height * width) / 10000;
-        const totalPrice = squareMeters * productPrice;
+        if (productType === 1 && width <300) {
+          // Ürün türü 1 ise metre cinsinden hesapla
+          totalPrice = productPrice * (width / 100 *3); // genişlik metre cinsinden
+        } else if (productType === 0) {
+          // Ürün türü 0 ise metrekare cinsinden hesapla
+          const squareMeters = (height * width) / 10000; // cm²'yi m²'ye çevir
+          totalPrice = squareMeters * productPrice;
+        }
         $('#totalPrice').text(`₺${totalPrice.toFixed(2)}`);
       } else {
         $('#totalPrice').text('₺0');
@@ -234,3 +243,5 @@
     $('#height, #width').on('input', calculateTotalPrice);
   });
 </script>
+
+
