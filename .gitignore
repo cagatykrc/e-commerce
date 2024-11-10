@@ -3,3 +3,4 @@ node_modules/
 e-commerce/config.env
 # config.env dosyasını yoksay
 /config.env
+config.env
