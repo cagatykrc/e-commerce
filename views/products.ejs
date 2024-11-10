@@ -1,5 +1,15 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
+<style>
+  .scrollable {
+    overflow-y: scroll; /* veya auto */
+}
+
+.scrollable::-webkit-scrollbar {
+    display: none; /* Kaydırma çubuğunu gizle */
+}
+
+</style>
 <div class="bg-white">
   <style>        .filter-areasd {
     transition: transform 0.3s ease;
@@ -231,17 +241,13 @@
             -->
             <div class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-2xl ring-1 ring-black ring-opacity-5 sortarea hidden focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
               <div class="py-1" role="none">
-                <!--
-                  Active: "bg-gray-100", Not Active: ""
-
-                  Selected: "font-medium text-gray-900", Not Selected: "text-gray-500"
-                -->
-                <a href="#" class="block px-4 py-2 text-sm font-medium text-gray-900" role="menuitem" tabindex="-1" id="menu-item-0">En Popüler</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabindex="-1" id="menu-item-1">En Çok Oy</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabindex="-1" id="menu-item-2">Yeni</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabindex="-1" id="menu-item-3">Fiyat: Düşükten Yükseğe</a>
-                <a href="#" class="block px-4 py-2 text-sm text-gray-500" role="menuitem" tabindex="-1" id="menu-item-4">Fiyat: Yüksekten Düşüğe</a>
+                <a onclick="applySort('popular')" class="block px-4 py-2 text-sm text-gray-500" role="menuitem">En Popüler</a>
+                <a onclick="applySort('vote')" class="block px-4 py-2 text-sm text-gray-500" role="menuitem">En Çok Oy</a>
+                <a onclick="applySort('newest')" class="block px-4 py-2 text-sm text-gray-500" role="menuitem">En Yeni</a>
+                <a onclick="applySort('price_asc')" class="block px-4 py-2 text-sm text-gray-500" role="menuitem">Fiyat: Düşükten Yükseğe</a>
+                <a onclick="applySort('price_desc')" class="block px-4 py-2 text-sm text-gray-500" role="menuitem">Fiyat: Yüksekten Düşüğe</a>
               </div>
+              
             </div>
           </div>
 
@@ -306,10 +312,10 @@
               <div class="pt-6" id="categories<%= category.dataValues.kategori_tab_id %> filter-section-0">
                 <div class="space-y-4">
                   <% category.dataValues.kategoriler.forEach(subcategory => { %>
-                    <div name="kategoriID" id="categories<%= category.dataValues.kategori_tab_id %>" class="flex items-center">
-                      <input id="filter-color-0" data-category="<%= subcategory.dataValues.category_low %>" name="kategoriID"  type="checkbox" class="cat-li h-4 w-4 mr-0 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="<%= subcategory.dataValues.category_low %>" <%= selectedCategories.includes(subcategory.dataValues.category_low) ? 'checked' : '' %> name="color[]" value="white" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                      <label for="filter-color-0" class="ml-3 text-sm text-gray-600"><%=subcategory.dataValues.kategori_ad %></label>
-                    </div>
+                    <div class="flex items-center cat-li" data-category="<%= subcategory.dataValues.category_low %>">
+                      <input id="filter-color-<%= subcategory.dataValues.category_low %>" name="kategoriID" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                      <label for="filter-color-<%= subcategory.dataValues.category_low %>" class="ml-3 text-sm text-gray-600"><%= subcategory.dataValues.kategori_ad %></label>
+                  </div>
                     <% }); %>
                 </div>
               </div>
@@ -410,15 +416,13 @@
               </div>
             </div>
             <div class="filter-btn-area">
-              <button class="btn" onclick="applyFilters()">Filtreleri Uygula</button>
-              <button class="btn" onclick="resetFilters()">Sıfırla</button>
             </div>
           </form>
           
           <!-- Product grid -->
           <div class="lg:col-span-3">
             <div class="container  product-cnt">
-              <div class="row overflow-y-scroll">
+              <div class="row overflow-y-scroll scrollable">
                   <!-- Start Column 1 -->
                   <% products.forEach(urun => { %>
                     <div class="relative inline-block lg:m-2 m-0 lg:w-full lg:max-w-xs w-44 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
@@ -479,54 +483,84 @@
   </div>
 </div>
 <script>
-  const filterbtn= document.querySelector(".filter-buttona")
-  const filterareasd= document.querySelector(".filter-areasd")
-  const menubutton = document.querySelector(".menu-button")
-  const closebutton= document.querySelector(".close-button")
-  const sortarea=document.querySelector(".sortarea")
-  filterbtn.addEventListener('click', ()=>{
+  const filterbtn = document.querySelector(".filter-buttona");
+  const filterareasd = document.querySelector(".filter-areasd");
+  const menubutton = document.querySelector(".menu-button");
+  const closebutton = document.querySelector(".close-button");
+  const sortarea = document.querySelector(".sortarea");
+
+  filterbtn.addEventListener('click', () => {
     filterareasd.classList.toggle('open');
-  })
-  closebutton.addEventListener('click', ()=>{
-    filterareasd.classList.toggle('open');
-  })
-  menubutton.addEventListener('click', ()=>{
-    sortarea.classList.toggle('hidden');
-  })
+  });
   
-  function toggleCategory(id) {
-        const element = document.getElementById(id);
-        if (element.style.display === "none") {
-            element.style.display = "block";
-        } else {
-            element.style.display = "none";
-        }
+  closebutton.addEventListener('click', () => {
+    filterareasd.classList.toggle('open');
+  });
+  
+  menubutton.addEventListener('click', () => {
+    sortarea.classList.toggle('hidden');
+  });
+
+  document.querySelectorAll('.cat-li input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', applyFilters);
+  });
+
+  function applyFilters() {
+    const selectedCategories = [];
+    document.querySelectorAll('.cat-li input[type="checkbox"]:checked').forEach((checkbox) => {
+      const category = checkbox.closest('.cat-li').getAttribute('data-category').trim();
+      selectedCategories.push(category);
+    });
+
+    updateUrl(selectedCategories);
+  }
+
+  function applySort(sortParam) {
+    const selectedCategories = [];
+    document.querySelectorAll('.cat-li input[type="checkbox"]:checked').forEach((checkbox) => {
+      const category = checkbox.closest('.cat-li').getAttribute('data-category').trim();
+      selectedCategories.push(category);
+    });
+
+    updateUrl(selectedCategories, sortParam);
+  }
+
+  function updateUrl(selectedCategories, sortParam = null) {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    urlParams.delete('kategoriID');
+    selectedCategories.forEach(category => {
+      urlParams.append('kategoriID', category);
+    });
+
+    if (sortParam) {
+      urlParams.set('sort', sortParam);
     }
 
-    function applyFilters() {
-        // Gather the selected categories
-        const selectedCategories = [];
-        document.querySelectorAll('.cat-li input[type="checkbox"]:checked').forEach((checkbox) => {
-            selectedCategories.push(checkbox.closest('.cat-li').getAttribute('data-category').trim());
-        });
+    const baseUrl = window.location.href.split('?')[0];
+    window.location.href = `${baseUrl}?${urlParams.toString()}`;
+  }
 
-        // Construct the query string from the selected categories
-        const queryString = selectedCategories.map(category => `kategoriID=${category}`).join('&');
+  function resetFilters() {
+    document.querySelectorAll('.spec-li input[type="checkbox"]').forEach((checkbox) => {
+      checkbox.checked = false;
+    });
 
-        // Reset URL to base and then add the query string
-        const baseUrl = window.location.href.split('?')[0];
-        window.location.href = `${baseUrl}?${queryString}`;
-    }
+    let baseUrl = window.location.href.split('?')[0];
+    window.location.href = baseUrl;
+  }
 
-    function resetFilters() {
-        // Clear all checkboxes
-        document.querySelectorAll('.spec-li input[type="checkbox"]').forEach((checkbox) => {
-            checkbox.checked = false;
-        });
+  // Sayfa yüklendiğinde checkbox'ların durumunu ayarla
+  window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedCategories = urlParams.getAll('kategoriID');
 
-        // Reload the page without any query parameters
-        let baseUrl = window.location.href.split('?')[0];
-        window.location.href = baseUrl;
-    }
+    document.querySelectorAll('.cat-li input[type="checkbox"]').forEach(checkbox => {
+      const category = checkbox.closest('.cat-li').getAttribute('data-category').trim();
+      checkbox.checked = selectedCategories.includes(category);
+    });
+  });
 </script>
+
+
 <%- include('./partials/footer.ejs') %>

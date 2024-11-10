@@ -16,6 +16,8 @@ const Duyurular = require('../models/Duyurular');
 const logger = require('../utility/logger');
 const Coupon = require('../models/Coupon');
 const productDesc = require('../models/productDesc');
+const Orders = require('../models/Orders');
+const OrderItem = require('../models/OrderItem');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
@@ -161,6 +163,80 @@ router.get('/urunolustur', verifyToken, async (req, res) => {
         console.error('Kategorileri çekerken bir hata oluştu: ' + error);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
         return res.status(500).send('Internal Server Error');
+    }
+});
+router.get('/siparisler', verifyToken, async (req, res) => {
+    const userS = req.session.user;
+
+    if (!(userS && userS.role === 'admin')) {
+        return res.render('404', { userS });
+    }
+
+    try {
+        // Siparişler ve her siparişe ait OrderItems'ı getirmek
+        const orders = await Orders.findAll({
+            include: [
+                {
+                    model: OrderItem, 
+                    as: 'OrderItems' // OrderItems ilişkisinin doğru şekilde getirildiğinden emin olalım
+                },
+                {
+                    model: Users,   // User modelini dahil ediyoruz
+                    as: 'user',    // İlişkiyi "user" olarak adlandırdık
+                    attributes: ['user_id', 'first_name', 'last_name', 'email'] // İstediğiniz User bilgilerini buradan seçebilirsiniz
+                },
+            ]
+        });
+
+        if (!orders || orders.length === 0) {
+            return res.render('admin/adminorder', { userS, Order: [] }); // Sipariş yoksa boş array gönderiyoruz
+        }
+
+        res.render('admin/adminorder', { userS, Order: orders });
+    } catch (error) {
+        console.error('Kategorileri çekerken bir hata oluştu: ' + error);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+router.get('/siparisler/:orderId', verifyToken, async (req, res) => {
+    const orderId = req.params.orderId;
+    const userS = req.session.user;
+    try {
+      const order = await Orders.findByPk(orderId, {
+        include: [
+          {
+            model: Users,
+            as: 'user',
+            attributes: ['first_name', 'last_name'],
+          },
+          {
+            model: OrderItem,
+            as: 'OrderItems',
+            include: [
+              {
+                model: Urunler,
+                as: 'urunler',
+                attributes: ['urun_id','aciklama', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
+                include: [{
+                  model: Kategoriler,
+                  as: 'kategoriler',
+                  attributes: ['kategori_ad']
+                }]
+              }
+            ]
+          }
+        ]
+      });
+      if (!order) {
+        console.log('Sipariş bulunamadı.');
+        return res.status(404).json({ message: 'Sipariş bulunamadı' });
+      }
+  
+      res.render('admin/adminOrderMan', { order, userS });
+    } catch (error) {
+      console.error('Sipariş detayları alınırken bir hata oluştu:', error);
+      return res.status(500).send('Internal Server Error');
     }
 });
 router.post('/urunaciklamatipekle', verifyToken,async(req,res) => {

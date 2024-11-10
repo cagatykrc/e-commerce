@@ -28,7 +28,7 @@ const merchant_key = process.env.MERCHANT_KEY || 'r7KJBYCjuWk4tDq5';
 const merchant_salt = process.env.MERCHANT_SALT || 'FF6sW88pwH4xU4J1';
 
 function generateUniqueId() {
-    return crypto.randomBytes(2).toString('hex');
+    return crypto.randomBytes(4).toString('hex');
 }
 
 router.post("/siparisonayla", async (req, res) => {
@@ -156,7 +156,9 @@ router.post("/", async function(req, res) {
     const { email, address,country,district,city,address_title, phone, firstname, lastname } = req.body;
     const user_ip = req.ip;
     const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Benzersiz ve alfanumerik bir sipariş ID'si oluşturun
-
+    if( email || address ||country ||district ||city ||address_title || phone || firstname || lastname ){
+        return res.redirect('/sepet')
+    }
     let basket = [];
     let totalCartPrice = 0;
 
@@ -341,34 +343,44 @@ router.get("/odeme_basarili", async function (req,res) {
 router.post("/odeme_basarili", async function (req, res) {
     const callback = req.body;
 
+    // Callback'ten gelen hash doğrulaması
     const paytr_token = callback.merchant_oid + merchant_salt + callback.status + callback.total_amount;
     const token = crypto.createHmac('sha256', merchant_key).update(paytr_token).digest('base64');
 
+    // Eğer hash doğrulama başarısızsa, hata döndürüyoruz
     if (token !== callback.hash) {
         throw new Error("PAYTR notification failed: bad hash");
     }
     console.log('callback: ' + token)
 
+    // Ödeme başarılıysa, siparişin ödeme durumunu güncelliyoruz
     if (callback.status === 'success') {
         try {
-            const order_success = await Orders.findAll({
+            // Siparişi 'merchant_oid' ile buluyoruz
+            const order_success = await Orders.findOne({
                 where: { merchant_oid: callback.merchant_oid }
             });
 
-            if (order_success.length > 0) {
-                await Promise.all(order_success.map(async (order) => {
-                    await order.update({
-                        payment_status: 1
-                    });
-                }));
-            }
+            // Eğer sipariş bulunursa
+            if (order_success) {
+                // Siparişi güncelliyoruz ve ödeme durumunu 1 (başarılı) yapıyoruz
+                await order_success.update({
+                    payment_status: 1, // Ödeme başarılı
+                    status: 'Ödeme Tamamlandı' // Sipariş durumu 'Ödeme Tamamlandı' olarak güncelleniyor
+                });
 
-            res.send('OK');
+                // Siparişin ID'sine göre sipariş detay sayfasına yönlendiriyoruz
+                res.redirect(`/siparisler/${order_success.order_id}`);
+            } else {
+                // Sipariş bulunamadığında hata mesajı
+                res.status(404).send('Order not found');
+            }
         } catch (error) {
             console.error('Error updating order:', error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
+        // Ödeme başarısızsa ana sayfaya yönlendiriyoruz
         res.redirect('/');
     }
 });

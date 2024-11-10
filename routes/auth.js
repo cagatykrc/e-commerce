@@ -21,17 +21,16 @@ router.get('/giris', (req, res) => {
     return res.redirect('/');
   }
 
-  // Öncelikle bildirimi kontrol et
-  const notification = req.session.notification || null;
+  // Bildirimi kontrol et, varsa göster ve sil
+  const pagemessage = req.session.pagemessage || null;
 
-  // Eğer bir bildirim varsa
-  if (notification) {
-    // Bildirimi göster ve sil
-    res.render('giris', { notification: notification, userS });
-    return delete req.session.notification; // Bildirimi gösterdikten sonra sil
+  // Eğer bir bildirim varsa, mesajı göster ve hemen sil
+  if (pagemessage) {
+    res.render('giris', { pagemessage, userS });
+    delete req.session.pagemessage; // Bildirimi gösterdikten sonra session'dan sil
   } else {
     // Bildirim yoksa normal render yap
-    return res.render('giris', { userS, notification: null });
+    return res.render('giris', { userS, pagemessage: null });
   }
 });
 
@@ -68,12 +67,12 @@ router.post('/kayit', postlimiter, async (req, res) => {
   });
 
   if (verifypassword !== password) {
-    req.session.notification = {title:'Şifreler Uyuşmuyor.',type:'danger'};
+    req.session.pagemessage = {title:'Şifre doğrulaması yanlış.',type:'danger'};
     return res.redirect('/auth/kayit')
   }
 
   if (existingUser) {
-    req.session.notification = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
+    req.session.pagemessage = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
     return res.redirect('/auth/kayit')
   }
 
@@ -101,7 +100,7 @@ const newUser = await Users.create({
 
     const ipAddress = req.socket.remoteAddress;
     logger.info(username + " Adında " + 'Kayıt Oluşturuldu: ' + ipAddress + '  //' + now);
-    req.session.notification = {title:'Başarıyla Kayıt Olundu.',type:'success'};
+    req.session.pagemessage = {title:'Başarıyla Kayıt Olundu.',type:'success'};
     return res.redirect('/auth/giris');
   } catch (error) {
     console.error(error);
@@ -119,7 +118,7 @@ const secretKey='123456';
 
 router.post('/giris', postlimiter, async (req, res) => {
   const userS = req.session.user;
-  const { emailanduser, password } = req.body; // Token'ı req.body üzerinden al
+  const { emailanduser, password } = req.body;
 
   try {
     const user = await Users.findOne({
@@ -132,16 +131,15 @@ router.post('/giris', postlimiter, async (req, res) => {
     });
 
     if (!user) {
-      req.session.notification = {title:'Eposta bulunamadı',type:'danger'};
-      return res.redirect('/auth/giris')
+      req.session.pagemessage = { title: 'Kullandığınız e-posta bulunamadı.', type: 'danger' };
+      return res.render('giris', { userS, pagemessage: req.session.pagemessage });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      req.session.notification = {title:'Hatalı Şifre!',type:'danger'};
-      res.redirect('/auth/giris')
-      return
+      req.session.pagemessage = { title: 'Kullandığınız şifre hatalı.', type: 'danger' };
+      return res.render('giris', { userS, pagemessage: req.session.pagemessage });
     }
 
     req.session.user = {
@@ -158,17 +156,20 @@ router.post('/giris', postlimiter, async (req, res) => {
       username: user.username,
       firstName: user.first_name,
       role: user.role
-    }, secretKey, { expiresIn: '1h' }); // Token 1 saat geçerli olacak şekilde ayarlanıyor
-    const ipAddress = req.socket.remoteAddress;
-    logger.info(user.username + " Adında Giriş Yaptı: " + ipAddress + '  //' + new Date());
+    }, secretKey, { expiresIn: '1h' });
 
-    // Token'ı yanıt olarak gönderme
+    const ipAddress = req.socket.remoteAddress;
+    logger.info(req.session.user.id + " ID'si ile Giriş Yaptı: " + ipAddress + '  //' + new Date());
+
+    // Başarılı girişten sonra yönlendirme yap
     return res.redirect('/');
   } catch (error) {
     console.error(error);
-    return res.redirect('/auth/giris');
+    req.session.pagemessage = { title: 'Bir hata oluştu, lütfen tekrar deneyin.', type: 'danger' };
+    return res.render('giris', { userS, pagemessage: req.session.pagemessage });
   }
 });
+
 
   
   

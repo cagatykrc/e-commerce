@@ -1,6 +1,6 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
-<div class="container m-auto">
+<div class="container mx-auto pl-2 m-auto">
 <section class="bg-white py-8 antialiased  md:py-16">
     <form action="/odeme/" class="mx-auto max-w-screen-xl px-4 2xl:px-0" method="post">
       <ol class="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-500  sm:text-base">
@@ -54,7 +54,7 @@
                 <div class="mb-2 flex items-center gap-2">
                   <label for="select-country-input-3" class="block text-sm font-medium text-gray-900"> Ülke* </label>
                 </div>
-                <select id="select-country-input-3" name="country" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                <select id="select-country-input-3" name="country" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " required>
                   <option selected>Türkiye</option>
 
                 </select>
@@ -64,7 +64,7 @@
                 <div class="mb-2 flex items-center gap-2">
                   <label for="Iller" class="block text-sm font-medium text-gray-900 "> İl* </label>
                 </div>
-                <select id="Iller" name="city" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                <select id="Iller" name="city" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " required>
                   <option value="0">Lütfen Bir İl Seçiniz</option>
                 </select>
               </div>
@@ -72,7 +72,7 @@
                 <div class="mb-2 flex items-center gap-2">
                   <label for="Ilceler" name="district" class="block text-sm font-medium text-gray-900 "> İlçe* </label>
                 </div>
-                <select id="Ilceler" name="district" disabled="disabled" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ">
+                <select id="Ilceler" name="district" disabled="disabled" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " required>
                   <option value="0">Lütfen Önce bir İl seçiniz</option>
                 </select>
               </div>

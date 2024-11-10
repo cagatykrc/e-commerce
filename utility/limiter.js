@@ -10,16 +10,18 @@ const router = express.Router();
 //     });
 //   };
 // Bildirimi oluştur
-const message = 'İstek Sayısını aştınız lütfen biraz bekleyiniz.';
+const message = 'İstek Sayısını aştınız lütfen daha sonra tekrar deneyiniz.';
 
 // Session'a bildirimi ekleyin
 const postlimiter = rateLimit({
   
-  windowMs: 1 * 60 * 1000,
-  max: 3,
+  windowMs: 15 * 60 * 1000, // 15 Dakika
+  max: 5, // 5 tane istek
+  legacyHeaders: false, // `X-RateLimit-*` Bölümünü kaldırır.
   handler: (req, res)=>{
     req.session.message = message;
     res.redirect('/');
   }
+  
 });
   module.exports = postlimiter;

@@ -1,39 +1,38 @@
-<%- include('../partials/header.ejs') %>
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Kullanıcı Yönetimi</h2>
-  
-  <div class="table-responsive usercont">
-    <table class="usercont-table table table-bordered table-hover">
-      <thead class="table-dark">
+<%- include('../partials/adminpanelheader.ejs') %>
+<%- include('./controlPanel.ejs') %>
+<div class="container lg:px-4 mx-auto mt-5">
+  <h2 class="text-3xl font-semibold text-slate-900 text-center mb-8">Kullanıcı Yönetimi</h2>
+
+  <div class="overflow-x-auto shadow-lg rounded-lg">
+    <table class="min-w-full table-auto bg-white border border-gray-200 rounded-lg">
+      <thead class="bg-slate-800 text-white">
         <tr>
-          <th>ID</th>
-          <th>Kullanıcı Adı</th>
-          <th>Email</th>
-          <th>Ad</th>
-          <th>Soyad</th>
-          <th>Yetki</th>
-          <th>Oluşturulma Tarihi</th>
-          <th></th>
+          <th class="px-6 py-3 text-left font-medium">ID</th>
+          <th class="px-6 py-3 text-left font-medium">Email</th>
+          <th class="px-6 py-3 text-left font-medium">Ad</th>
+          <th class="px-6 py-3 text-left font-medium">Soyad</th>
+          <th class="px-6 py-3 text-left font-medium">Yetki</th>
+          <th class="px-6 py-3 text-center font-medium">İşlem</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="text-slate-900">
         <% users.forEach(user => { %>
-          <tr>
-            <td><%= user.user_id %></td>
-            <td><%= user.username %></td>
-            <td><%= user.email %></td>
-            <td><%= user.first_name %></td>
-            <td><%= user.last_name %></td>
-            <td><%= user.role %></td>
-            <td><%= user.created_at %></td>
-            <td>
-                <a href="/admin/kullanici/<%= user.user_id %>/"><button class="btn btn-primary">Değiştir</button></a>
+          <tr class="border-t border-b hover:bg-slate-100">
+            <td class="px-6 py-4"><%= user.user_id %></td>
+            <td class="px-6 py-4"><%= user.email %></td>
+            <td class="px-6 py-4"><%= user.first_name %></td>
+            <td class="px-6 py-4"><%= user.last_name %></td>
+            <td class="px-6 py-4"><%= user.role %></td>
+            <td class="px-6 py-4 text-center">
+                <a href="/admin/kullanici/<%= user.user_id %>/">
+                  <button class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">Değiştir</button>
+                </a>
             </td>
           </tr>
         <% }); %>
       </tbody>
     </table>
   </div>
-  <a href="/admin/panel/"><button class="btn btn-secondary mt-1">Geri</button></a>
+
 </div>
-<%- include('../partials/footer.ejs') %>
+</div>

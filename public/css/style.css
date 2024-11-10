@@ -7,6 +7,9 @@
 
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+*{
+  scroll-behavior: smooth;
+}
 :root {
   /* widths for rows and containers
    */
@@ -163,10 +166,7 @@ a {
 .mobile-filter-area{
   display: none;
 }
-.product-slider i.angle-left{
-  left: 50px;
-  top: 50%;
-}
+
 .dream-avenue {
   font-family: DreamAvenue;
 }
@@ -177,10 +177,7 @@ a {
   font-style: normal;
 }
 
-.product-slider i.angle-right{
-  right: 100px;
-  top: 50%;
-}
+
 .product-slider-title{
   margin-bottom: 24px;
   display: flex;
@@ -439,9 +436,7 @@ div#category-area.shop-categories-area li{
   margin-top:64px ;
 }
 
-.product-slider i.angle-right,i.angle-left{
-  display: none;
-}
+
 ul.profile-ul{
   display: flex;
   flex-direction: row;
@@ -917,9 +912,7 @@ h2{
   flex-direction: row;
 
 }
-.product-slider i{
-  position: absolute;
-}
+
 
 .product-section .container{
   background-color: #fff;

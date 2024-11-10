@@ -2,21 +2,6 @@
 <%- include('./partials/loader.ejs') %>
 <%- include('./partials/notification.ejs') %>
 
-<!-- <div class="header-category-area">
-    <div class="category-curtain-types">
-        <ul class="category-curtains-ul">
-            <% if (productType && productType.kategoriler) { %>
-                <% productType.kategoriler.forEach(curtainc => { %>
-                    <li class="category-curtains-li">
-                        <a class="category-curtain-a" href="/urunler?kategoriID=<%= curtainc.category_low %>" title="<%= curtainc.kategori_ad %>"><%= curtainc.kategori_ad %></a>
-                    </li>
-                <% }); %>
-            <% } else { %>
-                <li>Aktif kategori bulunmuyor.</li>
-            <% } %>
-        </ul>
-    </div>
-</div> -->
 <!-- Slider -->
 <div x-data="{
     slides: [
@@ -96,7 +81,7 @@
     </button>
 
     <!-- slides -->
-    <div class="relative min-h-[70svh] w-full" x-on:touchstart="handleTouchStart($event)" x-on:touchmove="handleTouchMove($event)" x-on:touchend="handleTouchEnd()">
+    <div class="relative lg:min-h-[90svh] min-h-[60svh] w-full" x-on:touchstart="handleTouchStart($event)" x-on:touchmove="handleTouchMove($event)" x-on:touchend="handleTouchEnd()">
         <template x-for="(slide, index) in slides">
             <div x-show="currentSlideIndex == index + 1" class="absolute inset-0" x-transition.opacity.duration.700ms>
                 <img class="absolute w-full h-full inset-0 object-cover text-neutral-600 dark:text-neutral-300" x-bind:src="slide.imgSrc" x-bind:alt="slide.imgAlt" />
@@ -123,11 +108,12 @@
 
             <!-- Start New Products Slider -->
             <div class="product-slider">
-                <div class="product-slider-title">
+                <div class="product-slider-title text-center items-center self-center flex flex-row">
                     <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-dark">Öne Çıkanlar</h1>
+                    <span><a class="text-slate-950 font-medium text-center flex flex-row slef-center items-center hover:text-gray-400" href="/urunler?kategoriID=onecikanlar">Daha fazla  <i class="ml-1 fa-solid block fa-angle-right"></i></a></span>
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
-                    <% products.forEach(urun => { %>
+                    <% highlightprod.forEach(urun => { %>
                         <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
@@ -148,7 +134,7 @@
                                         <% } %>
                                     </span><br>
                                 </a>
-                                <div class="mt-2 mb-5 lg:h-8 h-12 flex items-center justify-between">
+                                <div class="mt-2 mb-5 lg:h-8 h-8 flex items-center justify-between">
 
                                     <p>
                                     <% if(urun.discount_price) { %>
@@ -177,7 +163,7 @@
                     <% }); %>
             </div>
             
-            <section id="latest-collection" class="mt-60 mb-60">
+            <section id="latest-collection" class="mt-30 mb-30">
                 <div class="container">
                   <div class="product-collection row">
                     <div class="col-lg-7 col-md-12 left-content">
@@ -231,11 +217,12 @@
            
             <!-- Start Best Sellers Slider -->
             <div class="product-slider">
-                <div class="product-slider-title">
-                    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-dark">Öne Çıkanlar</h1>
+                <div class="product-slider-title text-center items-center self-center flex flex-row">
+                    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-dark">Yeni Ürünler</h1>
+                    <span><a class="text-slate-950 font-medium text-center flex flex-row slef-center items-center hover:text-gray-400" href="/urunler?kategoriID=onecikanlar">Daha fazla  <i class="ml-1 fa-solid block fa-angle-right"></i></a></span>
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
-                    <% products.forEach(urun => { %>
+                    <% newproducts.forEach(urun => { %>
                         <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>
@@ -305,11 +292,12 @@
             </div>
 
             <div class="product-slider">
-                <div class="product-slider-title">
-                    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-dark">Öne Çıkanlar</h1>
+                <div class="product-slider-title text-center items-center self-center flex flex-row">
+                    <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-dark">Fon Perdeler</h1>
+                    <span><a class="text-slate-950 font-medium text-center flex flex-row slef-center items-center hover:text-gray-400" href="/urunler?kategoriID=onecikanlar">Daha fazla  <i class="ml-1 fa-solid block fa-angle-right"></i></a></span>
                 </div>
                 <div class="products-area overflow-auto flex flex-row">
-                    <% products.forEach(urun => { %>
+                    <% fonproduct.forEach(urun => { %>
                         <div class="relative inline-block m-2 lg:w-full lg:max-w-xs w-60 flex-shrink-0 flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
                             <a class="relative mx-3 mt-3 flex h-30 overflow-hidden rounded-xl" href="/urun/<%= urun.slug %>">
                                 <span class="<%= urun.kategoriler ? urun.kategoriler.category_low : '' %>"></span>

@@ -1,5 +1,6 @@
-<%- include('../partials/header.ejs') %>
-<div class="custom-category-container">
+<%- include('../partials/adminpanelheader.ejs') %>
+<%- include('./controlPanel.ejs') %>
+<div class="container lg:px-4">
     <div style="width: auto;" class="custom-category-panel">
         <div class="category-create-panel">
             <h2 class="text-center mb-4">Duyuru Oluştur</h2>
@@ -37,8 +38,7 @@
         <form action="/admin/duyurusil" method="POST">
             <button class="btn btn-danger">Duyuruyu Sil</button>
         </form>
-        <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
     </div>
 </div>
-
-<%- include('../partials/footer.ejs') %>
+</div>
+</div>

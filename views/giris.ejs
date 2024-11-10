@@ -1,5 +1,5 @@
 <%- include('./partials/header.ejs') %>
-<%- include ('./partials/notification.ejs') %>
+<!--  -->
 <div class="bg-white m-auto">
   <div class="min-h-screen m-auto flex flex-col items-center  pt-5 lg:pt-40  px-4">
     <div class="max-w-md mx-auto w-full">
@@ -27,6 +27,12 @@
               </svg>
             </div>
           </div>
+          <% if (pagemessage && pagemessage.title) { %>
+            <div class="text-sm <% if(pagemessage.type === 'danger') { %>text-red-600 <% } else { %>text-green-600<% } %>">
+              <%= pagemessage.title %>
+            </div>
+          <% } %>
+          
 
           <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center">

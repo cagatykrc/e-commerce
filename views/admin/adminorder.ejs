@@ -1,0 +1,54 @@
+<%- include('../partials/adminpanelheader.ejs') %>
+<%- include('./controlPanel.ejs') %>
+
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-center text-2xl font-semibold text-slate-900 mb-6">Tüm Siparişler</h2>
+
+    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
+        <table class="min-w-full table-auto border-collapse">
+            <thead>
+                <tr class="bg-gray-200 text-slate-900">
+                    <th class="py-3 px-4 border-b text-left">Sipariş Kodu</th>
+                    <th class="py-3 px-4 border-b text-left">Alıcı</th>
+                    <th class="py-3 px-4 border-b text-left">Toplam Tutar</th>
+                    <th class="py-3 px-4 border-b text-left">Sipariş Tarihi</th>
+                    <th class="py-3 px-4 border-b text-left">Durum</th>
+                    <th class="py-3 px-4 border-b text-left">Detaylar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (Order && Order.length > 0) { %>
+                    <% Order.forEach(order => { %>
+                        <% if (order.OrderItems && order.OrderItems.length > 0) { %>
+                            <tr class="border-b hover:bg-gray-100">
+                                <td class="py-3 px-4"><%= order.order_id %></td>
+                                <td class="py-3 px-4">
+                                    <%= order.user.first_name %> <%= order.user.last_name %>
+                                </td>
+                                <td class="py-3 px-4">₺<%= order.total_price %></td>
+                                <td class="py-3 px-4">
+                                    <%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <span class="py-1 px-3 rounded-full text-sm <% if(order.status === 'Teslim Edildi'){ %>bg-green-100 text-green-600<% } else if(order.status === 'Hazırlanıyor'){ %>bg-yellow-100 text-yellow-600<% } else { %>bg-red-100 text-red-600<% } %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <a href="/admin/siparisler/<%= order.order_id %>" class="text-indigo-600 hover:text-indigo-800 font-semibold">Detaylar</a>
+                                </td>
+                            </tr>
+                        <% } %>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="6" class="py-3 px-4 text-center">Hiç sipariş bulunmamaktadır.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+</div>

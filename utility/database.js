@@ -9,6 +9,7 @@ require('dotenv').config();
 // });
 const sequelize = new Sequelize( 'fatosperde', 'root', 'HQrlvkY2clOkwBQcsXEl', {
   host:'localhost',
-  dialect:'mysql' /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
+  dialect:'mysql',
+  logging:false /* one of 'mysql' | 'postgres' | 'sqlite' | 'mariadb' | 'mssql' | 'db2' | 'snowflake' | 'oracle' */
 });
 module.exports = sequelize;  

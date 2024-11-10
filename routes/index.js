@@ -11,6 +11,7 @@ const Kategorilertab = require('../models/Kategorilertab');
 const Duyurular = require('../models/Duyurular');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
+const Showcase = require('../models/Showcase');
 const redis = require('redis');
 const calculateTotalPrice = require('../utility/priceCalc'); 
 
@@ -124,10 +125,21 @@ router.get('/', async (req, res) => {
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
     });
+    const highlightprod = await Urunler.findAll({
+      include: [{
+        model: Showcase,
+        required: true,
+        where: { showcase_name: 'onecikanlar' } // Showcase modelinin alanı burada kullanılır
+      }]
+    });
+    
+  
+    
+    
 
     const kanatperdeProducts = await Urunler.findAll({
       include: [{ model: Kategoriler, as: 'kategoriler' }],
-      where: { '$kategoriler.category_low$': 'kanatperde' },
+      where: { '$kategoriler.category_low$': 'fonperde' },
       order: [['createdAt', 'DESC']],
       limit: 10
     });
@@ -138,12 +150,14 @@ router.get('/', async (req, res) => {
       if (discountPrice <= product_price) return 0; // İndirim yoksa 0 döner
       return Math.floor(((discountPrice - product_price) / discountPrice) * 100); // Yüzde tam sayı olarak
     };
-
+    const highlightprodWithDiscounts = highlightprod.map(product=>({
+      ...product.toJSON(),
+      discoundtPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
+    }));
     const productsWithDiscounts = urunler.map(product => ({
       ...product.toJSON(), // Sequelize nesnesini düzleştir
       discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
     }));
-    console.log(productsWithDiscounts);
     const newProductsWithDiscounts = newProducts.map(product => ({
       ...product.toJSON(),
       discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
@@ -161,6 +175,7 @@ router.get('/', async (req, res) => {
         fonproduct: kanatperdeProductsWithDiscounts,
         newproducts: newProductsWithDiscounts,
         products: productsWithDiscounts,
+        highlightprod: highlightprodWithDiscounts,
         userS,
         notification:notification
       });
@@ -172,6 +187,7 @@ router.get('/', async (req, res) => {
       fonproduct: kanatperdeProductsWithDiscounts,
       newproducts: newProductsWithDiscounts,
       products: productsWithDiscounts,
+      highlightprod: highlightprodWithDiscounts,
       userS,
       notification:notification
     }); // Normal render
@@ -220,12 +236,27 @@ router.get('/urunler', async (req, res) => {
     const productType = await Kategorilertab.findByPk(1, {
       include: [{ model: Kategoriler, as: 'kategoriler' }]
     });
+
+    // Sıralama işlemi
+    const sort = req.query.sort || 'newest'; // Varsayılan sıralama
+    const orderOptions = [];
+    if (sort === 'price_asc') {
+      orderOptions.push(['product_price', 'ASC']);
+    } else if (sort === 'price_desc') {
+      orderOptions.push(['product_price', 'DESC']);
+    } else if (sort === 'discount') {
+      orderOptions.push([Sequelize.literal('discount_price IS NOT NULL'), 'DESC']); // İndirimli ürünleri öne al
+    } else {
+      orderOptions.push(['createdAt', 'DESC']); // Varsayılan olarak en yeni
+    }
+
     const products = await Urunler.findAll({
       include: [{
         model: Kategoriler,
         as: 'kategoriler',
         where: whereClause
-      }]
+      }],
+      order: orderOptions
     });
 
     const announcements = await Duyurular.findAll();
@@ -278,7 +309,6 @@ router.get('/sepet', async (req, res) => {
           const height = parseFloat(cartItem.height) || 0;
           const quantity = parseFloat(cartItem.quantity) || 0;
           const productType = parseInt(cartItem.Urunler.urun_turu);
-          console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}, Product Type: ${productType}`);
           if (productType === 0) {
             if (productPrice > 0 && quantity > 0) {
               const squareMeters = (height * width) / 10000;
@@ -286,7 +316,6 @@ router.get('/sepet', async (req, res) => {
               cartItem.total_price = totalPrice;
               totalCartPrice += totalPrice;
             } else {
-                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
             }
           } else {
               if (productPrice > 0 && quantity > 0 && height < 300) {
@@ -295,7 +324,6 @@ router.get('/sepet', async (req, res) => {
                 cartItem.total_price = totalPrice;
                 totalCartPrice += totalPrice;
                             } else {
-                  console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
             }
           }
 
@@ -308,17 +336,13 @@ router.get('/sepet', async (req, res) => {
           const coupon = req.session.coupon;
           const discountRate = parseFloat(coupon.discount_rate);
           const discountPrice = parseFloat(coupon.discount_price);
-          console.log(discountRate, discountPrice);
           if (discountRate > 0) {
               discount = totalCartPrice * (discountRate / 100);
-              console.log(`Discount Rate applied: ${discountRate / 100}`);
           } else if (discountPrice > 0) {
               discount = discountPrice;
-              console.log(`Discount Price applied: ${discountPrice}`);
           }
           totalCartPrice -= discount;
-          console.log(`Discount applied: ${discount}`);
-          console.log(`Total Cart Price after discount: ${totalCartPrice}`);
+
       }
       kdvprice = rawprice*(1+8/100).toFixed(2)
       const withoutkdv = kdvprice -rawprice
@@ -327,8 +351,6 @@ router.get('/sepet', async (req, res) => {
       totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
       discount = isNaN(discount) ? 0 : discount;
 
-      console.log(`kdvprice: ${kdvprice}`);
-      console.log(discount);
 
       res.render('cart', { userS: req.session.user,rawprice, userCart, totalprice: totalCartPrice, totalCartPrice, discount, kdvprice, withoutkdv, notification, coupon: req.session.coupon });
   } catch (error) {
@@ -407,7 +429,6 @@ router.post('/kuponUygula', async (req, res) => {
 
   try {
       if (req.session.coupon == coupon_code) {
-        console.log('zatenvarmk');
         req.session.notification = {title:'Kupon zaten kullanımda.',type:'danger'};
         return res.redirect('/sepet');
       }
