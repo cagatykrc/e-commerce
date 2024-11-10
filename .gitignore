@@ -2,6 +2,8 @@ dergi-sitesi/app.log
 dergi-sitesi/config.env
 dergi-sitesi/node_modules/
 /node_modules
+/config.env
+config.env
 
 # testing
 /coverage
