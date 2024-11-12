@@ -151,8 +151,8 @@ router.get('/', async (req, res) => {
       return Math.floor(((discountPrice - product_price) / discountPrice) * 100); // Yüzde tam sayı olarak
     };
     const highlightprodWithDiscounts = highlightprod.map(product=>({
-      ...product.toJSON(),
-      discoundtPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
+      ...product.toJSON(), // Sequelize nesnesini düzleştir
+      discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
     }));
     const productsWithDiscounts = urunler.map(product => ({
       ...product.toJSON(), // Sequelize nesnesini düzleştir

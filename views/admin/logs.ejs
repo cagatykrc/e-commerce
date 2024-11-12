@@ -1,15 +1,37 @@
 <%- include('../partials/adminpanelheader.ejs') %>
 <%- include('./controlPanel.ejs') %>
 
-<div class="container lg:px-4">
-    <div class="log-area">
-        <pre><%= dosyaIcerigi %></pre>
-        <form action="/admin/logtemizle" method="POST">
-            <button class="btn btn-primary">Log İçeriğini Temizle</button>
-        </form>
-        <a href="/admin/panel"><button class="btn btn-secondary">Geri</button></a>
+<div class="container inline-block lg:px-4 lg:py-8">
+    <div class="log-area bg-white shadow-lg rounded-lg p-6">
+        <h2 class="text-2xl font-semibold text-slate-950 mb-4">Log Kayıtları</h2>
 
+        <!-- Log İçeriği Gösterimi -->
+        <div class="log-content mb-6">
+            <div class="overflow-x-auto">
+                <pre class="text-sm text-slate-800 bg-gray-50 p-4 rounded-lg border inline-block border-slate-300">
+<%= dosyaIcerigi %>
+                </pre>
+            </div>
+        </div>
+
+        <!-- Log Temizleme Butonu -->
+        <form action="/admin/logtemizle" method="POST">
+            <button type="submit" class="btn btn-danger bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 transition duration-300 mb-6">
+                Log İçeriğini Temizle
+            </button>
+        </form>
+
+        <!-- Geri Butonu -->
+        <a href="/admin/panel" class="inline-block">
+            <button class="btn btn-secondary bg-gray-300 text-slate-950 px-6 py-3 rounded-md hover:bg-gray-400 transition duration-300">
+                Geri
+            </button>
+        </a>
+    </div>
 </div>
-</div>
+
+<script>
+    // Burada herhangi bir özel işlev eklemek için JavaScript yazabilirsiniz (opsiyonel)
+</script>
 </div>
 </div>

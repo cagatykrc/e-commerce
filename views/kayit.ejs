@@ -1,7 +1,6 @@
 <!-- views/kayit.ejs -->
 <%- include('./partials/header.ejs',) %>
 
-<%- include ('./partials/notification.ejs') %>
 <div class="bg-white m-auto">
   <div class="min-h-screen m-auto flex flex-col items-center  pt-5 lg:pt-40  px-4">
     <div class="max-w-md mx-auto w-full">
@@ -64,6 +63,11 @@
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-4">
+            <% if (pagemessage && pagemessage.title) { %>
+              <div class="text-sm <% if(pagemessage.type === 'danger') { %>text-red-600 <% } else { %>text-green-600<% } %>">
+                <%= pagemessage.title %>
+              </div>
+            <% } %>
             <div class="flex items-center">
               <input required id="policy" name="policy" type="checkbox" class="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
               <label for="remember-me" class=" block text-sm text-gray-800">
@@ -81,6 +85,7 @@
           <p class="text-gray-800 text-sm !mt-8 text-center">Zaten bir hesabınız var mı? <a href="/auth/giris" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Giriş yap</a></p>
         </form>
       </div>
+      
     </div>
   </div>
 </div>

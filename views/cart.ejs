@@ -21,74 +21,71 @@
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div class="space-y-6">
           <% userCart.forEach(cartItem => { %>
-          <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm  md:p-6">
-            <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-              <a href="#" class="shrink-0 md:order-1">
-                <img class="h-40 w-40 rounded " src="/uploads/<%=cartItem.Urunler.resim%>" alt="imac image" />
-                <img class="hidden h-20 w-20 " src="/uploads/<%=cartItem.Urunler.resim%>" alt="imac image" />
-              </a>
-
-              <label for="counter-input" class="sr-only">Adet Seçiniz:</label>
-              <div class="flex items-center justify-between md:order-3 md:justify-end">
-                <div class="flex items-center">
-                  <button type="button" id="decrement-button" data-input-counter-decrement="counter-input" class="inline-flex  h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 ">
-                    <svg class="h-2.5 w-2.5 text-gray-900 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                    </svg>
-                  </button>
-                  <input type="text" id="counter-input" data-input-counter class="w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 " placeholder="<%= cartItem.quantity %>" value="<%= cartItem.quantity %>" required />
-                  <button type="button" id="increment-button" data-input-counter-increment="counter-input" class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 ">
-                    <svg class="h-2.5 w-2.5 text-gray-900" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                    </svg>
-                  </button>
-                </div>
-                <div class="text-end md:order-3 md:w-32">
-                  <% if (cartItem.Urunler.discount_price) { %>
-                    <p class="text-base font-bold text-gray-900 ">
-                      <strike>₺<%= cartItem.Urunler.discount_price %></strike><br>₺<%= cartItem.Urunler.product_price %>
-                    </p>
-                    <p class="text-base font-bold text-gray-900 ">
-                      <br>₺<%= cartItem.Urunler.product_price %></p>
-                  <% } else { %>
-                    <p class="text-base font-bold text-gray-900 ">
-                      <br>₺<%= cartItem.Urunler.product_price %></p>
-                  <% } %>
-                  
-                  <% 
-                    const quantity = parseFloat(cartItem.quantity) || 1; // Miktar değeri
-                    const unitPrice = (cartItem.total_price / quantity).toFixed(2); // Birim fiyatı hesapla
-                  %>
-                  
-                  <p class="text-base font-bold text-gray-900 ">
-                    Ürüne Düşen Fiyat: ₺<%= unitPrice %>
-                  </p>
-                </div>
-                
+            <div class="flex flex-row md:flex-row bg-white p-2 lg:p-4 rounded-lg shadow-md border border-gray-200 mb-4">
+              <!-- Resim Sol Tarafta (Mobilde Sol, PC için değişmez) -->
+              <div class="flex-shrink-0 lg:my-auto md:mb-0 md:w-1/4 lg:mr-0 mr-5">
+                <img class="h-32 lg:w-36 lg:h-40 w-32 rounded-md object-cover mx-auto md:mx-0" src="/uploads/<%=cartItem.Urunler.resim%>" alt="<%= cartItem.Urunler.urun_basligi %>" />
               </div>
-
-              <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                <a href="#" class="text-base font-medium text-gray-900 hover:underline "><%=cartItem.Urunler.urun_basligi%>, <%=cartItem.Urunler.kategoriler.kategori_ad%>, <%= cartItem.width %>CM En,<br><%= cartItem.height %>CM Boy</a>
-
-                <div class="flex items-center gap-4">
-                  <button type="button" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 hover:underline">
-                    <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
+            
+              <!-- Ürün Bilgileri Sağ Tarafta (Mobilde Sağ, PC için değişmez) -->
+              <div class="flex-1 flex flex-col justify-between md:ml-6">
+                <!-- Başlık ve Kategoriler -->
+                <div class="flex flex-col space-y-2">
+                  <p class="text-lg font-semibold text-gray-800 truncate"><%= cartItem.Urunler.urun_basligi %></p>
+                  <% if (cartItem.Urunler.discount_price) { %>
+                  <p class="text-sm text-gray-600"><%= cartItem.Urunler.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM ,<p class="text-sm text-gray-600 line-through"> ₺<%= cartItem.Urunler.discount_price %></p><p class="text-sm font-semibold text-gray-800">₺<%= cartItem.Urunler.product_price %></p>
+                    <% } else { %>
+                      <p class="text-sm text-gray-600"><%= cartItem.Urunler.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM , <p class="text-sm font-semibold text-gray-800">₺<%= cartItem.Urunler.product_price %></p>
+                    <% } %>
+                </div>
+            
+                <!-- Miktar ve Fiyat -->
+                <div class="flex items-center justify-between mt-4 space-x-4">
+                  <!-- Miktar Seçici -->
+                  <div class="flex items-center space-x-2">
+                    <button type="button" id="decrement-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
+                      <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                      </svg>
+                    </button>
+                    <input type="number" id="counter-input" class="w-12 text-center text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none" value="<%= cartItem.quantity %>" min="1" />
+                    <button type="button" id="increment-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
+                      <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                      </svg>
+                    </button>
+                  </div>
+                  <% 
+                  const quantity = parseFloat(cartItem.quantity) || 1; // Miktar değeri
+                  const unitPrice = (cartItem.total_price / quantity).toFixed(2); // Birim fiyatı hesapla
+                %>
+                  <!-- Fiyat -->
+                  <div class="text-right">
+                    <p class="text-lg font-bold text-gray-700">₺<%= unitPrice %></p>
+                  </div>
+                </div>
+            
+                <!-- Silme ve Favorilere Ekle Butonları -->
+                <div class="flex flex-row justify-between items-center mt-4 space-x-3">
+                  <button type="button" class="flex items-center text-sm text-gray-500 hover:text-gray-700">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v18M3 12h18" />
                     </svg>
                     Favorilere Ekle
                   </button>
-
-                  <button type="button" data-cartid="<%= cartItem.cart_id %>" class="remove-item inline-flex items-center text-sm font-medium text-red-600 hover:underline">
-                    <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+            
+                  <button type="button" data-cartid="<%= cartItem.cart_id %>" class="remove-item flex flex-row text-sm text-red-600 hover:underline">
+                    <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M18 18L6 6" />
                     </svg>
                     Sil
                   </button>
                 </div>
               </div>
             </div>
-          </div>
-          <% }); %>
+            <% }); %>
+            
+            
         </div>
         <div class="hidden xl:mt-8 xl:block">
           <h3 class="text-2xl font-semibold text-gray-900 ">İlginizi Çekebilir</h3>

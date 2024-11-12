@@ -43,14 +43,15 @@ router.get('/kayit', (req, res) => {
   if (userS) {
     return res.redirect('/');
   }
-  const notification = req.session.notification;
-  if (req.session.notification) {
+  const pagemessage = req.session.pagemessage || null;
+  if (pagemessage) {
     // Burada bildirimi HTML'de göster
-    res.render('kayit', { notification:notification,userS });
-    req.session.notification; // Bildirimi gösterdikten sonra sil
+    res.render('kayit', {  userS, pagemessage: null  });
+    delete req.session.pagemessage;// Bildirimi gösterdikten sonra sil
 } else {
-    res.render('kayit', {userS ,notification:notification}); // Normal render
+    res.render('kayit', { userS, pagemessage: null }); // Normal render
 }
+
 });
 
 
@@ -68,12 +69,14 @@ router.post('/kayit', postlimiter, async (req, res) => {
 
   if (verifypassword !== password) {
     req.session.pagemessage = {title:'Şifre doğrulaması yanlış.',type:'danger'};
-    return res.redirect('/auth/kayit')
+    console.log('test');
+    return res.render('kayit', { userS, pagemessage: req.session.pagemessage });
   }
 
   if (existingUser) {
     req.session.pagemessage = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
-    return res.redirect('/auth/kayit')
+    console.log('object');
+    return res.render('kayit', { userS, pagemessage: req.session.pagemessage });
   }
 
   try {

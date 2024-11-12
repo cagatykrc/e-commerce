@@ -1,26 +1,53 @@
 <%- include('../partials/adminpanelheader.ejs') %>
 <%- include('./controlPanel.ejs') %>
 
-<div class="container mx-auto px-4 py-8">
-    <h2 class="text-center text-2xl font-semibold text-slate-900 mb-6">Tüm Siparişler</h2>
+<div class="container mx-auto px-6 py-8">
+    <!-- Başlık -->
+    <h2 class="text-center text-3xl font-semibold text-slate-950 mb-6">Tüm Siparişler</h2>
 
-    <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
+    <!-- Arama ve Sıralama -->
+    <div class="mb-6 flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+            <label for="searchOrder" class="text-lg text-slate-950">Sipariş Kodu ile Ara:</label>
+            <input 
+                type="text" 
+                id="searchOrder" 
+                class="w-full sm:w-64 px-4 py-2 border rounded-lg text-slate-950 placeholder-slate-500 focus:ring-2 focus:ring-indigo-500"
+                placeholder="Sipariş Kodu Girin"
+            />
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <label for="sortOrder" class="text-lg text-slate-950">Sıralama:</label>
+            <select 
+                id="sortOrder" 
+                class="px-4 py-2 border rounded-lg text-slate-950 bg-white focus:ring-2 focus:ring-indigo-500">
+                <option value="latest">En Yeni</option>
+                <option value="oldest">En Eski</option>
+                <option value="priceAsc">Fiyat (Artan)</option>
+                <option value="priceDesc">Fiyat (Azalan)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Sipariş Tablosu -->
+    <div class="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
         <table class="min-w-full table-auto border-collapse">
             <thead>
-                <tr class="bg-gray-200 text-slate-900">
-                    <th class="py-3 px-4 border-b text-left">Sipariş Kodu</th>
-                    <th class="py-3 px-4 border-b text-left">Alıcı</th>
-                    <th class="py-3 px-4 border-b text-left">Toplam Tutar</th>
-                    <th class="py-3 px-4 border-b text-left">Sipariş Tarihi</th>
-                    <th class="py-3 px-4 border-b text-left">Durum</th>
-                    <th class="py-3 px-4 border-b text-left">Detaylar</th>
+                <tr class="bg-slate-100 text-slate-950">
+                    <th class="py-3 px-4 border-b text-left font-medium">Sipariş Kodu</th>
+                    <th class="py-3 px-4 border-b text-left font-medium">Alıcı</th>
+                    <th class="py-3 px-4 border-b text-left font-medium">Toplam Tutar</th>
+                    <th class="py-3 px-4 border-b text-left font-medium">Sipariş Tarihi</th>
+                    <th class="py-3 px-4 border-b text-left font-medium">Durum</th>
+                    <th class="py-3 px-4 border-b text-left font-medium">Detaylar</th>
                 </tr>
             </thead>
             <tbody>
                 <% if (Order && Order.length > 0) { %>
                     <% Order.forEach(order => { %>
                         <% if (order.OrderItems && order.OrderItems.length > 0) { %>
-                            <tr class="border-b hover:bg-gray-100">
+                            <tr class="border-b hover:bg-slate-50 transition-all duration-300">
                                 <td class="py-3 px-4"><%= order.order_id %></td>
                                 <td class="py-3 px-4">
                                     <%= order.user.first_name %> <%= order.user.last_name %>
@@ -30,12 +57,14 @@
                                     <%= new Date(order.order_date).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) %>
                                 </td>
                                 <td class="py-3 px-4">
-                                    <span class="py-1 px-3 rounded-full text-sm <% if(order.status === 'Teslim Edildi'){ %>bg-green-100 text-green-600<% } else if(order.status === 'Hazırlanıyor'){ %>bg-yellow-100 text-yellow-600<% } else { %>bg-red-100 text-red-600<% } %>">
+                                    <span class="py-1 px-3 rounded-full text-sm <% if(order.status === 'Teslim Edildi'){ %>bg-emerald-100 text-emerald-600<% } else if(order.status === 'Hazırlanıyor'){ %>bg-yellow-100 text-yellow-600<% } else { %>bg-red-100 text-red-600<% } %>">
                                         <%= order.status %>
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-center">
-                                    <a href="/admin/siparisler/<%= order.order_id %>" class="text-indigo-600 hover:text-indigo-800 font-semibold">Detaylar</a>
+                                    <a href="/admin/siparisler/<%= order.order_id %>" class="text-indigo-600 hover:text-indigo-800 font-semibold transition-all duration-300">
+                                        Detaylar
+                                    </a>
                                 </td>
                             </tr>
                         <% } %>
@@ -50,5 +79,35 @@
     </div>
 </div>
 
-</div>
+<script>
+    // Arama ve sıralama işlevselliği için basit bir js kodu ekleyebilirsiniz.
+    document.getElementById('searchOrder').addEventListener('input', function(event) {
+        // Arama yaparak siparişleri filtrelemek için kullanılabilir.
+        const searchTerm = event.target.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const orderCode = row.querySelector('td').textContent.toLowerCase();
+            if (orderCode.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    document.getElementById('sortOrder').addEventListener('change', function(event) {
+        const sortValue = event.target.value;
+        const rows = Array.from(document.querySelectorAll('tbody tr'));
+
+        // Sıralama işlemi burada yapılabilir (fiyat veya tarih sıralaması gibi).
+        // Örneğin, tarih sıralaması yapılabilir:
+        rows.sort((rowA, rowB) => {
+            const dateA = new Date(rowA.querySelector('td:nth-child(4)').textContent);
+            const dateB = new Date(rowB.querySelector('td:nth-child(4)').textContent);
+            return sortValue === 'latest' ? dateB - dateA : dateA - dateB;
+        });
+
+        rows.forEach(row => document.querySelector('tbody').appendChild(row));
+    });
+</script>
 </div>

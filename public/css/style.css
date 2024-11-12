@@ -1542,11 +1542,6 @@ textarea {
     .loginBtn:hover {
       background: #314d43;
     }
-    .custom-category-container{
-      padding: 25px;
-      margin-top: 125px;
-    }
-  
     @media (max-width:992px) {
       .lgncustom-container{
         width: 100%;

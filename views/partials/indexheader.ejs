@@ -103,6 +103,17 @@
         <!-- login -->
         <div class="flex-initial">
           <div class="flex justify-end items-center relative">
+            <% if (userS && userS.role === 'admin') { %>
+                <div class="hidden lg:flex mr-4 items-center">
+                    <div class="block relative">
+                        <button class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative">
+                            <div class="flex items-centerh-5">
+                               <a class="text-slate-950" href="/admin/panel">Panel</a>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+                <% }else{} %>
             <div class="hidden lg:flex mr-4 items-center">
                 <div class="block relative">
                     <button class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative">
@@ -221,6 +232,9 @@
                     <li class="py-2"><a href="/hakkimizda" class="text-slate-950 font-medium text-xl">Hakkında</a></li>
                     <li class="py-2"><a href="/sss" class="text-slate-950 font-medium text-xl">S.S.S</a></li>
                     <li class="py-2"><a href="/iletisim" class="text-slate-950 font-medium text-xl">İletişim</a></li>
+                    <% if (userS && userS.role === 'admin') { %>
+                        <li class="py-2"><a href="/admin/panel" class="text-slate-950 font-medium text-xl">Panel</a></li>
+                        <% }else{} %>
                 </ul>
             </div>
         </div>
