@@ -5,16 +5,16 @@
     <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
         <div class="edit-product bg-white shadow-lg rounded-lg p-6 flex-1">
             <h1 class="text-2xl font-bold mb-4">Dergi Düzenle</h1>
-            <form action="/admin/<%= urun.urun_id %>/duzenle" method="POST">
+            <form action="/admin/<%= product.urun_id %>/duzenle" method="POST">
                 <div class="mb-4">
                     <div class="resim-goster mt-4">
-                        <img src="/uploads/<%= urun.resim %>" alt="Dergi Kapağı" class="w-2/5 rounded-md">
+                        <img src="/uploads/<%= product.resim %>" alt="Dergi Kapağı" class="w-2/5 rounded-md">
                     </div>
                 </div>
                 
                 <div class="mb-4">
                     <label for="baslik" class="block text-sm font-medium text-slate-950 ">Başlık:</label>
-                    <input type="text" id="baslik" name="baslik" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.urun_basligi %>" required>
+                    <input type="text" id="baslik" name="baslik" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.urun_basligi %>" required>
                 </div>
 
 
@@ -22,7 +22,7 @@
                     <label for="kategorisi" class="block text-sm font-medium text-black">Kategoriler:</label>
                     <select name="kategorisi" id="kategorisi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                         <% kategoriler.forEach(kategori => { %>
-                            <option value="<%= kategori.category_id %>" <%= urun.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
+                            <option value="<%= kategori.category_id %>" <%= product.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
                         <% }); %>
                     </select>
                 </div>
@@ -31,35 +31,35 @@
                     <label for="productdesc_id" class="block text-sm font-medium text-black">Açıklama:</label>
                     <select name="productdesc_id" id="productdesc_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
                         <% productdesc.forEach(desc => { %>
-                            <option value="<%= desc.productdesc_id %>" <%= urun.productdesc_id == desc.productdesc_id ? 'selected' : '' %>><%= desc.desc_type %></option>
+                            <option value="<%= desc.productdesc_id %>" <%= product.productdesc_id == desc.productdesc_id ? 'selected' : '' %>><%= desc.desc_type %></option>
                         <% }); %>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label for="aciklama" class="block text-sm font-medium text-black">Açıklama:</label>
-                    <textarea id="aciklama" name="aciklama" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"><%= urun.aciklama %></textarea>
+                    <textarea id="aciklama" name="aciklama" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"><%= product.aciklama %></textarea>
                 </div>
 
                 <div class="mb-4">
                     <label for="color" class="block text-sm font-medium text-black">Renk:</label>
-                    <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color" value="<%= urun.product_color %>">
+                    <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color" value="<%= product.product_color %>">
                 </div>
 
                 <div class="mb-4">
                     <label for="price" class="block text-sm font-medium text-black">Fiyat:</label>
-                    <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
+                    <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
                 </div>
                 <div class="mb-4">
                     <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
                     <select name="turu" id="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                        <option value="1" <%= urun.urun_turu === 1 ? 'selected' : '' %>>Perde</option>
-                        <option value="0" <%= urun.urun_turu === 0 ? 'selected' : '' %>>Mekanik Perde</option>
+                        <option value="1" <%= product.urun_turu === 1 ? 'selected' : '' %>>Perde</option>
+                        <option value="0" <%= product.urun_turu === 0 ? 'selected' : '' %>>Mekanik Perde</option>
                     </select>
                 </div>
                 <div class="mb-4">
                     <label for="resim" class="block text-sm font-medium text-black">Kapak Adı:</label>
-                    <input type="text" id="resim" name="resim" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= urun.resim %>" required>
+                    <input type="text" id="resim" name="resim" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.resim %>" required>
                 </div>
 
                 <button type="submit" class="mt-4 w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Dergiyi Düzenle</button>
@@ -68,7 +68,7 @@
 
         <div class="discount-area bg-white shadow-lg rounded-lg p-6">
             <h2 class="text-xl font-bold mb-4">İndirim Uygula</h2>
-            <form action="/admin/<%= urun.urun_id %>/indirim" method="post">
+            <form action="/admin/<%= product.urun_id %>/indirim" method="post">
                 <div class="mb-4">
                     <label for="discount_price" class="block text-sm font-medium text-black">İndirimli Fiyat:</label>
                     <input type="number" name="discount_price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" step="0.01" placeholder="İndirimli fiyatı girin">

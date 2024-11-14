@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Urunler = require('../models/Urunler');
+const Products = require('../models/Products');
 const Yorumlar = require('../models/Yorumlar');
 const Users = require('../models/Users');
 const verifyToken= require('../utility/verifyToken');
@@ -17,14 +17,13 @@ const now = formattedDate.toLocaleString('tr-TR', options);
 // const limiterDefaultRequests = createLimiter(15);
 
 
-
 router.get('/:slug', async (req, res) => {
   const slug = req.params.slug;
   const userS = req.session.user;
 
   try {
-    // Sequelize ile urun bilgilerini slug'a göre çek
-    const urun = await Urunler.findOne({
+    // Sequelize ile product bilgilerini slug'a göre çek
+    const product = await Products.findOne({
       where: { slug: slug },
       include: [
         {
@@ -43,33 +42,28 @@ router.get('/:slug', async (req, res) => {
       ],
     });
 
-    // Eğer urun bulunursa, indirim oranını hesapla
-    const discountRate = ((urun.discount_price - urun.product_price) / urun.discount_price) * 100;
+    if (!product) {
+      return res.status(404).send('Product not found'); // Early return if no product is found
+    }
 
-    const olusturanUser = urun ? urun.olusturanUser : null;
+    // Eğer product bulunursa, indirim oranını hesapla
+    const discountRate = ((product.discount_price - product.product_price) / product.discount_price) * 100;
+    const olusturanUser = product ? product.olusturanUser : null;
 
     // Urun sayfasını render et
-    switch (urun.kategoriler.category_low) {
-      case 'tulperde':
-        res.render('tulcproductpage', { urun, userS, olusturanUser, discountRate });
-        break;
-      case 'storperde':
-        res.render('storcproductpage', { urun, userS, olusturanUser, discountRate });
-        break;
-      case 'fonperde':
-        res.render('foncproductpage', { urun, userS, olusturanUser, discountRate });
-        break;
-      default:
-        res.render('productpage', { urun, userS, olusturanUser, discountRate });
-        break;
+    if (product.urun_turu === 1) {
+      return res.render('productpage', { product, userS, olusturanUser, discountRate });
     }
+
+    return res.render('mechprod', { product, userS, olusturanUser, discountRate });
 
   } catch (error) {
     // Hata durumunda
     console.error('Urun ve yorum verilerini çekerken bir hata oluştu: ' + error);
-    res.status(500).send('Internal Server Error');
+    return res.status(500).send('Internal Server Error');
   }
 });
+
 
 router.post('/:urunId/yorumsil', verifyToken, async (req, res) => {
     const userS = req.session.user;

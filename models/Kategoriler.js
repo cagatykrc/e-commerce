@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
 const Kategorilertab = require('./Kategorilertab');
-const Urunler = require('./Urunler');
+const Urunler = require('./Products');
 const Kategoriler = sequelize.define('Kategoriler', {
     category_id: {
         type: DataTypes.INTEGER,

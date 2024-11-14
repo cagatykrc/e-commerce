@@ -1,65 +1,104 @@
 <%- include('../partials/adminpanelheader.ejs') %>
 <%- include('./controlPanel.ejs') %>
-<div class="ccontainer lg:px-4">
-    <div style="width: auto;" class="custom-category-panel">
-        <div class="category-create-panel">
-            <h2 class="text-center mb-4">Açıklama Oluştur</h2>
-            <!-- Kategori Tab Oluşturma Formu -->
 
-            <!-- Kategori Oluşturma Formu -->
-            <form action="/admin/urunaciklamatipekle" method="POST">
-                <div class="form-group">
-                    <label for="desc_type">Ürün tipi:</label>
-                    <input type="text" class="form-control admin-panel-input" id="desc_type" maxlength="32" name="desc_type">
-                </div>
-                <div class="form-group">
-                    <label for="pile_frequency">Pile oranı:</label>
-                    <input type="text" class="form-control admin-panel-input" id="pile_frequency" maxlength="255" name="pile_frequency">
-                </div>
-                <div class="form-group">
-                    <label for="stitching">Dikiş:</label>
-                    <input type="text" class="form-control admin-panel-input" id="stitching" maxlength="255" name="stitching">
-                </div>
-                <div class="form-group">
-                    <label for="cleaning">Ürün Temizlik:</label>
-                    <input type="text" class="form-control admin-panel-input" id="cleaning" maxlength="255" name="cleaning">
-                </div>
-                <div class="form-group">
-                    <label for="warranty">Garanti:</label>
-                    <input type="text" class="form-control admin-panel-input" id="warranty" maxlength="255" name="warranty">
-                </div>
-                <div class="form-group">
-                    <label for="payment_options">Ödeme Seçenekleri:</label>
-                    <input type="text" class="form-control admin-panel-input" id="payment_options" maxlength="255" name="payment_options">
-                </div>
-                <div class="form-group">
-                    <label for="delivery_time">Tahmini Kargo:</label>
-                    <input type="text" class="form-control admin-panel-input" id="delivery_time" maxlength="255" name="delivery_time">
-                </div>
-                <div class="form-group">
-                    <label for="moisture_resistance">Neme dayanıklılık:</label>
-
-                    <select name="moisture_resistance" id="moisture_resistance">
-                        <option value="1">Var</option>
-                        <option value="0">Yok</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="product_composition">Ürün Detayları:</label>
-                    <input type="text" class="form-control admin-panel-input" id="product_composition" maxlength="255" name="product_composition">
-                </div>
-                <div class="form-group">
-                    <label for="installation_areas">Montaj Şekli:</label>
-                    <input type="text" class="form-control admin-panel-input" id="installation_areas" maxlength="255" name="installation_areas">
-                </div>
-                
-                <button type="submit" class="btn addbookbtn btn-primary">Oluştur</button>
-            </form>
+<div class="container mx-auto px-6 py-8">
+  <!-- Main container with light background -->
+  <div class="bg-white rounded-xl shadow-lg p-8">
+    <!-- Create Description Form -->
+    <div class="mb-10">
+      <h2 class="text-4xl text-slate-900 text-center mb-6 font-semibold">Açıklama Oluştur</h2>
+      <!-- Kategori Oluşturma Formu -->
+      <form action="/admin/urunaciklamatipekle" method="POST" class="space-y-6">
+        <!-- Ürün Tipi -->
+        <div class="form-group">
+          <label for="desc_type" class="block text-lg text-slate-700 font-medium">Ürün Tipi:</label>
+          <input type="text" id="desc_type" name="desc_type" maxlength="32" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Kategori Yönetim Paneli -->
-        <div style="margin-top: 50px;" class="category-management-panel">
+        <!-- Pile Oranı -->
+        <div class="form-group">
+          <label for="pile_frequency" class="block text-lg text-slate-700 font-medium">Pile Oranı:</label>
+          <input type="text" id="pile_frequency" name="pile_frequency" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
 
-</div>
-</div>
+        <!-- Dikiş -->
+        <div class="form-group">
+          <label for="stitching" class="block text-lg text-slate-700 font-medium">Dikiş:</label>
+          <input type="text" id="stitching" name="stitching" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ürün Temizlik -->
+        <div class="form-group">
+          <label for="cleaning" class="block text-lg text-slate-700 font-medium">Ürün Temizlik:</label>
+          <input type="text" id="cleaning" name="cleaning" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Garanti -->
+        <div class="form-group">
+          <label for="warranty" class="block text-lg text-slate-700 font-medium">Garanti:</label>
+          <input type="text" id="warranty" name="warranty" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ödeme Seçenekleri -->
+        <div class="form-group">
+          <label for="payment_options" class="block text-lg text-slate-700 font-medium">Ödeme Seçenekleri:</label>
+          <input type="text" id="payment_options" name="payment_options" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Tahmini Kargo -->
+        <div class="form-group">
+          <label for="delivery_time" class="block text-lg text-slate-700 font-medium">Tahmini Kargo:</label>
+          <input type="text" id="delivery_time" name="delivery_time" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Neme Dayanıklılık -->
+        <div class="form-group">
+          <label for="moisture_resistance" class="block text-lg text-slate-700 font-medium">Neme Dayanıklılık:</label>
+          <select name="moisture_resistance" id="moisture_resistance" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+            <option value="1">Var</option>
+            <option value="0">Yok</option>
+          </select>
+        </div>
+
+        <!-- Ürün Detayları -->
+        <div class="form-group">
+          <label for="product_composition" class="block text-lg text-slate-700 font-medium">Ürün Detayları:</label>
+          <input type="text" id="product_composition" name="product_composition" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Montaj Şekli -->
+        <div class="form-group">
+          <label for="installation_areas" class="block text-lg text-slate-700 font-medium">Montaj Şekli:</label>
+          <input type="text" id="installation_areas" name="installation_areas" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ürün Ayrıntı 1 -->
+        <div class="form-group">
+          <label for="prodmark" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı:</label>
+          <input type="text" id="prodmark" name="prodmark" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ürün Ayrıntı 2 -->
+        <div class="form-group">
+          <label for="prodmark1" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 2:</label>
+          <input type="text" id="prodmark1" name="prodmark1" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ürün Ayrıntı 3 -->
+        <div class="form-group">
+          <label for="prodmark2" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 3:</label>
+          <input type="text" id="prodmark2" name="prodmark2" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ürün Ayrıntı 4 -->
+        <div class="form-group">
+          <label for="prodmark3" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 4:</label>
+          <input type="text" id="prodmark3" name="prodmark3" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-3 bg-slate-900 text-white text-lg rounded-lg hover:bg-slate-950 focus:ring-4 focus:ring-slate-950 transition duration-300">Oluştur</button>
+      </form>
+    </div>
+  </div>
 </div>

@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const helmet = require('helmet');
+const sessionsdb = require('./models/Sessions');
 
 const sequelize = require('./utility/database');
 const profileRoutes = require('./routes/profile');
@@ -46,6 +47,7 @@ app.use(helmet.hsts({
 const sessionStore = new SequelizeStore({
   db: sequelize,
 });
+
 
 app.use(session({
   store: sessionStore,
@@ -96,7 +98,7 @@ app.get('*', (req, res) => {
 // Sequelize modellerini senkronize et ve sunucuyu başlat
 (async () => {
   try {
-    await sequelize.sync({});
+    await sequelize.sync();
 
     const PORT = process.env.PORT || 80;
 

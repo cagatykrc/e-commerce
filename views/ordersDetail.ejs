@@ -26,7 +26,7 @@
                 <% order.OrderItems.forEach(item => { %>
                 <div class="flex flex-col lg:flex-row items-center py-6 border-b border-gray-200 gap-6 w-full">
                     <div class="img-box max-lg:w-full">
-                        <img src="/uploads/<%=item.urunler.resim %>" alt="<%=item.urunler.urun_basligi%>" 
+                        <img src="/uploads/<%=item.products.resim %>" alt="<%=item.products.urun_basligi%>" 
                             class="aspect-square w-full lg:max-w-[140px] rounded-xl object-cover">
                     </div>
                     <div class="flex flex-row items-center w-full ">
@@ -34,9 +34,9 @@
                             <div class="flex items-center">
                                 <div class="">
                                     <h2 class="font-semibold text-xl leading-8 text-black mb-3">
-                                        <%=item.urunler.urun_basligi%>, <%=item.urunler.kategoriler.kategori_ad%></h2>
+                                        <%=item.products.urun_basligi%>, <%=item.products.kategoriler.kategori_ad%></h2>
                                     <p class="font-normal text-lg leading-8 text-gray-500 mb-3 ">
-                                        <%=item.urunler.kategoriler.kategori_ad%>
+                                        <%=item.products.kategoriler.kategori_ad%>
                                         </p>
                                     <div class="flex items-center ">
                                         <p

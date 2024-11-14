@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
-const Urunler = require('./Urunler')
+const Products = require('./Products')
 const productDesc = sequelize.define('productDesc', {
     productdesc_id: {
         type: DataTypes.INTEGER,
@@ -74,7 +74,23 @@ const productDesc = sequelize.define('productDesc', {
     brand: {
         type: DataTypes.STRING,
         allowNull: true,
-    }
+    },
+    prodmark:{
+        type:DataTypes.STRING,
+        allowNull:true,
+    },    
+    prodmark1:{
+        type:DataTypes.STRING,
+        allowNull:true,
+    },
+    prodmark2:{
+        type:DataTypes.STRING,
+        allowNull:true,
+    },
+    prodmark3:{
+        type:DataTypes.STRING,
+        allowNull:true,
+    },
 }, {
     // Modelin ayarlarını belirle
     tableName: 'productdesc', // Veritabanında kullanılacak tablo adı

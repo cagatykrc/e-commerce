@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
-const Urunler = require('./Urunler');
+const Urunler = require('./Products');
 
 const Showcase = sequelize.define('Showcase', {
     showcase_id: {

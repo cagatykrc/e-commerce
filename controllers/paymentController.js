@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const request = require('request');
 const ShoppingCart = require('../models/ShoppingCart');
 const Users = require('../models/Users');
-const Urunler = require('../models/Urunler');
+const Products = require('../models/Products');
 const Orders = require('../models/Orders');
 const Kategoriler = require('../models/Kategoriler');
 const OrderItem = require('../models/OrderItem');
@@ -34,114 +34,131 @@ function generateUniqueId() {
 router.post("/siparisonayla", async (req, res) => {
     const userS = req.session.user;
     if (!userS) {
-      return res.redirect('/sepet');
+        return res.redirect('/sepet');
     }
 
-    
     try {
-      const userDetails = await Users.findAll({
-        where: {
-          user_id: userS.id
-        },
-        include: [{
-          model: ShoppingCart,
-          where: {
-            user_id: userS.id
-          }
-        }]
-      });
-      const userCart = await ShoppingCart.findAll({
-        where: { user_id: userS.id },
-        include: [{
-          model: Urunler,
-          attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi'],
-          include:[{
-            model:Kategoriler,
-            attributes:['kategori_ad'],
-            as:'kategoriler',
-          }]
-        }]
-      });
-      if(userCart < 0){
-        return res.redirect('/sepet')
-      }
-      let totalCartPrice = 0;
-    userCart.forEach(cartItem => {
-      const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;
-      const width = parseFloat(cartItem.width) || 0;
-      const height = parseFloat(cartItem.height) || 0;
-      const quantity = parseFloat(cartItem.quantity) || 0;
-      const productType = parseInt(cartItem.Urunler.urun_turu);
+        const userDetails = await Users.findAll({
+            where: {
+                user_id: userS.id
+            },
+            include: [{
+                model: ShoppingCart,
+                where: {
+                    user_id: userS.id
+                }
+            }]
+        });
+        
 
-      // Değerlerin kontrolü için konsol çıktıları
-      console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
-        if (productType === 0) {
-            if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
-                const squareMeters = (height * width) / 10000;
-                const totalPrice = squareMeters * productPrice * quantity;
-                cartItem.total_price = totalPrice;
-                totalCartPrice += totalPrice;
-              } else {
-                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
-                return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
-              }
-        } else {
-            if (productPrice > 0 && width > 0 && height < 300 && quantity > 0) {
-                const Meters = (width *3) / 100;
-                const totalPrice = Meters * productPrice * quantity;
-                cartItem.total_price = totalPrice;
-                totalCartPrice += totalPrice;
-              } else {
-                console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
-                return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
-              }
+        const userCart = await ShoppingCart.findAll({
+            where: { user_id: userS.id },
+            include: [{
+              model: Products,
+              attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi','urun_turu'], // Ya da istediğiniz diğer alanlar
+              include: [{
+                      model: Kategoriler,
+                      attributes: ['kategori_ad'],
+                      as: 'kategoriler',
+                    }]
+            }]
+          });
+
+        if (userCart.length === 0) {
+            return res.redirect('/sepet');
         }
 
-    });
+        let totalCartPrice = 0;
+        userCart.forEach(cartItem => {
+            const product = cartItem.product;
+            const productPrice = parseFloat(product.dataValues.product_price) || 0;
+            const width = parseFloat(cartItem.width) || 0;
+            const height = parseFloat(cartItem.height) || 0;
+            const quantity = parseFloat(cartItem.quantity) || 0;
+            const productType = parseInt(product.dataValues.urun_turu);
 
-      console.log(`Total Cart Price before discount: ${totalCartPrice}`);
-      let totalprice = totalCartPrice;
-      let discount = 0;
-      let kdvprice = 0;
-      let withoutkdv = 0;
-      console.log(req.session.coupon);
-      if (req.session.coupon) {
-        const coupon = req.session.coupon;
-        const discountRate = parseFloat(coupon.discount_rate);
-        const discountPrice = parseFloat(coupon.discount_price);
-        console.log(discountRate, discountPrice);
-        if (discountRate > 0) {
-          // İndirim oranı (discountRate'in yüzde olarak olduğunu varsayıyoruz)
-          discount = totalCartPrice * (discountRate / 100);
-          console.log(`Discount Rate applied: ${discountRate / 100}`);
-        } else if (discountPrice > 0) {
-          // Sabit indirim miktarı
-          discount = discountPrice;
-          console.log(`Discount Price applied: ${discountPrice}`);
+            console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
+            
+            if (product) {
+                if (productType === 0) {
+                    if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
+                        const squareMeters = (height * width) / 10000;
+                        const totalPrice = squareMeters * productPrice * quantity;
+                        cartItem.total_price = totalPrice;
+                        totalCartPrice += totalPrice;
+                    } else {
+                        console.log(`Geçersiz değerler bulundu: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                        return res.status(500).json({ message: 'Sistemsel bir hata meydana geldi' });
+                    }
+                } else {
+                    if (productPrice > 0 && width > 0 && height < 300 && quantity > 0) {
+                        const Meters = (width * 3) / 100;
+                        const totalPrice = Meters * productPrice * quantity;
+                        cartItem.total_price = totalPrice;
+                        totalCartPrice += totalPrice;
+                    } else {
+                        console.log(`Geçersiz değerler bulundu: ${productPrice}, ${width}, ${height}, ${quantity}`);
+                        return res.status(500).json({ message: 'Sistemsel bir hata meydana geldi' });
+                    }
+                }
+            } else {
+                console.log(`Sepet öğesi ID'si: ${cartItem.cart_id} için ürün bulunamadı`);
+            }
+        });
+
+        console.log(`Total Cart Price before discount: ${totalCartPrice}`);
+        let totalprice = totalCartPrice;
+        let discount = 0;
+        let kdvprice = 0;
+        let withoutkdv = 0;
+
+        console.log(req.session.coupon);
+        if (req.session.coupon) {
+            const coupon = req.session.coupon;
+            const discountRate = parseFloat(coupon.discount_rate);
+            const discountPrice = parseFloat(coupon.discount_price);
+            console.log(discountRate, discountPrice);
+
+            if (discountRate > 0) {
+                discount = totalCartPrice * (discountRate / 100);
+                console.log(`Discount Rate applied: ${discountRate / 100}`);
+            } else if (discountPrice > 0) {
+                discount = discountPrice;
+                console.log(`Discount Price applied: ${discountPrice}`);
+            }
+
+            totalCartPrice -= discount;
+            console.log(`Discount applied: ${discount}`);
+            console.log(`Total Cart Price after discount: ${totalCartPrice}`);
         }
-        totalCartPrice -= discount;
-        console.log(`Discount applied: ${discount}`);
-        console.log(`Total Cart Price after discount: ${totalCartPrice}`);
-      }
-  
-      // Son kontroller
-      const rawtotal = totalCartPrice
-      kdvprice = totalprice*(1+8/100).toFixed(2)
-      withoutkdv = kdvprice -totalprice
-      totalCartPrice = rawtotal + withoutkdv
-      totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
-      discount = isNaN(discount) ? 0 : discount;
-  
-      // Değerleri toFixed(2) ile formatlama
-      const totalCartPriceFormatted = totalCartPrice.toFixed(2);
-      const discountFormatted = discount.toFixed(2);
-  
-      res.render('checkout', { userS, userDetails: userDetails[0],totalprice, totalCartPrice: totalCartPriceFormatted, discount: discountFormatted,kdvprice,withoutkdv, coupon: req.session.coupon });
+
+        const rawtotal = totalCartPrice;
+        kdvprice = totalprice * (1 + 8 / 100); // KDV hesaplama
+        withoutkdv = kdvprice - totalprice;
+        totalCartPrice = rawtotal + withoutkdv;
+        totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
+        discount = isNaN(discount) ? 0 : discount;
+
+        // Değerleri toFixed(2) ile formatlama
+        const totalCartPriceFormatted = totalCartPrice.toFixed(2);
+        const discountFormatted = discount.toFixed(2);
+
+        res.render('checkout', { 
+            userS, 
+            userDetails: userDetails[0],
+            totalprice, 
+            totalCartPrice: totalCartPriceFormatted, 
+            discount: discountFormatted, 
+            kdvprice, 
+            withoutkdv, 
+            coupon: req.session.coupon 
+        });
+
     } catch (error) {
-      console.error('Error fetching user details and shopping cart:', error);
-      res.status(500).send('Internal Server Error');
+        console.error('Error fetching user details and shopping cart:', error);
+        res.status(500).send('Internal Server Error');
     }
-  });
+});
 
 router.get("/siparis", function(req, res) {
     res.redirect('/');
@@ -156,8 +173,8 @@ router.post("/", async function(req, res) {
     const { email, address,country,district,city,address_title, phone, firstname, lastname } = req.body;
     const user_ip = req.ip;
     const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Benzersiz ve alfanumerik bir sipariş ID'si oluşturun
-    if( email || address ||country ||district ||city ||address_title || phone || firstname || lastname ){
-        return res.redirect('/sepet')
+    if( !email || !address ||!country ||!district ||!city ||!address_title || !phone || !firstname || !lastname ){
+        return alert('Boş Alanları Doldurun')
     }
     let basket = [];
     let totalCartPrice = 0;
@@ -165,18 +182,19 @@ router.post("/", async function(req, res) {
     const userCart = await ShoppingCart.findAll({
         where: { user_id: user.id },
         include: [{
-            model: Urunler,
-            attributes: ['product_price', 'resim', 'urun_basligi']
+            model: Products,
+            attributes: ['product_price', 'resim', 'urun_basligi','urun_turu']
         }]
     });
 
     try {
         userCart.forEach(cartItem => {
-            const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;
+            const product = cartItem.product;
+            const productPrice = parseFloat(product.dataValues.product_price) || 0;
             const width = parseFloat(cartItem.width) || 0;
             const height = parseFloat(cartItem.height) || 0;
             const quantity = parseFloat(cartItem.quantity) || 0;
-            const productType = parseInt(cartItem.Urunler.urun_turu);
+            const productType = parseInt(product.dataValues.urun_turu);
 
             console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
             if (productType === 0) {
@@ -187,7 +205,7 @@ router.post("/", async function(req, res) {
                     totalCartPrice += totalPrice;
     
                     basket.push([
-                        cartItem.Urunler.urun_basligi,
+                        product.dataValues.urun_basligi,
                         totalPrice.toFixed(2),
                         cartItem.quantity
                     ]);
@@ -203,7 +221,7 @@ router.post("/", async function(req, res) {
                     totalCartPrice += totalPrice;
     
                     basket.push([
-                        cartItem.Urunler.urun_basligi,
+                        product.dataValues.urun_basligi,
                         totalPrice.toFixed(2),
                         cartItem.quantity
                     ]);
@@ -393,7 +411,7 @@ router.post("/odeme_basarili", async function (req, res) {
 //     const userCart = await ShoppingCart.findAll({
 //         where: { user_id: userId },
 //         include: [{
-//             model: Urunler,
+//             model: Products,
 //             attributes: ['urun_basligi', 'product_price']
 //         }]
 //     });

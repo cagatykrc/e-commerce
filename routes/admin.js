@@ -7,7 +7,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 const Users = require('../models/Users');
 const Yorumlar = require('../models/Yorumlar');
-const Urunler = require('../models/Urunler');
+const Products = require('../models/Products');
 const createLimiter= require('../utility/limiter');
 const Kategoriler = require('../models/Kategoriler');
 const verifyToken = require('../utility/verifyToken');
@@ -135,11 +135,11 @@ router.get('/urunyonetim', verifyToken, async (req, res) => {
     }
 
     try {
-        const urunler = await Urunler.findAll({
+        const products = await Products.findAll({
             include: [{ model: Kategoriler ,as:'kategoriler'}],
         });
-        console.log(urunler);
-        res.render('admin/managementProduct', { urunler, userS });
+        console.log(products);
+        res.render('admin/managementProduct', { products, userS });
     } catch (error) {
         console.error('Urun verilerini çekerken bir hata oluştu: ' + error);
         return res.status(500).send('Internal Server Error');
@@ -215,8 +215,8 @@ router.get('/siparisler/:orderId', verifyToken, async (req, res) => {
             as: 'OrderItems',
             include: [
               {
-                model: Urunler,
-                as: 'urunler',
+                model: Products,
+                as: 'products',
                 attributes: ['urun_id','aciklama', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
                 include: [{
                   model: Kategoriler,
@@ -241,7 +241,7 @@ router.get('/siparisler/:orderId', verifyToken, async (req, res) => {
 });
 router.post('/urunaciklamatipekle', verifyToken,async(req,res) => {
     const userS = req.session.user;
-    const {desc_type, pile_frequency, stitching, cleaning, warranty, payment_options, delivery_time, moisture_resistance, product_composition, installation_areas} = req.body;
+    const {desc_type, pile_frequency, stitching, cleaning, warranty, payment_options, delivery_time, moisture_resistance, product_composition, installation_areas, prodmark,prodmark1,prodmark2,prodmark3} = req.body;
     
     if (userS && userS.role === 'admin') {
 
@@ -256,6 +256,10 @@ router.post('/urunaciklamatipekle', verifyToken,async(req,res) => {
             moisture_resistance,
             product_composition,
             installation_areas,
+            prodmark,
+            prodmark1,
+            prodmark2,
+            prodmark3,
 
         });
         const ipAddress = req.socket.remoteAddress;
@@ -388,7 +392,7 @@ router.post('/urunolustur', verifyToken, upload.fields([
         const uniqueId = (baslik); // Veya başka bir yöntem
         const productId = generateProductId(kategorisi, uniqueId);
 
-        const result = await Urunler.create({
+        const result = await Products.create({
             aciklama,
             resim: resimDosya.filename,
             resim2: resimDosya2,  // İkinci resim
@@ -428,14 +432,14 @@ router.post('/:urunId/duzenle', verifyToken, async (req, res) => {
     const urunAdi = baslik;  // Bu ürün adını dinamik olarak alın
     const slug = slugify(urunAdi);
     try {
-        const urun = await Urunler.findByPk(urunId);
+        const product = await Products.findByPk(urunId);
 
-        if (!urun) {
+        if (!product) {
             return res.status(404).send('Ürün bulunamadı');
         }
 
         // Sequelize'nin update metodunu kullanarak ürünü güncelle
-        await urun.update({
+        await product.update({
             urun_basligi: baslik,
             aciklama: aciklama,
             resim: resim,
@@ -473,16 +477,16 @@ router.get('/:urunId/duzenle', async (req, res) => {
             const kategoriler = await Kategoriler.findAll();
             
             // Urunyi çek
-            const urun = await Urunler.findByPk(urunId);
+            const product = await Products.findByPk(urunId);
 
-            if (!urun) {
+            if (!product) {
                 return res.status(404).send('Urun bulunamadı');
             }
 
 
 
-            // UrunDuzenle view'ine urun ve kategorileri gönder
-            res.render('admin/editProduct', { urun, userS, kategoriler, productdesc });
+            // UrunDuzenle view'ine product ve kategorileri gönder
+            res.render('admin/editProduct', { product, userS, kategoriler, productdesc });
 
         } catch (error) {
             console.error('Duzenleme bilgisi alınırken bir hata oluştu: ' + error);
@@ -502,14 +506,14 @@ router.post('/:urunId/sil', verifyToken, async (req, res) => {
         
         try {
             // Sequelize ile urunyi bul ve sil
-            const urun = await Urunler.findByPk(urunId);
+            const product = await Products.findByPk(urunId);
             
-            if (!urun) {
+            if (!product) {
                 return res.status(404).send('Urun bulunamadı');
             }
             
             // Sequelize ile urunyi sil
-            await urun.destroy();
+            await product.destroy();
             
             // Sequelize ile ilgili urunye ait yorumları sil
             await Yorumlar.destroy({
@@ -540,15 +544,15 @@ router.post('/:urunId/indirim', verifyToken, async (req, res) => {
     const { discount_price, discount_percentage } = req.body;
 
     try {
-        const urun = await Urunler.findByPk(urunId);
-        if (!urun) {
+        const product = await Products.findByPk(urunId);
+        if (!product) {
             return res.status(404).send('Ürün bulunamadı');
         }
 
         // İndirimli fiyatı güncelleme
         if (discount_price) {
-            await urun.update({
-                discount_price: parseFloat(urun.product_price).toFixed(2),
+            await product.update({
+                discount_price: parseFloat(product.product_price).toFixed(2),
                 product_price:parseFloat(discount_price).toFixed(2),
             });
         }
@@ -556,8 +560,8 @@ router.post('/:urunId/indirim', verifyToken, async (req, res) => {
         // İndirim yüzdesini güncelleme
         if (discount_percentage) {
             const discountFactor = 1 - parseFloat(discount_percentage) / 100;
-            const discountedPrice = (urun.product_price * discountFactor).toFixed(2);
-            await urun.update({
+            const discountedPrice = (product.product_price * discountFactor).toFixed(2);
+            await product.update({
                 discount_price: discountedPrice,
             });
         }

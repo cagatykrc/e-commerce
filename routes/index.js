@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { Sequelize, Op } = require('sequelize');
 const nodemailer = require('nodemailer');
-const Urunler = require('../models/Urunler');
 const Users = require('../models/Users');
 const Coupon = require('../models/Coupon')
 const ShoppingCart = require('../models/ShoppingCart');
@@ -14,6 +13,7 @@ const OrderItem = require('../models/OrderItem');
 const Showcase = require('../models/Showcase');
 const redis = require('redis');
 const calculateTotalPrice = require('../utility/priceCalc'); 
+const Products = require('../models/Products');
 
 // Redis client oluşturma
 const redisClient = redis.createClient({
@@ -107,13 +107,13 @@ router.get('/', async (req, res) => {
       include: [{ model: Kategoriler, as: 'kategoriler' }]
     });
     
-    const urunler = await Urunler.findAll({
+    const products = await Products.findAll({
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       order: [['createdAt', 'DESC']],
       limit: 10,
     });
     
-    const newProducts = await Urunler.findAll({
+    const newProducts = await Products.findAll({
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       order: [['createdAt', 'DESC']],
       limit: 8
@@ -125,7 +125,7 @@ router.get('/', async (req, res) => {
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       order: [[{ model: Kategoriler, as: 'kategoriler' }, 'kategori_ad', 'ASC']]
     });
-    const highlightprod = await Urunler.findAll({
+    const highlightprod = await Products.findAll({
       include: [{
         model: Showcase,
         required: true,
@@ -137,7 +137,7 @@ router.get('/', async (req, res) => {
     
     
 
-    const kanatperdeProducts = await Urunler.findAll({
+    const kanatperdeProducts = await Products.findAll({
       include: [{ model: Kategoriler, as: 'kategoriler' }],
       where: { '$kategoriler.category_low$': 'fonperde' },
       order: [['createdAt', 'DESC']],
@@ -154,7 +154,7 @@ router.get('/', async (req, res) => {
       ...product.toJSON(), // Sequelize nesnesini düzleştir
       discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
     }));
-    const productsWithDiscounts = urunler.map(product => ({
+    const productsWithDiscounts = products.map(product => ({
       ...product.toJSON(), // Sequelize nesnesini düzleştir
       discountPercentage: calculateDiscountPercentage(product.product_price, product.discount_price)
     }));
@@ -250,7 +250,7 @@ router.get('/urunler', async (req, res) => {
       orderOptions.push(['createdAt', 'DESC']); // Varsayılan olarak en yeni
     }
 
-    const products = await Urunler.findAll({
+    const products = await Products.findAll({
       include: [{
         model: Kategoriler,
         as: 'kategoriler',
@@ -284,80 +284,86 @@ router.get('/sepet', async (req, res) => {
   const notification = req.session.notification;
   req.session.notification = null;
   if (!req.session.user) {
-      return res.redirect('/auth/giris');
+    return res.redirect('/auth/giris');
   }
 
   try {
-      const user = req.session.user;
-      const userCart = await ShoppingCart.findAll({
-          where: { user_id: user.id },
-          include: [{
-              model: Urunler,
-              attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi', 'urun_turu'],
-              include: [{
-                  model: Kategoriler,
-                  attributes: ['kategori_ad'],
-                  as: 'kategoriler',
+    const user = req.session.user;
+    const userCart = await ShoppingCart.findAll({
+      where: { user_id: user.id },
+      include: [{
+        model: Products,
+        attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi', 'urun_turu'], // Ya da istediğiniz diğer alanlar
+        include: [{
+                model: Kategoriler,
+                attributes: ['kategori_ad'],
+                as: 'kategoriler',
               }]
-          }]
-      });
+      }]
+    });
+    
 
-      let totalCartPrice = 0;
-      userCart.forEach(cartItem => {
-          const productPrice = parseFloat(cartItem.Urunler.product_price) || 0;
-          const width = parseFloat(cartItem.width) || 0;
-          const height = parseFloat(cartItem.height) || 0;
-          const quantity = parseFloat(cartItem.quantity) || 0;
-          const productType = parseInt(cartItem.Urunler.urun_turu);
-          if (productType === 0) {
-            if (productPrice > 0 && quantity > 0) {
-              const squareMeters = (height * width) / 10000;
-              const totalPrice = squareMeters * productPrice * quantity;
-              cartItem.total_price = totalPrice;
-              totalCartPrice += totalPrice;
-            } else {
-            }
-          } else {
-              if (productPrice > 0 && quantity > 0 && height < 300) {
-                const Meters = (width * 3) / 100;
-                const totalPrice = Meters * productPrice * quantity;
-                cartItem.total_price = totalPrice;
-                totalCartPrice += totalPrice;
-                            } else {
-            }
+    let totalCartPrice = 0;
+    userCart.forEach(cartItem => {
+      if (cartItem.product) { // Ensure Products is defined
+        const product = cartItem.product;
+        const productPrice = parseFloat(product.dataValues.product_price) || 0;
+        const width = parseFloat(cartItem.width) || 0;
+        const height = parseFloat(cartItem.height) || 0;
+        const quantity = parseFloat(cartItem.quantity) || 0;
+        const productType = parseInt(product.dataValues.urun_turu);
+    
+        // Calculate price based on product type
+        if (productType === 0) {
+          if (productPrice > 0 && quantity > 0) {
+            const squareMeters = (height * width) / 10000;
+            const totalPrice = squareMeters * productPrice * quantity;
+            cartItem.total_price = totalPrice;
+            totalCartPrice += totalPrice;
           }
-
-      });
-
-      console.log(`Total Cart Price before discount: ${totalCartPrice}`);
-      let discount = 0;
-      const rawprice = totalCartPrice.toFixed(2)
-      if (req.session.coupon) {
-          const coupon = req.session.coupon;
-          const discountRate = parseFloat(coupon.discount_rate);
-          const discountPrice = parseFloat(coupon.discount_price);
-          if (discountRate > 0) {
-              discount = totalCartPrice * (discountRate / 100);
-          } else if (discountPrice > 0) {
-              discount = discountPrice;
+        } else {
+          if (productPrice > 0 && quantity > 0 && height < 300) {
+            const Meters = (width * 3) / 100;
+            const totalPrice = Meters * productPrice * quantity;
+            cartItem.total_price = totalPrice;
+            totalCartPrice += totalPrice;
           }
-          totalCartPrice -= discount;
-
+        }
+      } else {
+        console.log(`No Products found for cart item ID: ${cartItem.cart_id}`);
       }
-      kdvprice = rawprice*(1+8/100).toFixed(2)
-      const withoutkdv = kdvprice -rawprice
-      const total = totalCartPrice + withoutkdv
-      totalCartPrice = total
-      totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
-      discount = isNaN(discount) ? 0 : discount;
+    });
+    
+    console.log(`Total Cart Price before discount: ${totalCartPrice}`);
 
+    let discount = 0;
+    const rawprice = totalCartPrice.toFixed(2);
+    if (req.session.coupon) {
+      const coupon = req.session.coupon;
+      const discountRate = parseFloat(coupon.discount_rate);
+      const discountPrice = parseFloat(coupon.discount_price);
+      if (discountRate > 0) {
+        discount = totalCartPrice * (discountRate / 100);
+      } else if (discountPrice > 0) {
+        discount = discountPrice;
+      }
+      totalCartPrice -= discount;
+    }
 
-      res.render('cart', { userS: req.session.user,rawprice, userCart, totalprice: totalCartPrice, totalCartPrice, discount, kdvprice, withoutkdv, notification, coupon: req.session.coupon });
+    const kdvprice = (rawprice * (1 + 8 / 100)).toFixed(2);
+    const withoutkdv = kdvprice - rawprice;
+    const total = totalCartPrice + withoutkdv;
+    totalCartPrice = total;
+    totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
+    discount = isNaN(discount) ? 0 : discount;
+
+    res.render('cart', { userS: req.session.user, rawprice, userCart:userCart, totalprice: totalCartPrice, totalCartPrice, discount, kdvprice, withoutkdv, notification, coupon: req.session.coupon });
   } catch (error) {
-      console.error('Error:', error.message);
-      res.status(500).json({ error: error.message });
+    console.error('Error:', error.message);
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 
 
@@ -372,7 +378,7 @@ router.post('/:urunId/sepetekle', async (req, res) => {
   const quantity = 1;
 
   try {
-    const product = await Urunler.findByPk(urunId, {
+    const product = await Products.findByPk(urunId, {
       attributes: ['product_price']
     });
 
@@ -472,8 +478,8 @@ router.get('/siparisler/:orderId', async (req, res) => {
           as: 'OrderItems',
           include: [
             {
-              model: Urunler,
-              as: 'urunler',
+              model: Products,
+              as: 'products',
               attributes: ['urun_id','aciklama', 'resim', 'urun_basligi', 'category_low', 'aciklama', 'product_price'],
               include: [{
                 model: Kategoriler,

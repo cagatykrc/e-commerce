@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Urunler = require('../models/Urunler');
+const Products = require('../models/Products');
 const Yorumlar = require('../models/Yorumlar');
 const Users = require('../models/Users');
 const verifyToken= require('../utility/verifyToken');
@@ -25,7 +25,7 @@ router.get('/urunler', async (req, res) => {
         }
 
         // Ürünleri filtreli olarak alın
-        const products = await Urunler.findAll({
+        const products = await Products.findAll({
             where: whereClause,
             include: [{
                 model: Kategoriler,

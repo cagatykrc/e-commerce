@@ -17,26 +17,26 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 text-sm font-light">
-                            <% urunler.forEach(urun => { %>
+                            <% products.forEach(product => { %>
                                 <tr class="border-b border-gray-200 hover:bg-gray-100">
                                     <td class="py-4 px-6 text-left">
-                                        <img src="/uploads/<%= urun.resim %>" alt="Image" class="w-16 h-16 object-cover rounded">
+                                        <img src="/uploads/<%= product.resim %>" alt="Image" class="w-16 h-16 object-cover rounded">
                                     </td>
                                     <td class="py-4 px-6 text-left">
-                                        <h2 class="text-lg font-semibold text-black"><%= urun.urun_basligi %></h2>
-                                        <span class="opacity-0"><%= urun.cart_id %></span>
+                                        <h2 class="text-lg font-semibold text-black"><%= product.urun_basligi %></h2>
+                                        <span class="opacity-0"><%= product.cart_id %></span>
                                     </td>
-                                    <td class="py-4 px-6 text-left">₺<%= urun.product_price %></td>
+                                    <td class="py-4 px-6 text-left">₺<%= product.product_price %></td>
                                     <td class="py-4 px-6 text-left">
-                                        <%= urun.kategoriler ? urun.kategoriler.kategori_ad: 'Kategori Yok' %>
+                                        <%= product.kategoriler ? product.kategoriler.kategori_ad: 'Kategori Yok' %>
                                     </td>
                                     <td class="py-4 px-6 text-left">
-                                        <a href="/admin/<%= urun.urun_id %>/duzenle" class="inline-block">
+                                        <a href="/admin/<%= product.urun_id %>/duzenle" class="inline-block">
                                             <button type="button" class="bg-blue-600 text-white font-semibold rounded-md px-2 py-1 text-sm">
                                                 <i class="fa-regular fa-pen-to-square text-white"></i>
                                             </button>
                                         </a>
-                                        <button type="button" class="bg-red-600 text-white font-semibold rounded-md px-2 py-1 text-sm ml-2" onclick="confirmDelete('<%= urun.urun_id %>')">X</button>
+                                        <button type="button" class="bg-red-600 text-white font-semibold rounded-md px-2 py-1 text-sm ml-2" onclick="confirmDelete('<%= product.urun_id %>')">X</button>
                                     </td>
                                 </tr>
                             <% }); %>
