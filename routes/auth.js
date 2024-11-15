@@ -11,6 +11,7 @@ const logger = require('../utility/logger');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
+const validator = require('../utility/validator');
 require('dotenv').config();
 // const limiterTwoRequests = createLimiter(2);
 // const limiterDefaultRequests = createLimiter(15);
@@ -22,16 +23,11 @@ router.get('/giris', (req, res) => {
   }
 
   // Bildirimi kontrol et, varsa göster ve sil
-  const pagemessage = req.session.pagemessage || null;
 
   // Eğer bir bildirim varsa, mesajı göster ve hemen sil
-  if (pagemessage) {
-    res.render('giris', { pagemessage, userS });
-    delete req.session.pagemessage; // Bildirimi gösterdikten sonra session'dan sil
-  } else {
+
     // Bildirim yoksa normal render yap
     return res.render('giris', { userS, pagemessage: null });
-  }
 });
 
 
@@ -43,19 +39,14 @@ router.get('/kayit', (req, res) => {
   if (userS) {
     return res.redirect('/');
   }
-  const pagemessage = req.session.pagemessage || null;
-  if (pagemessage) {
-    // Burada bildirimi HTML'de göster
-    res.render('kayit', {  userS, pagemessage: null  });
-    delete req.session.pagemessage;// Bildirimi gösterdikten sonra sil
-} else {
+
     res.render('kayit', { userS, pagemessage: null }); // Normal render
-}
+
 
 });
 
 
-router.post('/kayit', postlimiter, async (req, res) => {
+router.post('/kayit',validator.validateSignUp, postlimiter, async (req, res) => {
   const { username, firstName, lastName, email, password, verifypassword } = req.body;
   const userS = req.session.user;
 
@@ -68,15 +59,13 @@ router.post('/kayit', postlimiter, async (req, res) => {
   });
 
   if (verifypassword !== password) {
-    req.session.pagemessage = {title:'Şifre doğrulaması yanlış.',type:'danger'};
-    console.log('test');
-    return res.render('kayit', { userS, pagemessage: req.session.pagemessage });
+    let pagemessage = {title:'Şifre doğrulaması yanlış.',type:'danger'};
+    return res.render('kayit', { userS, pagemessage: pagemessage});
   }
 
   if (existingUser) {
-    req.session.pagemessage = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
-    console.log('object');
-    return res.render('kayit', { userS, pagemessage: req.session.pagemessage });
+    let pagemessage = {title:'Bu kullanıcı adı veya e-posta zaten kullanımda',type:'danger'};
+    return res.render('kayit', { userS, pagemessage: pagemessage });
   }
 
   try {
@@ -103,8 +92,8 @@ const newUser = await Users.create({
 
     const ipAddress = req.socket.remoteAddress;
     logger.info(username + " Adında " + 'Kayıt Oluşturuldu: ' + ipAddress + '  //' + now);
-    req.session.pagemessage = {title:'Başarıyla Kayıt Olundu.',type:'success'};
-    return res.redirect('/auth/giris');
+    let pagemessage = {title:'Başarıyla Kayıt Olundu.',type:'success'};
+    return res.redirect('/auth/giris', pagemessage);
   } catch (error) {
     console.error(error);
     req.session.notification = {title:'Bir Hata Oluştu',type:'danger'};
@@ -119,30 +108,30 @@ const secretKey='123456';
 
 
 
-router.post('/giris', postlimiter, async (req, res) => {
+router.post('/giris',validator.validateSignIn, postlimiter, async (req, res) => {
   const userS = req.session.user;
-  const { emailanduser, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await Users.findOne({
       where: {
         [Op.or]: [
-          { email: emailanduser },
-          { username: emailanduser }
+          { email: email },
+          { username: email }
         ]
       }
     });
 
     if (!user) {
-      req.session.pagemessage = { title: 'Kullandığınız e-posta bulunamadı.', type: 'danger' };
-      return res.render('giris', { userS, pagemessage: req.session.pagemessage });
+      let pagemessage = { title: 'Kullandığınız e-posta bulunamadı.', type: 'danger' };
+      return res.render('giris', { userS, pagemessage: pagemessage });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      req.session.pagemessage = { title: 'Kullandığınız şifre hatalı.', type: 'danger' };
-      return res.render('giris', { userS, pagemessage: req.session.pagemessage });
+      let pagemessage = { title: 'Kullandığınız şifre hatalı.', type: 'danger' };
+      return res.render('giris', { userS, pagemessage: pagemessage });
     }
 
     req.session.user = {
@@ -187,7 +176,7 @@ router.post('/cikis', (req, res) => {
   req.session.destroy();
   // res.clearCookie('token'); // Token cookie'sini temizle
   const ipAddress = req.socket.remoteAddress;
-  logger.info(userS.username + ' ' + 'Çıkış Yaptı' + " " + ipAddress + '  //' + now);
+  logger.info(userS.id + ' ' + 'Çıkış Yaptı' + " " + ipAddress + '  //' + now);
   return res.redirect('/');
 });
 

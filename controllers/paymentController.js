@@ -165,29 +165,37 @@ router.get("/siparis", function(req, res) {
 });
 
 router.post("/", async function(req, res) {
+    // Check if user is logged in
     const user = req.session.user;
     if (!user) {
-        return res.redirect('/sepet');
+        // If not logged in, redirect to the login or cart page
+        return res.redirect('/sepet'); // Or you can send an error response here
     }
 
-    const { email, address,country,district,city,address_title, phone, firstname, lastname } = req.body;
+    const { email, address, country, district, city, address_title, phone, firstname, lastname } = req.body;
     const user_ip = req.ip;
-    const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Benzersiz ve alfanumerik bir sipariş ID'si oluşturun
-    if( !email || !address ||!country ||!district ||!city ||!address_title || !phone || !firstname || !lastname ){
-        return alert('Boş Alanları Doldurun')
+    const merchant_oid = `${user.id}${Date.now()}`.replace(/[^a-zA-Z0-9]/g, ''); // Unique alphanumeric order ID
+
+    // Validate that all necessary fields are provided
+    if (!email || !address || !country || !district || !city || !address_title || !phone || !firstname || !lastname) {
+        return res.status(400).json({ message: 'Boş Alanları Doldurun' }); // Return an error if any field is missing
     }
+
+    // Initialize the basket and total price
     let basket = [];
     let totalCartPrice = 0;
 
+    // Fetch user's shopping cart
     const userCart = await ShoppingCart.findAll({
         where: { user_id: user.id },
         include: [{
             model: Products,
-            attributes: ['product_price', 'resim', 'urun_basligi','urun_turu']
+            attributes: ['product_price', 'resim', 'urun_basligi', 'urun_turu']
         }]
     });
 
     try {
+        // Calculate the total cart price
         userCart.forEach(cartItem => {
             const product = cartItem.product;
             const productPrice = parseFloat(product.dataValues.product_price) || 0;
@@ -196,14 +204,14 @@ router.post("/", async function(req, res) {
             const quantity = parseFloat(cartItem.quantity) || 0;
             const productType = parseInt(product.dataValues.urun_turu);
 
-            console.log(`Product Price: ${productPrice}, Width: ${width}, Height: ${height}, Quantity: ${quantity}`);
             if (productType === 0) {
+                // Product type 0: calculation based on area
                 if (productPrice > 0 && width > 0 && height > 0 && quantity > 0) {
                     const squareMeters = (height * width) / 10000;
                     const totalPrice = squareMeters * productPrice * quantity;
                     cartItem.total_price = totalPrice;
                     totalCartPrice += totalPrice;
-    
+
                     basket.push([
                         product.dataValues.urun_basligi,
                         totalPrice.toFixed(2),
@@ -211,15 +219,16 @@ router.post("/", async function(req, res) {
                     ]);
                 } else {
                     console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
-                    return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+                    return res.status(500).json({ message: 'Sistemsel bir hata meydana geldi' });
                 }
             } else {
+                // Product type 1: different calculation
                 if (productPrice > 0 && width > 0 && height < 300 && quantity > 0) {
                     const Meters = (width * 3) / 100;
                     const totalPrice = Meters * productPrice * quantity;
                     cartItem.total_price = totalPrice;
                     totalCartPrice += totalPrice;
-    
+
                     basket.push([
                         product.dataValues.urun_basligi,
                         totalPrice.toFixed(2),
@@ -227,20 +236,21 @@ router.post("/", async function(req, res) {
                     ]);
                 } else {
                     console.log(`Invalid values found: ${productPrice}, ${width}, ${height}, ${quantity}`);
-                    return res.status(500).json({message: 'Sistemsel bir hata meydana geldi'})
+                    return res.status(500).json({ message: 'Sistemsel bir hata meydana geldi' });
                 }
             }
-
         });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
 
+    // Apply any discount logic
     console.log(`Total Cart Price before discount: ${totalCartPrice}`);
     let totalprice = totalCartPrice;
     let discount = 0;
     let withoutkdv = 0;
     let kdvprice = 0;
+
     if (req.session.coupon) {
         const coupon = req.session.coupon;
         const discountRate = parseFloat(coupon.discount_rate) || 0;
@@ -248,27 +258,25 @@ router.post("/", async function(req, res) {
 
         if (discountRate > 0) {
             discount = totalCartPrice * (discountRate / 100);
-            console.log(`Discount Rate applied: ${discountRate / 100}`);
         } else if (discountPrice > 0) {
             discount = discountPrice;
-            console.log(`Discount Price applied: ${discountPrice}`);
         }
 
         totalCartPrice -= discount;
-        console.log(`Discount applied: ${discount}`);
-        console.log(`Total Cart Price after discount: ${totalCartPrice}`);
     }
-    const rawtotal = totalCartPrice
-    kdvprice = totalprice*(1+8/100).toFixed(2)
-    withoutkdv = kdvprice -totalprice
-    totalCartPrice = withoutkdv + rawtotal
+
+    // Final price calculation with VAT
+    const rawtotal = totalCartPrice;
+    kdvprice = (totalprice * (1 + 8 / 100)).toFixed(2);
+    withoutkdv = kdvprice - totalprice;
+    totalCartPrice = withoutkdv + rawtotal;
     totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
     discount = isNaN(discount) ? 0 : discount;
 
     const user_basket = nodeBase64.encode(JSON.stringify(basket));
     const payment_amount = Math.round(totalCartPrice * 100);
 
-
+    // Prepare order items
     try {
         const orderItems = userCart.map(cartItem => ({
             order_id: null,
@@ -280,6 +288,7 @@ router.post("/", async function(req, res) {
             height: cartItem.height,
         }));
 
+        // Create order
         const order = await Orders.create({
             order_id: generateUniqueId(),
             user_id: user.id,
@@ -299,6 +308,7 @@ router.post("/", async function(req, res) {
         return res.status(500).json({ error: error.message });
     }
 
+    // Proceed with payment
     const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}0${0}TL0`;
     const paytr_token = hashSTR + merchant_salt;
     const token = crypto.createHmac('sha256', merchant_key).update(paytr_token).digest('base64');
@@ -315,7 +325,7 @@ router.post("/", async function(req, res) {
             payment_amount: payment_amount,
             merchant_oid: merchant_oid,
             user_name: `${firstname} ${lastname}`,
-            user_address: country+', '+ city+', '+district+', '+address+', '+address_title ,
+            user_address: `${country}, ${city}, ${district}, ${address}, ${address_title}`,
             user_phone: phone,
             merchant_ok_url: 'http://184.72.145.255/odeme/odeme_basarili',
             merchant_fail_url: 'http://184.72.145.255/odeme/odeme_hata',
@@ -332,8 +342,6 @@ router.post("/", async function(req, res) {
         }
     };
 
-    console.log(options);
-
     request(options, function(error, response, body) {
         if (error) throw new Error(error);
         const res_data = JSON.parse(body);
@@ -345,6 +353,7 @@ router.post("/", async function(req, res) {
         }
     });
 });
+
 
 
 router.get("/odeme_basarili", async function (req,res) {
