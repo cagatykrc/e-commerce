@@ -21,40 +21,41 @@
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div class="space-y-6">
           <% userCart.forEach(cartItem => { %>
-            <div class="flex flex-row md:flex-row bg-white p-2 lg:p-4 rounded-lg shadow-md border border-gray-200 mb-4">
+            <div class="flex my-auto  flex-row md:flex-row bg-white p-2 lg:p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
               <!-- Resim Sol Tarafta (Mobilde Sol, PC için değişmez) -->
-              <div class="flex-shrink-0 lg:my-auto md:mb-0 md:w-1/4 lg:mr-0 mr-5">
-                <img class="h-32 lg:w-36 lg:h-40 w-32 rounded-md object-cover mx-auto md:mx-0" src="/uploads/<%=cartItem.product.resim%>" alt="<%= cartItem.product.urun_basligi %>" />
+              <div class="flex-shrink-0 flex flex-col justify-center items-center content-center lg:my-auto md:mb-0 md:w-1/4 lg:mr-0 mr-5">
+                <img class="h-24 lg:w-36 lg:h-40 w-24 rounded-md object-cover my-auto mx-auto md:mx-0 mb-5" src="/uploads/<%=cartItem.product.resim%>" alt="<%= cartItem.product.urun_basligi %>" />
+                <div class="flex items-center">
+                  <button type="button" id="decrement-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
+                    <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                    </svg>
+                  </button>
+                  <input type="number" id="counter-input" class="w-6 text-center text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none" disabled value="<%= cartItem.quantity %>" min="1" />
+                  <button type="button" id="increment-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
+                    <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             
               <!-- Ürün Bilgileri Sağ Tarafta (Mobilde Sağ, PC için değişmez) -->
               <div class="flex-1 flex flex-col justify-between md:ml-6">
                 <!-- Başlık ve Kategoriler -->
-                <div class="flex flex-col space-y-2">
+                <div class="flex flex-col space-y-1">
                   <p class="text-lg font-semibold text-gray-800 truncate"><%= cartItem.product.urun_basligi %></p>
                   <% if (cartItem.product.discount_price) { %>
-                  <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM ,<p class="text-sm text-gray-600 line-through"> ₺<%= cartItem.product.discount_price %></p><p class="text-sm font-semibold text-gray-800">₺<%= cartItem.product.product_price %></p>
+                  <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM ,<p class="text-sm text-gray-600 line-through"> ₺<%= cartItem.product.discount_price %></p><p class="text-sm font-semibold text-gray-500">₺<%= cartItem.product.product_price %></p>
                     <% } else { %>
-                      <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM , <p class="text-sm font-semibold text-gray-800">₺<%= cartItem.product.product_price %></p>
+                      <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM , <p class="text-sm font-semibold text-gray-500">₺<%= cartItem.product.product_price %></p>
                     <% } %>
                 </div>
             
                 <!-- Miktar ve Fiyat -->
-                <div class="flex items-center justify-between mt-4 space-x-4">
+                <div class="flex items-center justify-between mt-1 space-x-4">
                   <!-- Miktar Seçici -->
-                  <div class="flex items-center space-x-2">
-                    <button type="button" id="decrement-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
-                      <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
-                      </svg>
-                    </button>
-                    <input type="number" id="counter-input" class="w-12 text-center text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none" value="<%= cartItem.quantity %>" min="1" />
-                    <button type="button" id="increment-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
-                      <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
-                      </svg>
-                    </button>
-                  </div>
+
                   <% 
                   const quantity = parseFloat(cartItem.quantity) || 1; // Miktar değeri
                   const unitPrice = (cartItem.total_price / quantity).toFixed(2); // Birim fiyatı hesapla

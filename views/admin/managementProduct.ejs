@@ -37,6 +37,7 @@
                                             </button>
                                         </a>
                                         <button type="button" class="bg-red-600 text-white font-semibold rounded-md px-2 py-1 text-sm ml-2" onclick="confirmDelete('<%= product.urun_id %>')">X</button>
+                                        <button type="button" class="bg-green-600 text-white font-semibold rounded-md px-2 py-1 text-sm ml-2" onclick="confirmShowcase('<%= product.urun_id %>')">🔥</button>
                                     </td>
                                 </tr>
                             <% }); %>
@@ -64,6 +65,24 @@
             })
             .catch(error => {
                 console.error('Silme işlemi sırasında hata oluştu:', error);
+            });
+        }
+    }
+    function confirmShowcase(urunId) {
+        if (confirm('Emin misiniz?')) {
+            fetch('/admin/' + urunId + '/onecikar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ urunId: urunId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Vitrin işlemi sırasında hata oluştu:', error);
             });
         }
     }

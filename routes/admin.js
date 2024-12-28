@@ -18,6 +18,7 @@ const Coupon = require('../models/Coupon');
 const productDesc = require('../models/productDesc');
 const Orders = require('../models/Orders');
 const OrderItem = require('../models/OrderItem');
+const Showcase = require('../models/Showcase');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
@@ -775,6 +776,41 @@ router.post('/:kategoritabId/kategoritabsil', verifyToken, async (req, res) => {
         console.error('Kategori Tab silinirken bir hata oluştu: ' + error.message);
         // Hata durumunu uygun şekilde ele alabilirsiniz, örneğin 500 durum kodu ile hata sayfası render edebilirsiniz.
         res.status(500).send('Internal Server Error');
+    }
+});
+
+router.post('/:urunId/onecikar', verifyToken, async (req, res) => {
+    const userS = req.session.user;
+    
+    if (userS && userS.role === 'admin') {
+        const urunId = req.params.urunId;
+        
+        try {
+            // Sequelize ile urunyi bul ve sil
+            const product = await Products.findByPk(urunId);
+            
+            if (!product) {
+                return res.status(404).send('Urun bulunamadı');
+            }
+            
+            // Sequelize ile urunyi sil
+            const addshowcase = await Showcase.create({
+                showcase_name: 'onecikanlar',
+                product_id:urunId,
+            });
+            
+            // Sequelize ile ilgili urunye ait yorumları sil
+           
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(userS.id+' '+'Ürünü bir vitrine ekledi '+ipAddress +'  //'+now);
+
+            res.redirect('/admin/panel');
+        } catch (error) {
+            console.error('Urun vitrine eklenirken bir hata oluştu: ' + error);
+            return res.status(500).send('Internal Server Error');
+        }
+    } else {
+        res.redirect('/');
     }
 });
 
