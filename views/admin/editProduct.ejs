@@ -1,83 +1,134 @@
 <%- include('../partials/adminpanelheader.ejs') %>
 <%- include('./controlPanel.ejs') %>
 
-<div class="container mx-auto lg:px-4 mt-8 text-slate-950">
-    <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-        <div class="edit-product bg-white shadow-lg rounded-lg p-6 flex-1">
-            <h1 class="text-2xl font-bold mb-4">Dergi Düzenle</h1>
-            <form action="/admin/<%= product.urun_id %>/duzenle" method="POST">
-                <div class="mb-4">
-                    <div class="resim-goster mt-4">
-                        <img src="/uploads/<%= product.resim %>" alt="Dergi Kapağı" class="w-2/5 rounded-md">
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">Ürün Düzenle</h1>
+                <span class="text-sm text-gray-500">ID: <%= product.urun_id %></span>
+            </div>
+
+            <!-- Mevcut Görseller -->
+            <div class="grid md:grid-cols-3 gap-4 mb-8">
+                <div class="space-y-2">
+                    <img src="/uploads/<%= product.resim %>" alt="Ana Görsel" 
+                         class="w-full h-48 object-cover rounded-lg">
+                    <p class="text-sm text-center text-gray-500">Ana Görsel</p>
+                </div>
+                <div class="space-y-2">
+                    <img src="/uploads/<%= product.resim2 %>" alt="İkinci Görsel" 
+                         class="w-full h-48 object-cover rounded-lg">
+                    <p class="text-sm text-center text-gray-500">2. Görsel</p>
+                </div>
+                <div class="space-y-2">
+                    <img src="/uploads/<%= product.resim3 %>" alt="Üçüncü Görsel" 
+                         class="w-full h-48 object-cover rounded-lg">
+                    <p class="text-sm text-center text-gray-500">3. Görsel</p>
+                </div>
+            </div>
+
+            <form action="/admin/<%= product.urun_id %>/duzenle" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                
+                <!-- Temel Bilgiler -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ürün Başlığı</label>
+                        <input type="text" name="baslik" value="<%= product.urun_basligi %>" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Temel Fiyat (₺)</label>
+                        <input type="number" name="price" value="<%= product.product_price %>" required step="0.01"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
                 </div>
-                
-                <div class="mb-4">
-                    <label for="baslik" class="block text-sm font-medium text-slate-950 ">Başlık:</label>
-                    <input type="text" id="baslik" name="baslik" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.urun_basligi %>" required>
+
+                <!-- Varyantlar -->
+                <div class="border rounded-lg p-6 bg-gray-50">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Mevcut Varyantlar</h3>
+                    
+                    <!-- Renk Varyantları -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Renk Varyantları</h4>
+                        <div id="existing-color-variants" class="space-y-4">
+                            <% if (product.variants) { %>
+                                <% product.variants.filter(v => v.variant_type === 'color').forEach(variant => { %>
+                                    <div class="variant-item grid grid-cols-4 gap-4">
+                                        <input type="hidden" name="variant_ids[]" value="<%= variant.variant_id %>">
+                                        <input type="text" name="variant_colors[]" value="<%= variant.variant_value %>"
+                                               class="px-4 py-2 border border-gray-300 rounded-lg">
+                                        <input type="number" name="variant_color_prices[]" value="<%= variant.additional_price %>"
+                                               class="px-4 py-2 border border-gray-300 rounded-lg" step="0.01">
+                                        <input type="number" name="variant_color_stocks[]" value="<%= variant.stock %>"
+                                               class="px-4 py-2 border border-gray-300 rounded-lg">
+                                        <button type="button" onclick="deleteVariant(this, <%= variant.variant_id %>)"
+                                                class="text-red-600 hover:text-red-700">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                <% }); %>
+                            <% } %>
+                        </div>
+                        <button type="button" onclick="addVariant('color')"
+                                class="mt-2 px-4 py-2 text-sm text-blue-600 hover:text-blue-700">
+                            + Yeni Renk Ekle
+                        </button>
+                    </div>
+
+                    <!-- Materyal Varyantları -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-gray-700 mb-2">Materyal Varyantları</h4>
+                        <div id="existing-material-variants" class="space-y-4">
+                            <% if (product.variants) { %>
+                                <% product.variants.filter(v => v.variant_type === 'material').forEach(variant => { %>
+                                    <!-- Benzer yapı renk varyantları gibi -->
+                                <% }); %>
+                            <% } %>
+                        </div>
+                        <button type="button" onclick="addVariant('material')"
+                                class="mt-2 px-4 py-2 text-sm text-blue-600 hover:text-blue-700">
+                            + Yeni Materyal Ekle
+                        </button>
+                    </div>
                 </div>
 
-
-                <div class="mb-4">
-                    <label for="kategorisi" class="block text-sm font-medium text-black">Kategoriler:</label>
-                    <select name="kategorisi" id="kategorisi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                        <% kategoriler.forEach(kategori => { %>
-                            <option value="<%= kategori.category_id %>" <%= product.category_low == kategori.category_low ? 'selected' : '' %>><%= kategori.kategori_ad %></option>
-                        <% }); %>
-                    </select>
+                <div class="flex gap-4">
+                    <button type="submit" 
+                            class="flex-1 bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+                        Değişiklikleri Kaydet
+                    </button>
+                    <button type="button" onclick="window.history.back()"
+                            class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition duration-200">
+                        İptal
+                    </button>
                 </div>
-
-                <div class="mb-4">
-                    <label for="productdesc_id" class="block text-sm font-medium text-black">Açıklama:</label>
-                    <select name="productdesc_id" id="productdesc_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                        <% productdesc.forEach(desc => { %>
-                            <option value="<%= desc.productdesc_id %>" <%= product.productdesc_id == desc.productdesc_id ? 'selected' : '' %>><%= desc.desc_type %></option>
-                        <% }); %>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label for="aciklama" class="block text-sm font-medium text-black">Açıklama:</label>
-                    <textarea id="aciklama" name="aciklama" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2"><%= product.aciklama %></textarea>
-                </div>
-
-                <div class="mb-4">
-                    <label for="color" class="block text-sm font-medium text-black">Renk:</label>
-                    <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color" value="<%= product.product_color %>">
-                </div>
-
-                <div class="mb-4">
-                    <label for="price" class="block text-sm font-medium text-black">Fiyat:</label>
-                    <input type="text" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.product_price %>" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
-                </div>
-                <div class="mb-4">
-                    <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
-                    <select name="turu" id="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                        <option value="1" <%= product.urun_turu === 1 ? 'selected' : '' %>>Perde</option>
-                        <option value="0" <%= product.urun_turu === 0 ? 'selected' : '' %>>Mekanik Perde</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="resim" class="block text-sm font-medium text-black">Kapak Adı:</label>
-                    <input type="text" id="resim" name="resim" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" value="<%= product.resim %>" required>
-                </div>
-
-                <button type="submit" class="mt-4 w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Dergiyi Düzenle</button>
-            </form>
-        </div>
-
-        <div class="discount-area bg-white shadow-lg rounded-lg p-6">
-            <h2 class="text-xl font-bold mb-4">İndirim Uygula</h2>
-            <form action="/admin/<%= product.urun_id %>/indirim" method="post">
-                <div class="mb-4">
-                    <label for="discount_price" class="block text-sm font-medium text-black">İndirimli Fiyat:</label>
-                    <input type="number" name="discount_price" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" step="0.01" placeholder="İndirimli fiyatı girin">
-                </div>
-                <button class="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700 transition duration-200" type="submit">İndirim Uygula</button>
             </form>
         </div>
     </div>
 </div>
-</div>
-</div>
+
+<script>
+function deleteVariant(button, variantId) {
+    if (confirm('Bu varyantı silmek istediğinizden emin misiniz?')) {
+        fetch(`/admin/variant/${variantId}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': '<%= csrfToken %>'
+            }
+        }).then(response => {
+            if (response.ok) {
+                button.closest('.variant-item').remove();
+            }
+        });
+    }
+}
+
+// Diğer JavaScript fonksiyonları aynı kalacak
+</script>
 

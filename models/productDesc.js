@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
-const Products = require('./Products')
+
 const productDesc = sequelize.define('productDesc', {
     productdesc_id: {
         type: DataTypes.INTEGER,
@@ -11,15 +11,12 @@ const productDesc = sequelize.define('productDesc', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    pile_frequency: {
+    // Temel Ürün Bilgileri
+    brand: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    stitching: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    cleaning: {
+    model: {
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -27,43 +24,21 @@ const productDesc = sequelize.define('productDesc', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    material: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     dimensions: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    curtain: {
+    weight: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    pendant_accessory: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    home_environment: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-    },
-    office_environment: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-    },
+
+    // Garanti ve Teslimat
     warranty: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    payment_options: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    moisture_resistance: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-    },
-    product_composition: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    installation_areas: {
         type: DataTypes.STRING,
         allowNull: true,
     },
@@ -71,31 +46,69 @@ const productDesc = sequelize.define('productDesc', {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    brand: {
+    shipping_info: {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    prodmark:{
-        type:DataTypes.STRING,
-        allowNull:true,
-    },    
-    prodmark1:{
-        type:DataTypes.STRING,
-        allowNull:true,
-    },
-    prodmark2:{
-        type:DataTypes.STRING,
-        allowNull:true,
-    },
-    prodmark3:{
-        type:DataTypes.STRING,
-        allowNull:true,
-    },
-}, {
-    // Modelin ayarlarını belirle
-    tableName: 'productdesc', // Veritabanında kullanılacak tablo adı
-    timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
-}); // Her bir sipariş öğesi bir siparişe bağlıdır
 
+    // Ödeme ve İade
+    payment_options: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    return_policy: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+
+    // Ürün Özellikleri
+    features: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    usage_area: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    care_instructions: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+
+    // Öne Çıkan Özellikler (Bullet Points)
+    highlight1: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    highlight2: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    highlight3: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    highlight4: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+
+    // Ek Bilgiler
+    origin_country: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    certification: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    stock_status: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
+}, {
+    tableName: 'productdesc',
+    timestamps: true,
+});
 
 module.exports = productDesc;

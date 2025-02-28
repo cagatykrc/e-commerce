@@ -6,6 +6,8 @@ const Kategoriler = require('./Kategoriler')
 const productDesc = require('./productDesc');
 const OrderItem = require('./OrderItem');
 const Showcase = require('./Showcase');
+const ProductVariant = require('./ProductVariant');
+
 const Products = sequelize.define('products', {
     urun_id: {
         type: DataTypes.INTEGER,
@@ -75,8 +77,8 @@ const Products = sequelize.define('products', {
     tableName: 'products', // Veritabanında kullanılacak tablo adı
     timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
 });
+
 Products.hasMany(Showcase, { foreignKey: 'product_id' });
-OrderItem.belongsTo(Products, { as: 'products', foreignKey: 'urun_id' });
 Products.hasMany(OrderItem, { as: 'orderItems', foreignKey: 'urun_id' });
 Products.hasMany(Yorumlar, { as: 'yorumlar', foreignKey: 'urun_id', onDelete: 'CASCADE' });
 Products.belongsTo(productDesc,{as:'productdesc', foreignKey:'productdesc_id'})
@@ -89,6 +91,11 @@ Products.belongsTo(Kategoriler, {
 // Product belongs to Category
 Kategoriler.hasMany(Products, {
     foreignKey:'category_low', as:'products'
+});
+
+Products.hasMany(ProductVariant, { 
+    foreignKey: 'urun_id',
+    as: 'variants' 
 });
 
 module.exports = Products;

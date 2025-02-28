@@ -14,9 +14,6 @@
           <img src="/uploads/<%= product.resim3 %>" alt="<%= product.urun_basligi %>"
                         class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
                         onclick="changeImage(this.src)">
-          <img src="/uploads/<%= product.resim4 %>" alt="<%= product.urun_basligi %>"
-                        class="size-16 sm:size-20 object-cover rounded-md cursor-pointer opacity-60 hover:opacity-100 transition duration-300"
-                        onclick="changeImage(this.src)">
         </div>
       </div>
 
@@ -86,10 +83,10 @@
         <div>
           <h3 class="text-lg font-semibold mb-2">Özellikleri:</h3>
           <ul class="list-disc list-inside text-gray-700">
-            <li><%= product.productdesc.prodmark%>.</li>
-            <li><%= product.productdesc.prodmark1%>.</li>
-            <li><%= product.productdesc.prodmark2%>.</li>
-            <li><%= product.productdesc.prodmark3%>.</li>
+            <li><%= product.productdesc.highlight1%>.</li>
+            <li><%= product.productdesc.highlight2%>.</li>
+            <li><%= product.productdesc.highlight3%>.</li>
+            <li><%= product.productdesc.highlight4%>.</li>
           </ul>
         </div>
       </div>
@@ -120,18 +117,6 @@
             <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.brand %></td>
           </tr>
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">Pile Sıklığı:</td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.pile_frequency %></td>
-          </tr>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">Dikiş:</td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.stitching %></td>
-          </tr>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">Ürün Temizlik:</td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.cleaning %></td>
-          </tr>
-          <tr>
             <td class="px-6 py-4 whitespace-nowrap">Renk:</td>
             <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.color %></td>
           </tr>
@@ -148,16 +133,8 @@
             <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.delivery_time %></td>
           </tr>
           <tr>
-            <td class="px-6 py-4 whitespace-nowrap">Neme Dayanıklılık:</td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.moisture_resistance %></td>
-          </tr>
-          <tr>
             <td class="px-6 py-4 whitespace-nowrap">Ürün Detayları:</td>
             <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.product_composition %></td>
-          </tr>
-          <tr>
-            <td class="px-6 py-4 whitespace-nowrap">Montaj Şekli:</td>
-            <td class="px-6 py-4 whitespace-nowrap"><%= product.productdesc.installation_areas %></td>
           </tr>
         </tbody>
       </table>
@@ -166,8 +143,102 @@
   </div>
 </div>
 
+<!-- Ürün Varyantları -->
+<div class="mb-6 space-y-4">
+    <!-- Renk Seçimi -->
+    <% if (product.variants && product.variants.some(v => v.variant_type === 'color')) { %>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Renk Seçimi</label>
+        <div class="flex flex-wrap gap-2">
+            <% product.variants.filter(v => v.variant_type === 'color').forEach(variant => { %>
+                <button type="button"
+                        data-variant-id="<%= variant.variant_id %>"
+                        data-price="<%= variant.additional_price %>"
+                        onclick="selectVariant(this, 'color')"
+                        class="variant-btn color-btn px-4 py-2 border rounded-md hover:border-blue-500 
+                               <%= variant.stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                        <%= variant.stock <= 0 ? 'disabled' : '' %>>
+                    <%= variant.variant_value %>
+                    <% if (variant.additional_price > 0) { %>
+                        <span class="text-sm text-gray-500">(+₺<%= variant.additional_price %>)</span>
+                    <% } %>
+                </button>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
 
-                                      
+    <!-- Materyal Seçimi -->
+    <% if (product.variants && product.variants.some(v => v.variant_type === 'material')) { %>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Materyal Seçimi</label>
+        <div class="flex flex-wrap gap-2">
+            <% product.variants.filter(v => v.variant_type === 'material').forEach(variant => { %>
+                <button type="button"
+                        data-variant-id="<%= variant.variant_id %>"
+                        data-price="<%= variant.additional_price %>"
+                        onclick="selectVariant(this, 'material')"
+                        class="variant-btn material-btn px-4 py-2 border rounded-md hover:border-blue-500
+                               <%= variant.stock <= 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                        <%= variant.stock <= 0 ? 'disabled' : '' %>>
+                    <%= variant.variant_value %>
+                    <% if (variant.additional_price > 0) { %>
+                        <span class="text-sm text-gray-500">(+₺<%= variant.additional_price %>)</span>
+                    <% } %>
+                </button>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Seçilen varyantları saklamak için hidden input'lar -->
+    <input type="hidden" name="selected_color" id="selected_color">
+    <input type="hidden" name="selected_material" id="selected_material">
+</div>
+
+<script>
+let selectedVariants = {
+    color: null,
+    material: null
+};
+
+function selectVariant(button, type) {
+    // Aynı tipteki diğer butonlardan active class'ı kaldır
+    document.querySelectorAll(`.variant-btn.${type}-btn`).forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+    });
+    
+    // Seçilen butona active class ekle
+    button.classList.add('border-blue-500', 'bg-blue-50');
+    
+    // Seçilen varyantı kaydet
+    selectedVariants[type] = {
+        id: button.dataset.variantId,
+        additionalPrice: parseFloat(button.dataset.price) || 0
+    };
+    
+    // Hidden input'u güncelle
+    document.getElementById(`selected_${type}`).value = button.dataset.variantId;
+    
+    // Toplam fiyatı güncelle
+    updateTotalPrice();
+}
+
+function updateTotalPrice() {
+    const basePrice = parseFloat('<%= product.product_price %>');
+    let totalAdditionalPrice = 0;
+    
+    // Seçili varyantların ek fiyatlarını topla
+    Object.values(selectedVariants).forEach(variant => {
+        if (variant) {
+            totalAdditionalPrice += variant.additionalPrice;
+        }
+    });
+    
+    const finalPrice = basePrice + totalAdditionalPrice;
+    document.getElementById('totalPrice').textContent = `₺${finalPrice.toFixed(2)}`;
+}
+</script>
 
 <%- include('./partials/footer.ejs') %>
 

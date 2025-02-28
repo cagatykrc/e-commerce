@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
-const Users = require('./Users');
-const Products = require('./Products')
+
 const ShoppingCart = sequelize.define('ShoppingCart', {
     cart_id: {
         type: DataTypes.INTEGER,
@@ -33,11 +32,5 @@ const ShoppingCart = sequelize.define('ShoppingCart', {
     tableName: 'shoppingcart', // Veritabanında kullanılacak tablo adı
     timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
 });
-ShoppingCart.belongsTo(Users,{foreignKey:'user_id', sourceKey:'user_id'})
-Users.hasMany(ShoppingCart,{foreignKey: 'user_id',sourceKey:'user_id'})
-
-ShoppingCart.belongsTo(Products, { foreignKey: 'urun_id' });
-
-Products.hasMany(ShoppingCart, { foreignKey: 'urun_id' });
 
 module.exports = ShoppingCart;

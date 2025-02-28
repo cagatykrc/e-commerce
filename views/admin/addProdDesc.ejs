@@ -6,98 +6,165 @@
   <div class="bg-white rounded-xl shadow-lg p-8">
     <!-- Create Description Form -->
     <div class="mb-10">
-      <h2 class="text-4xl text-slate-900 text-center mb-6 font-semibold">Açıklama Oluştur</h2>
-      <!-- Kategori Oluşturma Formu -->
+      <h2 class="text-4xl text-slate-900 text-center mb-6 font-semibold">Ürün Açıklaması Oluştur</h2>
+      
       <form action="/admin/urunaciklamatipekle" method="POST" class="space-y-6">
         <!-- Ürün Tipi -->
         <div class="form-group">
           <label for="desc_type" class="block text-lg text-slate-700 font-medium">Ürün Tipi:</label>
-          <input type="text" id="desc_type" name="desc_type" maxlength="32" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <input type="text" id="desc_type" name="desc_type" required maxlength="32" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Pile Oranı -->
+        <!-- Temel Ürün Bilgileri -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Temel Ürün Bilgileri</h3>
+        
         <div class="form-group">
-          <label for="pile_frequency" class="block text-lg text-slate-700 font-medium">Pile Oranı:</label>
-          <input type="text" id="pile_frequency" name="pile_frequency" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="brand" class="block text-lg text-slate-700 font-medium">Marka:</label>
+          <input type="text" id="brand" name="brand" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Dikiş -->
         <div class="form-group">
-          <label for="stitching" class="block text-lg text-slate-700 font-medium">Dikiş:</label>
-          <input type="text" id="stitching" name="stitching" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="model" class="block text-lg text-slate-700 font-medium">Model:</label>
+          <input type="text" id="model" name="model" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Ürün Temizlik -->
         <div class="form-group">
-          <label for="cleaning" class="block text-lg text-slate-700 font-medium">Ürün Temizlik:</label>
-          <input type="text" id="cleaning" name="cleaning" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="color" class="block text-lg text-slate-700 font-medium">Renk:</label>
+          <input type="text" id="color" name="color" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Garanti -->
+        <div class="form-group">
+          <label for="material" class="block text-lg text-slate-700 font-medium">Malzeme:</label>
+          <input type="text" id="material" name="material" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <div class="form-group">
+          <label for="dimensions" class="block text-lg text-slate-700 font-medium">Boyutlar:</label>
+          <input type="text" id="dimensions" name="dimensions" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <div class="form-group">
+          <label for="weight" class="block text-lg text-slate-700 font-medium">Ağırlık:</label>
+          <input type="text" id="weight" name="weight" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Garanti ve Teslimat -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Garanti ve Teslimat</h3>
+
         <div class="form-group">
           <label for="warranty" class="block text-lg text-slate-700 font-medium">Garanti:</label>
-          <input type="text" id="warranty" name="warranty" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <input type="text" id="warranty" name="warranty" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Ödeme Seçenekleri -->
+        <div class="form-group">
+          <label for="delivery_time" class="block text-lg text-slate-700 font-medium">Tahmini Teslimat:</label>
+          <input type="text" id="delivery_time" name="delivery_time" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <div class="form-group">
+          <label for="shipping_info" class="block text-lg text-slate-700 font-medium">Kargo Bilgisi:</label>
+          <input type="text" id="shipping_info" name="shipping_info" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ödeme ve İade -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Ödeme ve İade</h3>
+
         <div class="form-group">
           <label for="payment_options" class="block text-lg text-slate-700 font-medium">Ödeme Seçenekleri:</label>
-          <input type="text" id="payment_options" name="payment_options" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <input type="text" id="payment_options" name="payment_options" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Tahmini Kargo -->
         <div class="form-group">
-          <label for="delivery_time" class="block text-lg text-slate-700 font-medium">Tahmini Kargo:</label>
-          <input type="text" id="delivery_time" name="delivery_time" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="return_policy" class="block text-lg text-slate-700 font-medium">İade Koşulları:</label>
+          <input type="text" id="return_policy" name="return_policy" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Neme Dayanıklılık -->
+        <!-- Ürün Özellikleri -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Ürün Özellikleri</h3>
+
         <div class="form-group">
-          <label for="moisture_resistance" class="block text-lg text-slate-700 font-medium">Neme Dayanıklılık:</label>
-          <select name="moisture_resistance" id="moisture_resistance" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
-            <option value="1">Var</option>
-            <option value="0">Yok</option>
-          </select>
+          <label for="features" class="block text-lg text-slate-700 font-medium">Özellikler:</label>
+          <textarea id="features" name="features" rows="4" 
+                    class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950"></textarea>
         </div>
 
-        <!-- Ürün Detayları -->
         <div class="form-group">
-          <label for="product_composition" class="block text-lg text-slate-700 font-medium">Ürün Detayları:</label>
-          <input type="text" id="product_composition" name="product_composition" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="usage_area" class="block text-lg text-slate-700 font-medium">Kullanım Alanı:</label>
+          <input type="text" id="usage_area" name="usage_area" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Montaj Şekli -->
         <div class="form-group">
-          <label for="installation_areas" class="block text-lg text-slate-700 font-medium">Montaj Şekli:</label>
-          <input type="text" id="installation_areas" name="installation_areas" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="care_instructions" class="block text-lg text-slate-700 font-medium">Bakım Talimatları:</label>
+          <textarea id="care_instructions" name="care_instructions" rows="4" 
+                    class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950"></textarea>
         </div>
 
-        <!-- Ürün Ayrıntı 1 -->
+        <!-- Öne Çıkan Özellikler -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Öne Çıkan Özellikler</h3>
+
         <div class="form-group">
-          <label for="prodmark" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı:</label>
-          <input type="text" id="prodmark" name="prodmark" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="highlight1" class="block text-lg text-slate-700 font-medium">Öne Çıkan Özellik 1:</label>
+          <input type="text" id="highlight1" name="highlight1" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Ürün Ayrıntı 2 -->
         <div class="form-group">
-          <label for="prodmark1" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 2:</label>
-          <input type="text" id="prodmark1" name="prodmark1" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="highlight2" class="block text-lg text-slate-700 font-medium">Öne Çıkan Özellik 2:</label>
+          <input type="text" id="highlight2" name="highlight2" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Ürün Ayrıntı 3 -->
         <div class="form-group">
-          <label for="prodmark2" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 3:</label>
-          <input type="text" id="prodmark2" name="prodmark2" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="highlight3" class="block text-lg text-slate-700 font-medium">Öne Çıkan Özellik 3:</label>
+          <input type="text" id="highlight3" name="highlight3" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
-        <!-- Ürün Ayrıntı 4 -->
         <div class="form-group">
-          <label for="prodmark3" class="block text-lg text-slate-700 font-medium">Ürün Ayrıntı 4:</label>
-          <input type="text" id="prodmark3" name="prodmark3" maxlength="255" class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+          <label for="highlight4" class="block text-lg text-slate-700 font-medium">Öne Çıkan Özellik 4:</label>
+          <input type="text" id="highlight4" name="highlight4" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <!-- Ek Bilgiler -->
+        <h3 class="text-xl text-slate-800 font-medium mt-8 mb-4">Ek Bilgiler</h3>
+
+        <div class="form-group">
+          <label for="origin_country" class="block text-lg text-slate-700 font-medium">Menşei:</label>
+          <input type="text" id="origin_country" name="origin_country" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <div class="form-group">
+          <label for="certification" class="block text-lg text-slate-700 font-medium">Sertifikalar:</label>
+          <input type="text" id="certification" name="certification" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
+        </div>
+
+        <div class="form-group">
+          <label for="stock_status" class="block text-lg text-slate-700 font-medium">Stok Durumu:</label>
+          <input type="text" id="stock_status" name="stock_status" maxlength="255" 
+                 class="w-full p-3 bg-slate-100 text-slate-900 rounded-lg border border-slate-300 focus:ring-2 focus:ring-slate-950">
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="w-full py-3 bg-slate-900 text-white text-lg rounded-lg hover:bg-slate-950 focus:ring-4 focus:ring-slate-950 transition duration-300">Oluştur</button>
+        <button type="submit" 
+                class="w-full py-3 bg-slate-900 text-white text-lg rounded-lg hover:bg-slate-950 focus:ring-4 focus:ring-slate-950 transition duration-300">
+          Oluştur
+        </button>
       </form>
     </div>
   </div>

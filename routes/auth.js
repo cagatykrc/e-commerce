@@ -3,9 +3,9 @@ const router = express.Router();
 const postlimiter = require('../utility/limiter');
 const bcrypt = require('bcryptjs');
 const Users = require('../models/Users');
-const jwt= require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const crypto = require('crypto')
+const crypto = require('crypto');
 const { Sequelize, Op } = require('sequelize');
 const logger = require('../utility/logger');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
@@ -15,6 +15,17 @@ const validator = require('../utility/validator');
 require('dotenv').config();
 // const limiterTwoRequests = createLimiter(2);
 // const limiterDefaultRequests = createLimiter(15);
+
+// config.env dosyasını yükle
+dotenv.config({ path: './config.env' });
+
+// JWT secret key'i kontrol et
+const JWT_SECRET = process.env.JWT_SECRET || process.env.ACCES_TOKEN_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET or ACCES_TOKEN_SECRET must be defined in config.env');
+}
+
 router.get('/giris', (req, res) => {
   const userS = req.session.user;
 
@@ -27,7 +38,11 @@ router.get('/giris', (req, res) => {
   // Eğer bir bildirim varsa, mesajı göster ve hemen sil
 
     // Bildirim yoksa normal render yap
-    return res.render('giris', { userS, pagemessage: null });
+    return res.render('auth/login', { 
+        userS,
+        error: null,
+        csrfToken: req.csrfToken()
+    });
 });
 
 
@@ -123,15 +138,21 @@ router.post('/giris',validator.validateSignIn, postlimiter, async (req, res) => 
     });
 
     if (!user) {
-      let pagemessage = { title: 'Kullandığınız e-posta bulunamadı.', type: 'danger' };
-      return res.render('giris', { userS, pagemessage: pagemessage });
+      return res.render('auth/login', {
+        userS: null,
+        error: 'Email veya şifre hatalı',
+        csrfToken: req.csrfToken()
+      });
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
-      let pagemessage = { title: 'Kullandığınız şifre hatalı.', type: 'danger' };
-      return res.render('giris', { userS, pagemessage: pagemessage });
+    if (!validPassword) {
+      return res.render('auth/login', {
+        userS: null,
+        error: 'Email veya şifre hatalı',
+        csrfToken: req.csrfToken()
+      });
     }
 
     req.session.user = {
@@ -142,23 +163,38 @@ router.post('/giris',validator.validateSignIn, postlimiter, async (req, res) => 
       role: user.role
     };
 
-    // JWT token oluşturma
-    const token = jwt.sign({
-      id: user.user_id,
-      username: user.username,
-      firstName: user.first_name,
-      role: user.role
-    }, secretKey, { expiresIn: '1h' });
+    // JWT token oluştur
+    const token = jwt.sign(
+      { 
+        userId: user.user_id, 
+        email: user.email 
+      },
+      JWT_SECRET,
+      { 
+        expiresIn: '24h',
+        algorithm: 'HS256'
+      }
+    );
+
+    // Token'ı cookie olarak kaydet
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, // 24 saat
+      sameSite: 'strict'
+    });
 
     const ipAddress = req.socket.remoteAddress;
-    logger.info(req.session.user.id + " ID'si ile Giriş Yaptı: " + ipAddress + '  //' + new Date());
+    logger.info(`${user.user_id} ID'si ile Giriş Yaptı: ${ipAddress} - ${new Date()}`);
 
-    // Başarılı girişten sonra yönlendirme yap
     return res.redirect('/');
   } catch (error) {
-    console.error(error);
-    req.session.pagemessage = { title: 'Bir hata oluştu, lütfen tekrar deneyin.', type: 'danger' };
-    return res.render('giris', { userS, pagemessage: req.session.pagemessage });
+    console.error('Giriş hatası:', error);
+    return res.render('auth/login', {
+      userS: null,
+      error: 'Bir hata oluştu, lütfen tekrar deneyin',
+      csrfToken: req.csrfToken()
+    });
   }
 });
 

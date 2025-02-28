@@ -22,6 +22,9 @@ const Showcase = require('../models/Showcase');
 const options = { timeZone: 'Europe/Istanbul' }; // Türkiye saat dilimi
 const formattedDate = new Date();
 const now = formattedDate.toLocaleString('tr-TR', options);
+const { Op } = require('sequelize');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 // const limiterDefaultRequests = createLimiter(15)
 // const limiterTwoRequests = createLimiter(1)
 function slugify(text) {
@@ -240,32 +243,190 @@ router.get('/siparisler/:orderId', verifyToken, async (req, res) => {
       return res.status(500).send('Internal Server Error');
     }
 });
-router.post('/urunaciklamatipekle', verifyToken,async(req,res) => {
+router.post('/urunaciklamatipekle', verifyToken, async(req, res) => {
     const userS = req.session.user;
-    const {desc_type, pile_frequency, stitching, cleaning, warranty, payment_options, delivery_time, moisture_resistance, product_composition, installation_areas, prodmark,prodmark1,prodmark2,prodmark3} = req.body;
+    const {
+        desc_type,
+        // Temel Ürün Bilgileri
+        brand,
+        model,
+        color,
+        material,
+        dimensions,
+        weight,
+        // Garanti ve Teslimat
+        warranty,
+        delivery_time,
+        shipping_info,
+        // Ödeme ve İade
+        payment_options,
+        return_policy,
+        // Ürün Özellikleri
+        features,
+        usage_area,
+        care_instructions,
+        // Öne Çıkan Özellikler
+        highlight1,
+        highlight2,
+        highlight3,
+        highlight4,
+        // Ek Bilgiler
+        origin_country,
+        certification,
+        stock_status
+    } = req.body;
     
     if (userS && userS.role === 'admin') {
+        try {
+            const productdescadd = await productDesc.create({
+                desc_type,
+                // Temel Ürün Bilgileri
+                brand,
+                model,
+                color,
+                material,
+                dimensions,
+                weight,
+                // Garanti ve Teslimat
+                warranty,
+                delivery_time,
+                shipping_info,
+                // Ödeme ve İade
+                payment_options,
+                return_policy,
+                // Ürün Özellikleri
+                features,
+                usage_area,
+                care_instructions,
+                // Öne Çıkan Özellikler
+                highlight1,
+                highlight2,
+                highlight3,
+                highlight4,
+                // Ek Bilgiler
+                origin_country,
+                certification,
+                stock_status
+            });
 
-        const productdescadd = await productDesc.create({
-            desc_type,
-            pile_frequency,
-            stitching,
-            cleaning,
-            warranty,
-            payment_options,
-            delivery_time,
-            moisture_resistance,
-            product_composition,
-            installation_areas,
-            prodmark,
-            prodmark1,
-            prodmark2,
-            prodmark3,
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(userS.username + ' ' + 'Ürün Açıklaması Oluşturdu: ' + ipAddress + '  //' + now);
+            res.redirect('/admin/urunaciklamatip');
+        } catch (error) {
+            console.error('Ürün açıklaması oluşturulurken hata:', error);
+            res.status(500).send('Ürün açıklaması oluşturulurken bir hata oluştu');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
 
-        });
-        const ipAddress = req.socket.remoteAddress;
-        logger.info(userS.username+' '+'Açıklama Oluşturdu: '+ipAddress +'  //'+now);
-        res.redirect('/admin/urunaciklamatip');
+router.post('/urunaciklamatipduzenle/:id', verifyToken, async(req, res) => {
+    const userS = req.session.user;
+    const descId = req.params.id;
+    const {
+        desc_type,
+        // Temel Ürün Bilgileri
+        brand,
+        model,
+        color,
+        material,
+        dimensions,
+        weight,
+        // Garanti ve Teslimat
+        warranty,
+        delivery_time,
+        shipping_info,
+        // Ödeme ve İade
+        payment_options,
+        return_policy,
+        // Ürün Özellikleri
+        features,
+        usage_area,
+        care_instructions,
+        // Öne Çıkan Özellikler
+        highlight1,
+        highlight2,
+        highlight3,
+        highlight4,
+        // Ek Bilgiler
+        origin_country,
+        certification,
+        stock_status
+    } = req.body;
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const productdesc = await productDesc.findByPk(descId);
+            
+            if (!productdesc) {
+                return res.status(404).send('Ürün açıklaması bulunamadı');
+            }
+
+            await productdesc.update({
+                desc_type,
+                // Temel Ürün Bilgileri
+                brand,
+                model,
+                color,
+                material,
+                dimensions,
+                weight,
+                // Garanti ve Teslimat
+                warranty,
+                delivery_time,
+                shipping_info,
+                // Ödeme ve İade
+                payment_options,
+                return_policy,
+                // Ürün Özellikleri
+                features,
+                usage_area,
+                care_instructions,
+                // Öne Çıkan Özellikler
+                highlight1,
+                highlight2,
+                highlight3,
+                highlight4,
+                // Ek Bilgiler
+                origin_country,
+                certification,
+                stock_status
+            });
+
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(userS.username + ' ' + 'Ürün Açıklaması Düzenledi: ' + ipAddress + '  //' + now);
+            res.redirect('/admin/urunaciklamatip');
+        } catch (error) {
+            console.error('Ürün açıklaması düzenlenirken hata:', error);
+            res.status(500).send('Ürün açıklaması düzenlenirken bir hata oluştu');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
+
+router.post('/urunaciklamatipsil/:id', verifyToken, async(req, res) => {
+    const userS = req.session.user;
+    const descId = req.params.id;
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const productdesc = await productDesc.findByPk(descId);
+            
+            if (!productdesc) {
+                return res.status(404).send('Ürün açıklaması bulunamadı');
+            }
+
+            await productdesc.destroy();
+
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(userS.username + ' ' + 'Ürün Açıklaması Sildi: ' + ipAddress + '  //' + now);
+            res.redirect('/admin/urunaciklamatip');
+        } catch (error) {
+            console.error('Ürün açıklaması silinirken hata:', error);
+            res.status(500).send('Ürün açıklaması silinirken bir hata oluştu');
+        }
     } else {
         res.redirect('/');
     }
@@ -314,48 +475,171 @@ router.post('/duyurusil', verifyToken, async (req, res) => {
     }
 });
 
-router.get('/kuponlar', async (req,res)=>{
+router.get('/kuponlar', verifyToken, async (req, res) => {
     const userS = req.session.user;
-    if (!(userS && userS.role === 'admin')) {
-        return res.render('404', {userS});
-    }
-    const coupons = await Coupon.findAll()
-    console.log(coupons);
-    res.render('admin/couponCreate', {userS,coupons })
-})
-
-router.post('/kupon-olustur', async (req, res) => {
-    const { coupon_code, discount_type, discount_value, expiry_date } = req.body;
-
-    try {
-        if (discount_type === 'percentage') {
-            await Coupon.create({
-                coupon_code,
-                discount_rate: discount_value,
-                discount_type,
-                active: 1,
-                expiry_date
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const coupons = await Coupon.findAll({
+                order: [['createdAt', 'DESC']]
             });
-        } else if (discount_type === 'fixed_amount') {
-            await Coupon.create({
-                coupon_code,
-                discount_price: discount_value,
-                discount_type,
-                active: 1,
-                expiry_date
+            
+            res.render('admin/couponCreate', { 
+                coupons,
+                userS,
+                error: null,
+                success: null
             });
-        } else {
-            res.status(400).send('Invalid discount type');
-            return;
+        } catch (error) {
+            console.error('Kuponlar listelenirken hata:', error);
+            res.status(500).send('Kuponlar listelenirken bir hata oluştu');
         }
-        
-        res.redirect('/admin/kuponlar');
-    } catch (error) {
-        console.error('Kupon oluşturulurken hata oluştu:', error);
-        res.status(500).send('Internal Server Error');
+    } else {
+        res.redirect('/');
     }
 });
 
+router.post('/kupon-olustur', verifyToken, csrfProtection, async (req, res) => {
+    const userS = req.session.user;
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const {
+                coupon_code,
+                discount_type,
+                discount_value,
+                expiry_date,
+                description,
+                _csrf
+            } = req.body;
+
+            // Kupon kodunu büyük harfe çevir ve boşlukları temizle
+            const upperCouponCode = coupon_code.trim().toUpperCase().replace(/\s+/g, '');
+
+            // Boş kupon kodu kontrolü
+            if (!upperCouponCode) {
+                req.session.notification = {
+                    type: 'error',
+                    message: 'Kupon kodu boş olamaz'
+                };
+                return res.redirect('/admin/kuponlar');
+            }
+
+            // Kupon kodu benzersizliğini kontrol et
+            const existingCoupon = await Coupon.findOne({
+                where: {
+                    coupon_code: upperCouponCode
+                }
+            });
+
+            if (existingCoupon) {
+                req.session.notification = {
+                    type: 'error',
+                    message: 'Bu kupon kodu zaten kullanımda'
+                };
+                return res.redirect('/admin/kuponlar');
+            }
+
+            // Yeni kupon oluştur
+            const newCoupon = await Coupon.create({
+                coupon_code: upperCouponCode,
+                discount_type,
+                discount_value: parseFloat(discount_value),
+                expiry_date: new Date(expiry_date + 'T23:59:59'), // Günün sonuna kadar geçerli
+                description,
+                active: true,
+                usage_count: 0,
+                max_usage: null // Sınırsız kullanım için null
+            });
+
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(`${userS.username} yeni kupon oluşturdu: ${upperCouponCode} - ${ipAddress} - ${new Date()}`);
+            
+            req.session.notification = {
+                type: 'success',
+                message: 'Kupon başarıyla oluşturuldu'
+            };
+            
+            res.redirect('/admin/kuponlar');
+        } catch (error) {
+            console.error('Kupon oluşturulurken hata:', error);
+            req.session.notification = {
+                type: 'error',
+                message: 'Kupon oluşturulurken bir hata oluştu'
+            };
+            res.redirect('/admin/kuponlar');
+        }
+    } else {
+        res.redirect('/');
+    }
+});
+
+router.post('/:couponId/sil', verifyToken, async (req, res) => {
+    const userS = req.session.user;
+    const { couponId } = req.params;
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const coupon = await Coupon.findByPk(couponId);
+            
+            if (!coupon) {
+                return res.status(404).json({
+                    error: 'Kupon bulunamadı'
+                });
+            }
+
+            await coupon.destroy();
+
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(`${userS.username} kupon sildi: ${coupon.coupon_code} - ${ipAddress} - ${new Date()}`);
+            
+            res.json({ success: true });
+        } catch (error) {
+            console.error('Kupon silinirken hata:', error);
+            res.status(500).json({
+                error: 'Kupon silinirken bir hata oluştu'
+            });
+        }
+    } else {
+        res.status(403).json({
+            error: 'Yetkisiz erişim'
+        });
+    }
+});
+
+router.post('/:couponId/durum', verifyToken, async (req, res) => {
+    const userS = req.session.user;
+    const { couponId } = req.params;
+    const { active } = req.body;
+    
+    if (userS && userS.role === 'admin') {
+        try {
+            const coupon = await Coupon.findByPk(couponId);
+            
+            if (!coupon) {
+                return res.status(404).json({
+                    error: 'Kupon bulunamadı'
+                });
+            }
+
+            await coupon.update({ active });
+
+            const ipAddress = req.socket.remoteAddress;
+            logger.info(`${userS.username} kupon durumunu güncelledi: ${coupon.coupon_code} - ${active ? 'aktif' : 'pasif'} - ${ipAddress} - ${new Date()}`);
+            
+            res.json({ success: true });
+        } catch (error) {
+            console.error('Kupon durumu güncellenirken hata:', error);
+            res.status(500).json({
+                error: 'Kupon durumu güncellenirken bir hata oluştu'
+            });
+        }
+    } else {
+        res.status(403).json({
+            error: 'Yetkisiz erişim'
+        });
+    }
+});
 
 function generateProductId(category, uniqueId) {
     const categoryInitial = category.charAt(0).toUpperCase(); // Kategorinin ilk harfini al
@@ -367,53 +651,47 @@ router.post('/urunolustur', verifyToken, upload.fields([
     { name: 'resim2', maxCount: 1 },
     { name: 'resim3', maxCount: 1 }
 ]), async (req, res) => {
-    const userS = req.session.user;
-
-    if (!(userS && userS.role === 'admin')) {
-        return res.redirect('/');
-    }
-
-    const userID = req.session.user.id;
-
-    const { baslik, price, aciklama, kategorisi, turu, productdesc_id } = req.body;
-    const urunAdi = baslik;  // Bu ürün adını dinamik olarak alın
-    const slug = slugify(urunAdi);
-
-    if (!req.files || !req.files['resim']) {
-        console.error('Dosya yüklemesi başarısız oldu.');
-        return res.status(400).send('Bad Request');
-    }
-
-    const resimDosya = req.files['resim'][0];
-    const resimDosya2 = req.files['resim2'] ? req.files['resim2'][0].filename : null;
-    const resimDosya3 = req.files['resim3'] ? req.files['resim3'][0].filename : null;
-
     try {
-        // Benzersiz bir ID oluştur
-        const uniqueId = (baslik); // Veya başka bir yöntem
-        const productId = generateProductId(kategorisi, uniqueId);
+        // Yetki kontrolü
+        if (!req.session.user || req.session.user.role !== 'admin') {
+            throw new Error('Yetkisiz erişim');
+        }
 
-        const result = await Products.create({
-            aciklama,
-            resim: resimDosya.filename,
-            resim2: resimDosya2,  // İkinci resim
-            resim3: resimDosya3,  // Üçüncü resim
-            olusturan_user_id: userID,
+        // Form verilerini al
+        const { baslik, price, kategorisi, aciklama } = req.body;
+        
+        // Resimleri kontrol et
+        if (!req.files || !req.files.resim || !req.files.resim2 || !req.files.resim3) {
+            throw new Error('Tüm resimler gereklidir');
+        }
+
+        // Yeni ürün oluştur
+        const yeniUrun = await Products.create({
             urun_basligi: baslik,
-            product_price: parseFloat(price).toFixed(2),
+            slug: slugify(baslik, { lower: true, strict: true, locale: 'tr' }),
+            product_price: parseFloat(price),
             category_low: kategorisi,
-            urun_turu: turu,
-            slug,
-            productdesc_id, // Ürün kimliğini ekle
+            aciklama: aciklama,
+            resim: req.files.resim[0].filename,
+            resim2: req.files.resim2[0].filename,
+            resim3: req.files.resim3[0].filename,
+            olusturan_user_id: req.session.user.id,
+            urun_turu: 1
         });
 
-        const ipAddress = req.socket.remoteAddress;
-        logger.info(userS.username + ' ' + 'Urun Oluşturdu: ' + ipAddress + '  //' + new Date());
+        req.session.notification = {
+            type: 'success',
+            message: 'Ürün başarıyla oluşturuldu'
+        };
 
-        res.redirect('/admin/panel');
+        res.redirect('/admin/urunler');
     } catch (error) {
-        console.error('Urun oluşturulurken bir hata oluştu: ' + error);
-        return res.status(500).send('Internal Server Error');
+        console.error('Ürün oluşturma hatası:', error);
+        req.session.notification = {
+            type: 'error',
+            message: error.message
+        };
+        return res.redirect('/admin/urunolustur');
     }
 });
 

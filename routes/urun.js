@@ -51,11 +51,8 @@ router.get('/:slug', async (req, res) => {
     const olusturanUser = product ? product.olusturanUser : null;
 
     // Urun sayfasını render et
-    if (product.urun_turu === 1) {
-      return res.render('productpage', { product, userS, olusturanUser, discountRate });
-    }
 
-    return res.render('mechprod', { product, userS, olusturanUser, discountRate });
+    return res.render('productpage', { product, userS, olusturanUser, discountRate });
 
   } catch (error) {
     // Hata durumunda

@@ -1,18 +1,18 @@
 <%- include('./partials/header.ejs') %>
 <%- include('./partials/loader.ejs') %>
 <%- include('./partials/notification.ejs')%>
-<% if(!userCart){%>
+<% if(!cartItems || cartItems.length === 0){%>
   <section class="bg-white py-8 antialiased md:py-16 flex align-center justify-content-center h-60">
     <div class="bgwhite width-30 height-30 m-auto">
       <div class="flex justify-content-center align-center">
-        <i class="fa-solid fa-cart-shopping"></i>
-
+        <h2 class="text-2xl font-bold text-gray-900">Sepetiniz Boş</h2>
       </div>
-          
-      <h2 class="text-xl font-semibold text-slate-950 sm:text-2xl">Sepetinizde Ürün Bulunmamaktadır.</h2>
+      <div class="mt-4 flex justify-content-center align-center">
+        <a href="/" class="text-blue-600 hover:text-blue-700">Alışverişe Devam Et</a>
+      </div>
     </div>
   </section>
-  <% }else{ %>
+<% } else { %>
 <section class="bg-white py-8 antialiased  md:py-16">
   <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <h2 class="text-xl font-semibold text-gray-900  sm:text-2xl">Alışveriş Sepeti</h2>
@@ -20,18 +20,18 @@
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
         <div class="space-y-6">
-          <% userCart.forEach(cartItem => { %>
+          <% cartItems.forEach(item => { %>
             <div class="flex my-auto  flex-row md:flex-row bg-white p-2 lg:p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
               <!-- Resim Sol Tarafta (Mobilde Sol, PC için değişmez) -->
               <div class="flex-shrink-0 flex flex-col justify-center items-center content-center lg:my-auto md:mb-0 md:w-1/4 lg:mr-0 mr-5">
-                <img class="h-24 lg:w-36 lg:h-40 w-24 rounded-md object-cover my-auto mx-auto md:mx-0 mb-5" src="/uploads/<%=cartItem.product.resim%>" alt="<%= cartItem.product.urun_basligi %>" />
+                <img class="h-24 lg:w-36 lg:h-40 w-24 rounded-md object-cover my-auto mx-auto md:mx-0 mb-5" src="/uploads/<%=item.product.resim%>" alt="<%= item.product.urun_basligi %>" />
                 <div class="flex items-center">
                   <button type="button" id="decrement-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
                     <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
                     </svg>
                   </button>
-                  <input type="number" id="counter-input" class="w-6 text-center text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none" disabled value="<%= cartItem.quantity %>" min="1" />
+                  <input type="number" id="counter-input" class="w-6 text-center text-sm font-medium text-gray-900 bg-transparent border-none focus:outline-none" disabled value="<%= item.quantity %>" min="1" />
                   <button type="button" id="increment-button" class="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 focus:outline-none">
                     <svg class="w-2 h-2 lg:w-4 lg:h-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
@@ -44,25 +44,35 @@
               <div class="flex-1 flex flex-col justify-between md:ml-6">
                 <!-- Başlık ve Kategoriler -->
                 <div class="flex flex-col space-y-1">
-                  <p class="text-lg font-semibold text-gray-800 truncate"><%= cartItem.product.urun_basligi %></p>
-                  <% if (cartItem.product.discount_price) { %>
-                  <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM ,<p class="text-sm text-gray-600 line-through"> ₺<%= cartItem.product.discount_price %></p><p class="text-sm font-semibold text-gray-500">₺<%= cartItem.product.product_price %></p>
-                    <% } else { %>
-                      <p class="text-sm text-gray-600"><%= cartItem.product.kategoriler.kategori_ad %>, <%= cartItem.width %> CM x <%= cartItem.height %> CM , <p class="text-sm font-semibold text-gray-500">₺<%= cartItem.product.product_price %></p>
-                    <% } %>
+                  <p class="text-lg font-semibold text-gray-800 truncate"><%= item.product.urun_basligi %></p>
+                  <% if (item.product.discount_price) { %>
+                    <p class="text-sm text-gray-600">
+                        <%= item.product.productCategory?.kategori_ad || 'Kategori Yok' %>, 
+                        <span class="text-sm text-gray-600 line-through">₺<%= item.product.discount_price %></span>
+                        <span class="text-sm font-semibold text-gray-500">₺<%= item.product.product_price %></span>
+                    </p>
+                  <% } else { %>
+                    <p class="text-sm text-gray-600">
+                        <%= item.product.productCategory?.kategori_ad || 'Kategori Yok' %>, 
+                        <span class="text-sm font-semibold text-gray-500">₺<%= item.product.product_price %></span>
+                    </p>
+                  <% } %>
                 </div>
             
                 <!-- Miktar ve Fiyat -->
                 <div class="flex items-center justify-between mt-1 space-x-4">
                   <!-- Miktar Seçici -->
+                  <div class="flex items-center">
+                    <span class="text-gray-600">Miktar: <%= item.quantity %></span>
+                  </div>
 
-                  <% 
-                  const quantity = parseFloat(cartItem.quantity) || 1; // Miktar değeri
-                  const unitPrice = (cartItem.total_price / quantity).toFixed(2); // Birim fiyatı hesapla
-                %>
                   <!-- Fiyat -->
                   <div class="text-right">
-                    <p class="text-lg font-bold text-gray-700">₺<%= unitPrice %></p>
+                    <% 
+                      // İndirimli fiyat varsa onu, yoksa normal fiyatı kullan
+                      const unitPrice = item.product.discount_price || item.product.product_price;
+                    %>
+                    <p class="text-lg font-bold text-gray-700">₺<%= parseFloat(unitPrice).toFixed(2) %></p>
                   </div>
                 </div>
             
@@ -75,7 +85,7 @@
                     Favorilere Ekle
                   </button>
             
-                  <button type="button" data-cartid="<%= cartItem.cart_id %>" class="remove-item flex flex-row text-sm text-red-600 hover:underline">
+                  <button type="button" data-cartid="<%= item.cart_id %>" class="remove-item flex flex-row text-sm text-red-600 hover:underline">
                     <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M18 18L6 6" />
                     </svg>
@@ -97,7 +107,7 @@
                 <img class="mx-auto hidden h-44 w-44 " src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
               </a>
               <div>
-                <a href="#" class="text-lg font-semibold leading-tight text-gray-900 hover:underline ">iMac 27”</a>
+                <a href="#" class="text-lg font-semibold leading-tight text-gray-900 hover:underline ">iMac 27"</a>
                 <p class="mt-2 text-base font-normal text-gray-500 ">This generation has some improvements, including a longer continuous battery life.</p>
               </div>
               <div>
@@ -202,23 +212,23 @@
           <div class="space-y-4">
             <div class="space-y-2">
               <dl class="flex items-center justify-between gap-4">
-                <dt class="text-base font-normal text-gray-500 ">Tutar</dt>
-                <dd class="text-base font-medium text-gray-900 ">₺<%= rawprice %></dd>
+                <dt class="text-base font-normal text-gray-500">Tutar</dt>
+                <dd class="text-base font-medium text-gray-900">₺<%= rawprice %></dd>
               </dl>
               <dl class="flex items-center justify-between gap-4">
-                <dt class="text-base font-normal text-gray-500 ">%8 KDV</dt>
-                <dd class="text-base font-medium text-gray-900 ">₺<%= withoutkdv.toFixed(2) %></dd>
+                <dt class="text-base font-normal text-gray-500">%8 KDV</dt>
+                <dd class="text-base font-medium text-gray-900">₺<%= withoutkdv %></dd>
               </dl>
-              <% if (discount) { %>
+              <% if (discount > 0) { %>
               <dl class="flex items-center justify-between gap-4">
-                <dt class="text-base font-normal text-gray-500 ">Kupon İndirimi</dt>
-                <dd class="text-base font-medium text-green-600">-₺<%= discount.toFixed(2) %></dd>
+                <dt class="text-base font-normal text-gray-500">Kupon İndirimi</dt>
+                <dd class="text-base font-medium text-green-600">-₺<%= discount %></dd>
               </dl>
               <% } %>
             </div>
             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt class="text-base font-bold text-gray-900">Toplam</dt>
-              <dd class="text-base font-bold text-gray-900">₺<%= totalCartPrice.toFixed(2) %></dd>
+              <dd class="text-base font-bold text-gray-900">₺<%= totalCartPrice %></dd>
             </dl>
             </div>
             <form action="/odeme/siparisonayla" method="POST">
@@ -262,14 +272,40 @@
           </div>
         </div>
 
-        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm ">
-          <form method="post" action="/kuponUygula" class="space-y-4">
-            <div>
-              <label for="voucher" class="mb-2 block text-sm font-medium text-gray-900 "> Kupon kodun var mı? </label>
-              <input type="text" name="coupon_code" id="voucher" class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 " placeholder="" required />
-            </div>
-            <button type="submit" id="apply-coupon" class="bg-slate-950 flex w-full items-center justify-center rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 ">Kodu Uygula</button>
-          </form>
+        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <form id="couponForm" class="space-y-4">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <div>
+                    <label for="coupon_code" class="mb-2 block text-sm font-medium text-gray-900">
+                        Kupon Kodu
+                    </label>
+                    <input type="text" 
+                           name="coupon_code" 
+                           id="coupon_code" 
+                           class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
+                           placeholder="Kupon kodunu girin"
+                           maxlength="20"
+                           pattern="[A-Za-z0-9]+"
+                           required />
+                </div>
+                <button type="submit" 
+                        class="w-full bg-slate-950 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-200">
+                    Kuponu Uygula
+                </button>
+            </form>
+            
+            <% if (appliedCoupon) { %>
+                <div class="mt-4 p-3 bg-green-50 text-green-800 rounded-lg">
+                    <p class="text-sm">
+                        "<%= appliedCoupon.code %>" kuponu uygulandı
+                        (<%= appliedCoupon.type === 'percentage' ? '%' + appliedCoupon.value : '₺' + appliedCoupon.value %>)
+                    </p>
+                    <button onclick="removeCoupon()" 
+                            class="text-xs text-red-600 hover:underline mt-1">
+                        Kuponu Kaldır
+                    </button>
+                </div>
+            <% } %>
         </div>
       </div>
     </div>
@@ -277,54 +313,83 @@
 </section>
     <% } %>
 <script>
-  document.getElementById('apply-coupon').addEventListener('click', async () => {
-      const couponCode = document.getElementById('coupon').value;
-      try {
-          const response = await fetch('/kuponUygula', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ coupon_code: couponCode })
-          });
+document.getElementById('couponForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Boşlukları temizle ve büyük harfe çevir
+    const couponCode = document.getElementById('coupon_code').value.trim().toUpperCase().replace(/\s+/g, '');
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+    
+    if (!couponCode) {
+        alert('Lütfen bir kupon kodu girin');
+        return;
+    }
+    
+    if (!/^[A-Z0-9]+$/.test(couponCode)) {
+        alert('Geçersiz kupon kodu');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/kuponUygula', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+            body: JSON.stringify({ 
+                coupon_code: couponCode,
+                _csrf: csrfToken 
+            })
+        });
 
-          const result = await response.json();
-          if (result.success) {
-              location.reload();
-          } else {
-              alert(result.message);
-          }
-      } catch (error) {
-          console.error('Hata:', error);
-          alert('Bir hata oluştu.');
-      }
-  });
+        const data = await response.json();
+        
+        if (data.success) {
+            window.location.reload();
+        } else {
+            alert(data.message || 'Kupon uygulanamadı');
+        }
+    } catch (error) {
+        console.error('Hata:', error);
+        alert('Kupon uygulanırken bir hata oluştu');
+    }
+});
+
+// Kupon kodu input alanı için otomatik temizleme
+document.getElementById('coupon_code').addEventListener('input', function(e) {
+    this.value = this.value.replace(/\s+/g, '').toUpperCase();
+});
 </script>
 
 
 <script>
 document.querySelectorAll('.remove-item').forEach(button => {
-button.addEventListener('click', async (e) => {
-const cartId = e.target.getAttribute('data-cartid');
-try {
-  const response = await fetch(`/${cartId}/sepetsil`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({})
-  });
-  const result = await response.json();
-  if (result.success) {
-    location.reload();
-  } else {
-    alert(result.message);
-  }
-} catch (error) {
-  console.error('Hata:', error);
-  alert('Bir hata oluştu.');
-}
-});
+    button.addEventListener('click', async (e) => {
+        const cartId = e.target.getAttribute('data-cartid');
+        const csrfToken = document.querySelector('input[name="_csrf"]').value;
+        
+        try {
+            const response = await fetch(`/${cartId}/sepetsil`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'CSRF-Token': csrfToken
+                },
+                body: JSON.stringify({ _csrf: csrfToken })
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                window.location.reload();
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Hata:', error);
+            alert('Bir hata oluştu.');
+        }
+    });
 });
 </script>
 <script src="/js/bootstrap.bundle.min.js"></script>

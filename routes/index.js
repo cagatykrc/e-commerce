@@ -14,6 +14,8 @@ const Showcase = require('../models/Showcase');
 const redis = require('redis');
 const calculateTotalPrice = require('../utility/priceCalc'); 
 const Products = require('../models/Products');
+const verifyToken = require('../utility/verifyToken');
+const ProductVariant = require('../models/ProductVariant');
 
 // Redis client oluşturma
 const redisClient = redis.createClient({
@@ -280,87 +282,67 @@ router.get('/urunler', async (req, res) => {
 });
 
 // Sepet
-router.get('/sepet', async (req, res) => {
-  const notification = req.session.notification;
-  req.session.notification = null;
-  if (!req.session.user) {
-    return res.redirect('/auth/giris');
-  }
-
+router.get('/sepet', verifyToken, async (req, res) => {
+  const userS = req.session.user;
   try {
-    const user = req.session.user;
-    const userCart = await ShoppingCart.findAll({
-      where: { user_id: user.id },
+    if (!userS) {
+      return res.redirect('/giris');
+    }
+
+    const cartItems = await ShoppingCart.findAll({
+      where: { user_id: req.session.user.id },
       include: [{
         model: Products,
-        attributes: ['product_price', 'discount_price', 'resim', 'urun_basligi', 'urun_turu'], // Ya da istediğiniz diğer alanlar
+        as: 'product',
         include: [{
-                model: Kategoriler,
-                attributes: ['kategori_ad'],
-                as: 'kategoriler',
-              }]
+          model: Kategoriler,
+          as: 'productCategory',
+          attributes: ['kategori_ad']
+        }]
       }]
     });
-    
 
-    let totalCartPrice = 0;
-    userCart.forEach(cartItem => {
-      if (cartItem.product) { // Ensure Products is defined
-        const product = cartItem.product;
-        const productPrice = parseFloat(product.dataValues.product_price) || 0;
-        const width = parseFloat(cartItem.width) || 0;
-        const height = parseFloat(cartItem.height) || 0;
-        const quantity = parseFloat(cartItem.quantity) || 0;
-        const productType = parseInt(product.dataValues.urun_turu);
-    
-        // Calculate price based on product type
-        if (productType === 0) {
-          if (productPrice > 0 && quantity > 0) {
-            const squareMeters = (height * width) / 10000;
-            const totalPrice = squareMeters * productPrice * quantity;
-            cartItem.total_price = totalPrice;
-            totalCartPrice += totalPrice;
-          }
-        } else {
-          if (productPrice > 0 && quantity > 0 && height < 300) {
-            const Meters = (width * 3) / 100;
-            const totalPrice = Meters * productPrice * quantity;
-            cartItem.total_price = totalPrice;
-            totalCartPrice += totalPrice;
-          }
-        }
-      } else {
-        console.log(`No Products found for cart item ID: ${cartItem.cart_id}`);
-      }
-    });
-    
-    console.log(`Total Cart Price before discount: ${totalCartPrice}`);
+    // Toplam fiyat hesaplama
+    let rawprice = cartItems.reduce((total, item) => {
+      const itemPrice = item.product.discount_price || item.product.product_price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
 
+    let withoutkdv = rawprice * 0.08;
+    let totalCartPrice = rawprice + withoutkdv;
     let discount = 0;
-    const rawprice = totalCartPrice.toFixed(2);
-    if (req.session.coupon) {
-      const coupon = req.session.coupon;
-      const discountRate = parseFloat(coupon.discount_rate);
-      const discountPrice = parseFloat(coupon.discount_price);
-      if (discountRate > 0) {
-        discount = totalCartPrice * (discountRate / 100);
-      } else if (discountPrice > 0) {
-        discount = discountPrice;
+
+    if (req.session.appliedCoupon) {
+      const coupon = req.session.appliedCoupon;
+      if (coupon.type === 'percentage') {
+        discount = (totalCartPrice * coupon.value) / 100;
+      } else {
+        discount = parseFloat(coupon.value);
       }
       totalCartPrice -= discount;
     }
 
-    const kdvprice = (rawprice * (1 + 8 / 100)).toFixed(2);
-    const withoutkdv = kdvprice - rawprice;
-    const total = totalCartPrice + withoutkdv;
-    totalCartPrice = total;
-    totalCartPrice = isNaN(totalCartPrice) ? 0 : totalCartPrice;
-    discount = isNaN(discount) ? 0 : discount;
+    const notification = req.session.notification;
+    delete req.session.notification;
 
-    res.render('cart', { userS: req.session.user, rawprice, userCart:userCart, totalprice: totalCartPrice, totalCartPrice, discount, kdvprice, withoutkdv, notification, coupon: req.session.coupon });
+    res.render('cart', {
+      userS,
+      cartItems,
+      rawprice: parseFloat(rawprice).toFixed(2),
+      withoutkdv: parseFloat(withoutkdv).toFixed(2),
+      totalCartPrice: parseFloat(totalCartPrice).toFixed(2),
+      discount: parseFloat(discount).toFixed(2),
+      appliedCoupon: req.session.appliedCoupon,
+      notification
+    });
+
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: error.message });
+    console.error('Sepet görüntüleme hatası:', error);
+    req.session.notification = {
+      type: 'error',
+      message: 'Sepet görüntülenirken bir hata oluştu'
+    };
+    res.redirect('/');
   }
 });
 
@@ -368,39 +350,72 @@ router.get('/sepet', async (req, res) => {
 
 
 
-router.post('/:urunId/sepetekle', async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/auth/giris');
-  }
-  const userS = req.session.user;
-  const urunId = req.params.urunId;
-  const { width, height } = req.body;
-  const quantity = 1;
-
-  try {
-    const product = await Products.findByPk(urunId, {
-      attributes: ['product_price']
-    });
-
-    if (!product) {
-      return res.status(404).send('Urun bulunamadi');
+router.post('/:urunId/sepetekle', verifyToken, async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/auth/giris');
     }
 
+    const userS = req.session.user;
+    const urunId = req.params.urunId;
+    const quantity = parseInt(req.body.quantity) || 1;
+    const selectedColor = req.body.selected_color;
+    const selectedMaterial = req.body.selected_material;
 
+    try {
+        const product = await Products.findByPk(urunId, {
+            include: [{
+                model: ProductVariant,
+                as: 'variants',
+                where: {
+                    variant_id: {
+                        [Op.in]: [selectedColor, selectedMaterial].filter(Boolean)
+                    }
+                },
+                required: false
+            }]
+        });
 
-    await ShoppingCart.create({
-      user_id: userS.id,
-      quantity,
-      urun_id: urunId,
-      width,
-      height,
-    });
+        if (!product) {
+            return res.status(404).send('Ürün bulunamadı');
+        }
 
-    res.redirect('/sepet');
-  } catch (error) {
-    console.error('Ürun Sepete eklenirken bir hata oluştu: ' + error);
-    return res.status(500).send('Internal Server Error');
-  }
+        // Varyant fiyatlarını hesapla
+        let additionalPrice = 0;
+        if (product.variants) {
+            additionalPrice = product.variants.reduce((sum, variant) => 
+                sum + (parseFloat(variant.additional_price) || 0), 0);
+        }
+
+        // Toplam fiyat hesaplama
+        const basePrice = product.discount_price || product.product_price;
+        const total_price = (basePrice + additionalPrice) * quantity;
+
+        // Sepete ekle
+        await ShoppingCart.create({
+            user_id: userS.id,
+            quantity,
+            urun_id: urunId,
+            total_price: parseFloat(total_price),
+            selected_variants: JSON.stringify({
+                color: selectedColor,
+                material: selectedMaterial
+            })
+        });
+
+        req.session.notification = {
+            type: 'success',
+            message: 'Ürün sepete eklendi'
+        };
+
+        res.redirect('/sepet');
+    } catch (error) {
+        console.error('Ürün Sepete eklenirken bir hata oluştu:', error);
+        req.session.notification = {
+            type: 'error',
+            message: 'Ürün sepete eklenirken bir hata oluştu'
+        };
+        return res.redirect('/urun/' + urunId);
+    }
 });
 
 router.post('/:cartid/sepetsil', async (req, res) => {
@@ -430,35 +445,103 @@ router.post('/:cartid/sepetsil', async (req, res) => {
   }
 });
 
-router.post('/kuponUygula', async (req, res) => {
-  const { coupon_code } = req.body;
+router.post('/kuponUygula', verifyToken, async (req, res) => {
+    try {
+        const userS = req.session.user;
+        const { coupon_code } = req.body;
 
-  try {
-      if (req.session.coupon == coupon_code) {
-        req.session.notification = {title:'Kupon zaten kullanımda.',type:'danger'};
-        return res.redirect('/sepet');
-      }
-      const coupon = await Coupon.findOne({ where: { coupon_code } });
+        if (!userS) {
+            return res.status(401).json({
+                success: false,
+                message: 'Lütfen önce giriş yapın'
+            });
+        }
 
-      if (!coupon) {
-        req.session.notification = {title:'Geçersiz kupon kodu.',type:'danger'};
-        return res.redirect('/sepet');
-      }
+        // Kupon kodunu büyük harfe çevir ve boşlukları temizle
+        const upperCouponCode = coupon_code.trim().toUpperCase().replace(/\s+/g, '');
 
-      // Kuponu session'a kaydet
-      req.session.coupon = {
-          coupon_code: coupon.coupon_code,
-          discount_rate: coupon.discount_rate,
-          discount_price: coupon.discount_price
-      };
+        // Boş kupon kodu kontrolü
+        if (!upperCouponCode) {
+            return res.status(400).json({
+                success: false,
+                message: 'Kupon kodu boş olamaz'
+            });
+        }
 
-      req.session.notification = {title:'Kupon başarıyla uygulandı.',type:'success'};
-      return res.redirect('/sepet');
-  } catch (error) {
-      console.error(error);
-      req.session.notification = {title:'Bir hata oluştu.',type:'danger'};
+        // Aktif ve süresi dolmamış kuponu bul
+        const coupon = await Coupon.findOne({
+            where: {
+                coupon_code: upperCouponCode,
+                active: true,
+                expiry_date: {
+                    [Op.gt]: new Date() // Şu anki tarihten büyük olanları seç
+                }
+            }
+        });
 
-  }
+        if (!coupon) {
+            return res.status(400).json({
+                success: false,
+                message: 'Geçersiz veya süresi dolmuş kupon kodu'
+            });
+        }
+
+        // Sepetteki toplam tutarı hesapla
+        const cart = await ShoppingCart.findAll({
+            where: { user_id: userS.id },
+            include: [{
+                model: Products,
+                as: 'product'
+            }]
+        });
+
+        const cartTotal = cart.reduce((total, item) => {
+            const itemPrice = item.product.discount_price || item.product.product_price;
+            return total + (itemPrice * item.quantity);
+        }, 0);
+
+        // İndirim hesapla
+        let discountAmount = 0;
+        if (coupon.discount_type === 'percentage') {
+            discountAmount = (cartTotal * coupon.discount_value) / 100;
+        } else {
+            discountAmount = parseFloat(coupon.discount_value);
+        }
+
+        // Session'a kuponu kaydet
+        req.session.appliedCoupon = {
+            code: coupon.coupon_code,
+            type: coupon.discount_type,
+            value: coupon.discount_value,
+            discountAmount
+        };
+
+        // Kullanım sayısını artır
+        await coupon.increment('usage_count');
+
+        return res.json({
+            success: true,
+            message: 'Kupon başarıyla uygulandı',
+            discountAmount
+        });
+
+    } catch (error) {
+        console.error('Kupon uygulama hatası:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Kupon uygulanırken bir hata oluştu'
+        });
+    }
+});
+
+// Kupon kaldırma route'u ekleyelim
+router.post('/kuponKaldir', verifyToken, async (req, res) => {
+    if (req.session.appliedCoupon) {
+        delete req.session.appliedCoupon;
+        res.json({ success: true });
+    } else {
+        res.status(400).json({ success: false, message: 'Uygulanmış kupon bulunamadı' });
+    }
 });
 
 // Sipariş Detayları

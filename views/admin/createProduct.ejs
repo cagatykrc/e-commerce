@@ -1,76 +1,87 @@
 <%- include('../partials/adminpanelheader.ejs') %>
 <%- include('./controlPanel.ejs') %>
 
-<div class="container mx-auto lg:px-4 mt-8 text-slate-950">
-    <div class="bg-white shadow-lg rounded-lg p-6">
-        <h1 class="text-2xl font-bold mb-6">Ürün Oluştur</h1>
-        <form action="/admin/urunolustur" method="POST" enctype="multipart/form-data">
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="p-8">
+            <h1 class="text-2xl font-bold text-gray-800 mb-6">Yeni Ürün Oluştur</h1>
             
-            <div class="mb-4">
-                <label for="baslik" class="block text-sm font-medium text-gray-700">Başlık:</label>
-                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="baslik" maxlength="55" name="baslik" required>
-            </div>
+            <form action="/admin/urunolustur" method="POST" enctype="multipart/form-data">
+                <!-- Temel Bilgiler -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ürün Başlığı</label>
+                        <input type="text" name="baslik" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                               placeholder="Ürün adını girin">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Temel Fiyat (₺)</label>
+                        <input type="number" name="price" required step="0.01"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                               placeholder="0.00">
+                    </div>
+                </div>
 
-            <div class="mb-4">
-                <label for="price" class="block text-sm font-medium text-gray-700">Fiyat:</label>
-                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="price" name="price" maxlength="7" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir fiyat girin, örneğin 122.00" required>
-            </div>
+                <!-- Resimler -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ana Resim</label>
+                        <input type="file" name="resim" required accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">2. Resim</label>
+                        <input type="file" name="resim2" required accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">3. Resim</label>
+                        <input type="file" name="resim3" required accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
 
-            <div class="mb-4">
-                <label for="aciklama" class="block text-sm font-medium text-gray-700">Açıklama:</label>
-                <textarea class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="aciklama" name="aciklama"></textarea>
-            </div>
+                <!-- Kategori ve Açıklama -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                        <select name="kategorisi" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <% kategoriler.forEach(kategori => { %>
+                                <option value="<%= kategori.category_id %>"><%= kategori.kategori_ad %></option>
+                            <% }); %>
+                        </select>
+                    </div>
 
-            <div class="mb-4">
-                <label for="turu" class="block text-sm font-medium text-gray-700">Türü:</label>
-                <select name="turu" id="turu" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                    <option value="1">Perde</option>
-                    <option value="0">Mekanik Perde</option>
-                </select>
-            </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Açıklama</label>
+                        <textarea name="aciklama" required rows="4"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                                  placeholder="Ürün açıklaması"></textarea>
+                    </div>
+                </div>
 
-            <div class="mb-4">
-                <label for="color" class="block text-sm font-medium text-gray-700">Renk:</label>
-                <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2" id="color" name="color">
-            </div>
-
-            <div class="mb-4">
-                <label for="kategorisi" class="block text-sm font-medium text-gray-700">Kategoriler:</label>
-                <select name="kategorisi" id="kategorisi" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                    <% kategoriler.forEach(kategori => { %>
-                        <option value="<%= kategori.category_id %>"><%= kategori.kategori_ad %></option>
-                    <% }); %>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label for="productdesc_id" class="block text-sm font-medium text-gray-700">Açıklama:</label>
-                <select name="productdesc_id" id="productdesc_id" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 p-2">
-                    <% productdesc.forEach(desc => { %>
-                        <option value="<%= desc.productdesc_id %>"><%= desc.desc_type %></option>
-                    <% }); %>
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <label for="resim" class="block text-sm font-medium text-gray-700">Resim Dosyası:</label>
-                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim" name="resim" required>
-            </div>
-
-            <div class="mb-4">
-                <label for="resim2" class="block text-sm font-medium text-gray-700">2. Resim Dosyası:</label>
-                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim2" name="resim2" required>
-            </div>
-
-            <div class="mb-4">
-                <label for="resim3" class="block text-sm font-medium text-gray-700">3. Resim Dosyası:</label>
-                <input type="file" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" id="resim3" name="resim3" required>
-            </div>
-
-            <button type="submit" class="w-full mt-4 bg-slate-900 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200">Ürünü Oluştur</button>
-        </form>
+                <button type="submit" 
+                        class="w-full bg-blue-600 text-white font-medium py-3 rounded-lg hover:bg-blue-700">
+                    Ürünü Oluştur
+                </button>
+            </form>
+        </div>
     </div>
 </div>
-</div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
+<script>
+// AJAX istekleri için fetch wrapper
+async function fetchWithCsrf(url, options = {}) {
+    const defaultOptions = {
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    
+    return fetch(url, { ...defaultOptions, ...options });
+}
+</script>

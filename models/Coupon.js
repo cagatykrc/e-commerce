@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../utility/database');
+
 const Coupon = sequelize.define('Coupon', {
     coupon_id: {
         type: DataTypes.INTEGER,
@@ -9,27 +10,44 @@ const Coupon = sequelize.define('Coupon', {
     coupon_code: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true, // Kupon kodları benzersiz olmalı
     },
-    discount_rate: {
-        type: DataTypes.DECIMAL(5,2),
-        allowNull: true,
+    discount_type: {
+        type: DataTypes.ENUM('percentage', 'fixed_amount'),
+        allowNull: false,
     },
-    discount_price: {
-        type: DataTypes.DECIMAL(10,2),
+    discount_value: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        validate: {
+            min: 0
+        }
+    },
+    expiry_date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    description: {
+        type: DataTypes.TEXT,
         allowNull: true,
     },
     active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-    },
-    discount_type:{
-        type: DataTypes.STRING,
-        allowNull: false, 
         defaultValue: true,
+    },
+    usage_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    max_usage: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
     }
 }, {
     // Modelin ayarlarını belirle
-    tableName: 'coupon', // Veritabanında kullanılacak tablo adı
+    tableName: 'coupons', // Veritabanında kullanılacak tablo adı
     timestamps: true, // Oluşturma ve güncelleme tarih alanları ekler
 });
 

@@ -1,102 +1,184 @@
 <%- include('../partials/header.ejs') %>
 
-<div class="container mx-auto px-4 mt-8">
-    <div class="create-coupon-container flex flex-col lg:flex-row">
-        <div class="create-coupon bg-white shadow-md rounded-lg p-6 mb-6 lg:mb-0 lg:w-1/2">
-            <h1 class="text-xl font-bold mb-4">Kupon Oluştur</h1>
-            <form action="/admin/kupon-olustur" method="POST">
-                <div class="mb-4">
-                    <label for="coupon_code" class="block text-sm font-medium">Kupon Kodu:</label>
-                    <input type="text" id="coupon_code" name="coupon_code" class="mt-1 block w-full p-2 border rounded-md" required>
-                </div>
-
-                <div class="mb-4">
-                    <label for="discount_type" class="block text-sm font-medium">İndirim Türü:</label>
-                    <select id="discount_type" name="discount_type" class="mt-1 block w-full p-2 border rounded-md" required>
-                        <option value="percentage">Yüzdelik İndirim</option>
-                        <option value="fixed_amount">Sabit Tutar İndirimi</option>
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label for="discount_value" class="block text-sm font-medium">İndirim Değeri:</label>
-                    <input type="text" id="discount_value" name="discount_value" class="mt-1 block w-full p-2 border rounded-md" pattern="^\d+(\.\d{1,2})?$" title="Lütfen geçerli bir değer girin, örneğin 20 veya 50.00" required>
-                </div>
-
-                <div class="mb-4">
-                    <label for="expiry_date" class="block text-sm font-medium">Son Kullanma Tarihi:</label>
-                    <input type="date" id="expiry_date" name="expiry_date" class="mt-1 block w-full p-2 border rounded-md" required>
-                </div>
-
-                <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium">Açıklama:</label>
-                    <textarea id="description" name="description" class="mt-1 block w-full p-2 border rounded-md"></textarea>
-                </div>
-
-                <button type="submit" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">Kupon Oluştur</button>
-                <a class="bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 transition duration-200 inline-block mt-2" href="/admin/panel">Geri</a>
-            </form>
+<div class="container  mx-auto px-4 py-8">
+  <div class="grid md:grid-cols-2 gap-8 bg-gray-200">
+    <!-- Kupon Oluşturma Formu -->
+    <div class="bg-white rounded-xl shadow-sm p-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Yeni Kupon Oluştur</h2>
+      
+      <form action="/admin/kupon-olustur" method="POST" class="space-y-6">
+        <!-- CSRF Token ekleyelim -->
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        
+        <!-- Kupon Kodu -->
+        <div>
+          <label for="coupon_code" class="block text-sm font-medium text-gray-700 mb-2">
+            Kupon Kodu
+          </label>
+          <input type="text" 
+                 id="coupon_code" 
+                 name="coupon_code" 
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                 placeholder="Örn: YILBASI2024" 
+                 pattern="[A-Za-z0-9]+"
+                 oninput="this.value = this.value.replace(/\s+/g, '').toUpperCase()"
+                 required>
         </div>
 
-        <div class="coupon-area lg:ml-6 bg-white shadow-md rounded-lg p-6">
-            <h1 class="text-xl font-bold mb-4">Kategori Yönetim</h1>
-            <div class="table-responsive">
-                <table class="min-w-full bg-white border border-gray-200">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-4 text-left">Kupon ID</th>
-                            <th class="py-3 px-4 text-left">Kupon Kodu</th>
-                            <th class="py-3 px-4 text-left">İndirim Oranı</th>
-                            <th class="py-3 px-4 text-left">İndirim Fiyatı</th>
-                            <th class="py-3 px-4 text-left">Aktif?</th>
-                            <th class="py-3 px-4 text-left">İşlemler</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        <% if (coupons.length > 0) { %>
-                            <% coupons.forEach(kupon => { %>
-                                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="py-3 px-4"><%= kupon.coupon_id %></td>
-                                    <td class="py-3 px-4"><%= kupon.coupon_code %></td>
-                                    <td class="py-3 px-4"><%= kupon.discount_rate %> %</td>
-                                    <td class="py-3 px-4"><%= kupon.discount_price %> %</td>
-                                    <td class="py-3 px-4"><%= kupon.active %></td>
-                                    <td class="py-3 px-4">
-                                        <button type="button" class="bg-red-600 text-white font-semibold rounded-md px-2 py-1" onclick="confirmDelete('<%= kupon.coupon_id %>')">X</button>
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="6" class="text-center py-3">Henüz kupon yok.</td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
+        <!-- İndirim Türü -->
+        <div>
+          <label for="discount_type" class="block text-sm font-medium text-gray-700 mb-2">
+            İndirim Türü
+          </label>
+          <select id="discount_type" 
+                  name="discount_type" 
+                  class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                  required>
+            <option value="percentage">Yüzde İndirimi (%)</option>
+            <option value="fixed_amount">Sabit Tutar İndirimi (₺)</option>
+          </select>
         </div>
+
+        <!-- İndirim Değeri -->
+        <div>
+          <label for="discount_value" class="block text-sm font-medium text-gray-700 mb-2">
+            İndirim Miktarı
+          </label>
+          <div class="relative">
+            <input type="number" 
+                   id="discount_value" 
+                   name="discount_value" 
+                   class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                   placeholder="20" 
+                   min="0" 
+                   step="0.01" 
+                   required>
+            <span id="discount_symbol" class="absolute right-3 top-2 text-gray-500">%</span>
+          </div>
+        </div>
+
+        <!-- Son Kullanma Tarihi -->
+        <div>
+          <label for="expiry_date" class="block text-sm font-medium text-gray-700 mb-2">
+            Son Kullanma Tarihi
+          </label>
+          <input type="date" 
+                 id="expiry_date" 
+                 name="expiry_date" 
+                 class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                 required>
+        </div>
+
+        <!-- Açıklama -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+            Açıklama
+          </label>
+          <textarea id="description" 
+                    name="description" 
+                    rows="3" 
+                    class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                    placeholder="Kupon hakkında açıklama..."></textarea>
+        </div>
+
+        <!-- Butonlar -->
+        <div class="flex gap-4 pt-4">
+          <button type="submit" 
+                  class="flex-1 bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition duration-200">
+            Kuponu Oluştur
+          </button>
+          <a href="/admin/panel" 
+             class="px-6 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition duration-200">
+            Geri Dön
+          </a>
+        </div>
+      </form>
     </div>
+
+    <!-- Kupon Listesi -->
+    <div class="bg-white rounded-xl shadow-sm p-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Aktif Kuponlar</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-100">
+              <th class="text-left py-4 px-4 text-sm font-medium text-gray-500">Kod</th>
+              <th class="text-left py-4 px-4 text-sm font-medium text-gray-500">İndirim</th>
+              <th class="text-left py-4 px-4 text-sm font-medium text-gray-500">Durum</th>
+              <th class="text-right py-4 px-4 text-sm font-medium text-gray-500">İşlem</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            <% if (coupons.length > 0) { %>
+              <% coupons.forEach(kupon => { %>
+                <tr class="hover:bg-gray-50 transition duration-150">
+                  <td class="py-4 px-4">
+                    <span class="font-medium text-gray-900"><%= kupon.coupon_code %></span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <%= kupon.discount_rate ? `%${kupon.discount_rate}` : `₺${kupon.discount_price}` %>
+                  </td>
+                  <td class="py-4 px-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                               <%= kupon.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                      <%= kupon.active ? 'Aktif' : 'Pasif' %>
+                    </span>
+                  </td>
+                  <td class="py-4 px-4 text-right">
+                    <button onclick="confirmDelete('<%= kupon.coupon_id %>')"
+                            class="text-red-600 hover:text-red-800 transition duration-150">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" 
+                           stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" 
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="4" class="py-8 text-center text-gray-500">
+                  Henüz oluşturulmuş kupon bulunmuyor.
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-    function confirmDelete(couponId) {
-        if (confirm('Emin misiniz?')) {
-            fetch('/admin/' + couponId + '/sil', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ couponId: couponId }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Silme işlemi sırasında hata oluştu:', error);
-            });
-        }
+  // İndirim türüne göre sembolü güncelle
+  document.getElementById('discount_type').addEventListener('change', function() {
+    const symbol = document.getElementById('discount_symbol');
+    symbol.textContent = this.value === 'percentage' ? '%' : '₺';
+  });
+
+  // Kupon silme işlemi
+  function confirmDelete(couponId) {
+    if (confirm('Bu kuponu silmek istediğinizden emin misiniz?')) {
+      const csrfToken = document.querySelector('input[name="_csrf"]').value;
+      
+      fetch('/admin/' + couponId + '/sil', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ 
+          couponId: couponId,
+          _csrf: csrfToken 
+        })
+      })
+      .then(response => response.json())
+      .then(() => window.location.reload())
+      .catch(error => console.error('Silme işlemi sırasında hata:', error));
     }
+  }
 </script>
 
 <%- include('../partials/footer.ejs') %>

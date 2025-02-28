@@ -1,0 +1,53 @@
+<!-- Sepete Ekleme Formu -->
+<form action="/<%= urun.urun_id %>/sepetekle" method="POST" class="mt-6">
+    <!-- CSRF Token -->
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    
+    <!-- Miktar Seçici -->
+    <div class="mb-4">
+        <label for="quantity" class="block text-sm font-medium text-gray-700">Miktar</label>
+        <input 
+            type="number" 
+            name="quantity" 
+            id="quantity" 
+            min="1" 
+            value="1" 
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+        >
+    </div>
+
+    <!-- Sepete Ekle Butonu -->
+    <button 
+        type="submit"
+        class="w-full bg-slate-950 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition duration-200"
+    >
+        Sepete Ekle
+    </button>
+</form>
+
+<script>
+async function addToCart(urunId) {
+    try {
+        const response = await fetch(`/${urunId}/sepetekle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': document.querySelector('input[name="_csrf"]').value
+            },
+            body: JSON.stringify({
+                quantity: document.getElementById('quantity').value,
+                _csrf: document.querySelector('input[name="_csrf"]').value
+            })
+        });
+
+        if (response.ok) {
+            window.location.href = '/sepet';
+        } else {
+            alert('Ürün sepete eklenirken bir hata oluştu');
+        }
+    } catch (error) {
+        console.error('Hata:', error);
+        alert('Bir hata oluştu');
+    }
+}
+</script> 
